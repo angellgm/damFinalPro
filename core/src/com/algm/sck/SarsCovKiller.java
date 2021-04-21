@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 public class SarsCovKiller extends ApplicationAdapter {
 	SpriteBatch batch;
 	Texture img;
+	Texture fondo;
 	
 	@Override
 	public void create () {
