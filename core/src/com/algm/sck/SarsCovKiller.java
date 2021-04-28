@@ -31,9 +31,10 @@ public class SarsCovKiller extends ApplicationAdapter {
 		if (nave.getNavePosicion()>500) {
 			nave.setNaveDireccion(-1);
 		}
-		int navep=nave.getNavePosicion();
-		nave.setNavePosicion(navep += (3 * nave.getNaveDireccion()));
-		Gdx.gl.glClearColor(1, 1, 0, 1);
+		int navePos = nave.getNavePosicion();
+		nave.setNavePosicion(navePos  += (3 * nave.getNaveDireccion()));
+		
+		Gdx.gl.glClearColor(1, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.begin();
 		batch.draw(imgNave, nave.getNavePosicion(), 0);
