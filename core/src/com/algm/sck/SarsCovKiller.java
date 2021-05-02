@@ -2,48 +2,59 @@ package com.algm.sck;
 
 import com.algm.movimiento.MovNave;
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-public class SarsCovKiller extends ApplicationAdapter {
+
+/**
+ * @author Angel
+ * Alt-Shift-J -> Gen coments
+ * NOTAS sobre el cambio a Game vs ApplicationAdapter
+ * La clase Game tiene un poco más de sobrecarga con el uso de pantallas. Sin embargo, esta sobrecarga está diseñada para facilitar
+ * la implementación de diferentes etapas / niveles en su juego. Es importante tener en cuenta que esta sobrecarga es mínima.
+ * El ApplicationAdapter no tiene ninguna sobrecarga adicional (es una aplicación recta de un ApplicationListener).
+ * Esto le da más control ya que tiene que hacer todo usted mismo... Preferible Game para el primer juego ...
+ */
+
+public class SarsCovKiller extends Game implements Screen {
+	/**
+	 * ASSETMANAGER
+	 * https://libgdx.badlogicgames.com/ci/nightlies/docs/api/com/badlogic/gdx/assets/AssetManager.html
+	 * clase que se usa para cargar y descargar recursos para su proyecto.
+	 * Almacenará una cantidad de referencias que tiene un activo y lo mantendrá cargado hasta que ya no sea necesario.
+	 */
+	public static final AssetManager ASSETMANAGER = new AssetManager();
 	SpriteBatch batch;
 	Texture imgNave;
 	MovNave nave;
+	
+	
+	@Override
+	public void create() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void show() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void render(float delta) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void hide() {
+		// TODO Auto-generated method stub
+		
+	}
  
 
 
-	
-	@Override
-	public void create () {
-		batch = new SpriteBatch();
-		imgNave = new Texture("nave.png");
-		nave = new MovNave();
-	}
-
-	@Override
-	public void render () {
-		if (nave.getNavePosicion()<0) {
-			nave.setNaveDireccion(1);
-		}
-		
-		if (nave.getNavePosicion()>500) {
-			nave.setNaveDireccion(-1);
-		}
-		int navePos = nave.getNavePosicion();
-		nave.setNavePosicion(navePos  += (3 * nave.getNaveDireccion()));
-		
-		Gdx.gl.glClearColor(1, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		batch.begin();
-		batch.draw(imgNave, nave.getNavePosicion(), 0);
-		batch.end();
-	}
-	
-	@Override
-	public void dispose () {
-		batch.dispose();
-		imgNave.dispose();
-	}
 }
