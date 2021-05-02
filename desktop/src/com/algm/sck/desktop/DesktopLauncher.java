@@ -7,6 +7,12 @@ import com.algm.sck.SarsCovKiller;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+		config.title = "SarsCovKiller";
+		config.width = 1200;
+		config.height = 600;
+		//config.fullscreen = true;
+		
+		
 		new LwjglApplication(new SarsCovKiller(), config);
 	}
 }

@@ -38,7 +38,4 @@ public abstract class Pantalla implements Screen {
 
 	}
 
-
-	
-
 }

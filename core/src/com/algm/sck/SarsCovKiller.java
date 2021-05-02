@@ -1,18 +1,16 @@
 package com.algm.sck;
 
 import com.algm.movimiento.MovNave;
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 
 /**
  * @author Angel
+ * 
  * Alt-Shift-J -> Gen coments
  * NOTAS sobre el cambio a Game vs ApplicationAdapter
  * La clase Game tiene un poco más de sobrecarga con el uso de pantallas. Sin embargo, esta sobrecarga está diseñada para facilitar
@@ -29,15 +27,21 @@ public class SarsCovKiller extends Game implements Screen {
 	 * Almacenará una cantidad de referencias que tiene un activo y lo mantendrá cargado hasta que ya no sea necesario.
 	 */
 	public static final AssetManager ASSETMANAGER = new AssetManager();
-	SpriteBatch batch;
-	Texture imgNave;
-	MovNave nave;
-	
+
 	
 	@Override
 	public void create() {
-		// TODO Auto-generated method stub
 		
+		ASSETMANAGER.load("laser.png", Texture.class);
+		ASSETMANAGER.load("virus.png", Texture.class);
+		ASSETMANAGER.load("nanobot.png", Texture.class);
+		
+		//Pantalla de carga
+		while(!ASSETMANAGER.update()) {
+			
+		}
+		//Primera pantalla Test
+		setScreen(new PantallaJuego(this));
 	}
 	@Override
 	public void show() {
@@ -54,7 +58,12 @@ public class SarsCovKiller extends Game implements Screen {
 		// TODO Auto-generated method stub
 		
 	}
- 
+	@Override
+	public void dispose() {
+		super.dispose();
+		//Eliminar ASSETMANAGER despues del juego
+		ASSETMANAGER.dispose();
+	}
 
 
 }
