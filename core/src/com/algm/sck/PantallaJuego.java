@@ -4,6 +4,8 @@
 package com.algm.sck;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
+
+import actores.Controller;
 import actores.Laser;
 import actores.NanoBot;
 import actores.Virus;
@@ -34,6 +36,7 @@ public class PantallaJuego extends Pantalla {
 	private Laser laser;
 	private NanoBot nanoBot;
 	private Virus virus;
+	private Controller control;
 
 
 	public PantallaJuego(SarsCovKiller juego) {
@@ -44,18 +47,21 @@ public class PantallaJuego extends Pantalla {
 	@Override
 	public void show() {
 		stage = new Stage();
-		
+		control = new Controller();
 		laser = new Laser();
 		virus = new Virus();
 		nanoBot = new NanoBot();
 		
-		nanoBot.setPosition(50, 50);
-		laser.setPosition(100, 100);
-		virus.setPosition(200, 200);
+		nanoBot.setPosition(20, 500);
+		laser.setPosition(150, 500);
+		virus.setPosition(300, 500);
+		control.setPosition(20, 20);
 		
 		stage.addActor(laser);
 		stage.addActor(virus);
 		stage.addActor(nanoBot);
+		
+		stage.addActor(control);
 		
 	}
 

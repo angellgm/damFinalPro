@@ -13,7 +13,7 @@ public class Virus extends Actor {
 
 	public Virus() {
 		// Inicializar textura
-		virus = new TextureRegion(SarsCovKiller.ASSETMANAGER.get("virus.png", Texture.class), 120, 120);
+		virus = new TextureRegion(SarsCovKiller.ASSETMANAGER.get("virus.png", Texture.class), 60, 60);
 		// Tamaño igual al de la textura
 		setSize(virus.getRegionWidth(), virus.getRegionHeight());
 	}
