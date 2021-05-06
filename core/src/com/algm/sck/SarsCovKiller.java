@@ -16,14 +16,14 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
  * La clase Game tiene un poco más de sobrecarga con el uso de pantallas. Sin embargo, esta sobrecarga está diseñada para facilitar
  * la implementación de diferentes etapas / niveles en su juego. Es importante tener en cuenta que esta sobrecarga es mínima.
  * El ApplicationAdapter no tiene ninguna sobrecarga adicional (es una aplicación recta de un ApplicationListener).
- * Esto le da más control ya que tiene que hacer todo usted mismo... Preferible Game para el primer juego ...
+ * 1200*600 Res. Original
  */
 
 public class SarsCovKiller extends Game implements Screen {
 	/**
 	 * ASSETMANAGER
 	 * https://libgdx.badlogicgames.com/ci/nightlies/docs/api/com/badlogic/gdx/assets/AssetManager.html
-	 * clase que se usa para cargar y descargar recursos para su proyecto.
+	 * clase que se usa para cargar y descargar recursos para el proyecto.
 	 * Almacenará una cantidad de referencias que tiene un activo y lo mantendrá cargado hasta que ya no sea necesario.
 	 */
 	public static final AssetManager ASSETMANAGER = new AssetManager();

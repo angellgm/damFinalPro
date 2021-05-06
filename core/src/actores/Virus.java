@@ -4,12 +4,15 @@ import com.algm.sck.SarsCovKiller;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class Virus extends Actor {
 
 	// Área de la textura
 	private TextureRegion virus;
+	private Vector2 vectorVirus;
+
 
 	public Virus() {
 		// Inicializar textura

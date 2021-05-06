@@ -4,11 +4,13 @@ import com.algm.sck.SarsCovKiller;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class Laser extends Actor {
 	// Área de la textura
 	private TextureRegion laser;
+	private Vector2 vectorLaser;
 
 	public Laser() {
 		// Inicializar textura
@@ -22,6 +24,20 @@ public class Laser extends Actor {
 		// TODO Auto-generated method stub
 		batch.draw(laser, getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(),
 				getScaleX(), getScaleY(), getRotation());
+	}
+	
+	@Override
+	public void act(float delta) {
+		// TODO Auto-generated method stub
+		super.act(delta);
+		//Se mueve solo en el eje x
+		moveBy(500 * delta, 0);
+		//Eliminar actor al llegar al final de la pantalla
+		if (getX() > getStage().getWidth()) {
+			remove();
+		}
+		
+		
 	}
 	
 }
