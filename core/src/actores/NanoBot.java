@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 public class NanoBot extends Actor {
 	// Área de la textura
 	private TextureRegion nanoBot;
-	public Vector2 vectorNanoBot= new Vector2(0, 0); 
+	public Vector2 vectorNanoBot; 
 
 
 	public NanoBot() {

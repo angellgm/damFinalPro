@@ -24,7 +24,7 @@ import actores.Virus;
  */
 public class PantallaJuego extends Pantalla {
 	/**
-	 *  https://libgdx.badlogicgames.com/ci/nightlies/docs/api/com/badlogic/gdx/scenes/scene2d/Stage.html
+	 * https://libgdx.badlogicgames.com/ci/nightlies/docs/api/com/badlogic/gdx/scenes/scene2d/Stage.html
 	 * Un gráfico de escena 2D que contiene jerarquías de actors. Stage maneja la
 	 * ventana gráfica y distribuye eventos de entrada. setViewport(Viewport)
 	 * controla las coordenadas utilizadas dentro del escenario y configura la
@@ -47,7 +47,7 @@ public class PantallaJuego extends Pantalla {
 	 * 1200*600 Res. Original
 	 */
 
-	 Stage stage;
+	Stage stage;
 	private Laser laser;
 	private NanoBot nanoBot;
 	private Virus virus;
@@ -60,7 +60,7 @@ public class PantallaJuego extends Pantalla {
 
 	@Override
 	public void show() {
-		
+
 		stage = new Stage();
 		Gdx.input.setInputProcessor(stage);
 		control = new Controller();
@@ -81,42 +81,68 @@ public class PantallaJuego extends Pantalla {
 			public boolean keyDown(InputEvent event, int keycode) {
 				switch (keycode) {
 				case Input.Keys.S:
-					nanoBot.vectorNanoBot.y = -200;
+					nanoBot.vectorNanoBot.y = -300;
 					return true;
+
 				case Input.Keys.W:
-					nanoBot.vectorNanoBot.y = 200;
+					nanoBot.vectorNanoBot.y = 300;
+					// nanoBot.vectorNanoBot.x = 0;
 					return true;
+
 				case Input.Keys.A:
-					nanoBot.vectorNanoBot.x = -200;
+					nanoBot.vectorNanoBot.x = -300;
+					// nanoBot.vectorNanoBot.y = 0;
 					return true;
+
 				case Input.Keys.D:
-					nanoBot.vectorNanoBot.y = 0;
-					nanoBot.vectorNanoBot.x = 200;
+					nanoBot.vectorNanoBot.x = 300;
+					// nanoBot.vectorNanoBot.y = 0;
 					return true;
+
 				default:
 					return false;
 				}
 
 			}
 
-			@Override
-			public boolean keyTyped(InputEvent event, char character) {
-				// TODO Auto-generated method stub
-				return super.keyTyped(event, character);
-			}
 
 			@Override
 			public boolean keyUp(InputEvent event, int keycode) {
-				
-				if(keycode != Input.Keys.SPACE) {
-					return false;
-				}
-				else {
-					//Crear lasers
+
+//				if(keycode != Input.Keys.SPACE) {
+//					return false;
+//				}
+				switch (keycode) {
+				case Input.Keys.S: // 47
+					//if (keycode != 51)
+						
+						nanoBot.vectorNanoBot.y = 0;
+					return true;
+					
+
+				case Input.Keys.W: // 51
+					if (keycode != 47)
+						nanoBot.vectorNanoBot.y = 0;
+					return true;
+
+				case Input.Keys.A: // 29
+					if (keycode != 32)
+						nanoBot.vectorNanoBot.x = 0;
+					return true;
+
+				case Input.Keys.D: // 32
+					if (keycode != 29)
+						nanoBot.vectorNanoBot.x = 0;
+					return true;
+
+				case Input.Keys.SPACE: // 62
 					Laser laser = new Laser();
-					laser.setPosition(nanoBot.getX() + nanoBot.getWidth() ,nanoBot.getY() );
+					laser.setPosition(nanoBot.getX() + nanoBot.getWidth(), nanoBot.getY());
 					stage.addActor(laser);
 					return true;
+
+				default:
+					return false;
 
 				}
 			}
@@ -129,12 +155,12 @@ public class PantallaJuego extends Pantalla {
 	public void resize(int width, int height) {
 		// TODO Auto-generated method stub
 		super.resize(width, height);
-		//stage.setViewport
+		// stage.setViewport
 	}
 
 	@Override
 	public void render(float delta) {
-		//stage.clear();
+		// stage.clear();
 		Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		stage.act(); // Actulizar
