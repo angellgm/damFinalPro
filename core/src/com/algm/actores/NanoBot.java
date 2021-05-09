@@ -1,4 +1,4 @@
-package actores;
+package com.algm.actores;
 
 import com.algm.sck.SarsCovKiller;
 import com.badlogic.gdx.graphics.Texture;
@@ -74,10 +74,5 @@ public class NanoBot extends Actor {
 	public void setVectorNanoBot(Vector2 vectorNanoBot) {
 		this.vectorNanoBot = vectorNanoBot;
 	}
-	
 
-		
-
-	
-	
 }

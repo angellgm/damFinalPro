@@ -5,6 +5,11 @@ package com.algm.sck;
 
 import java.awt.event.KeyEvent;
 
+import com.algm.actores.Controller;
+import com.algm.actores.Laser;
+import com.algm.actores.NanoBot;
+import com.algm.actores.Virus;
+import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
@@ -13,16 +18,12 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
-import actores.Controller;
-import actores.Laser;
-import actores.NanoBot;
-import actores.Virus;
-
 /**
  * @author Angel
  *
  */
 public class PantallaJuego extends Pantalla {
+
 	/**
 	 * https://libgdx.badlogicgames.com/ci/nightlies/docs/api/com/badlogic/gdx/scenes/scene2d/Stage.html
 	 * Un gráfico de escena 2D que contiene jerarquías de actors. Stage maneja la
@@ -52,6 +53,10 @@ public class PantallaJuego extends Pantalla {
 	private NanoBot nanoBot;
 	private Virus virus;
 	private Controller control;
+	private boolean keyDownW;
+	private boolean keyDownS;
+	private boolean keyDownA;
+	private boolean keyDownD;
 
 	public PantallaJuego(SarsCovKiller juego) {
 		super(juego);
@@ -64,91 +69,25 @@ public class PantallaJuego extends Pantalla {
 		stage = new Stage();
 		Gdx.input.setInputProcessor(stage);
 		control = new Controller();
+		control.setPosition(10, 10);
 		laser = new Laser();
 		virus = new Virus();
 		nanoBot = new NanoBot();
-
 		nanoBot.setPosition(20, 250);
-		stage.setKeyboardFocus(nanoBot);
-
+		
+		if(Gdx.app.getType()==ApplicationType.Desktop) {
+			stage.setKeyboardFocus(nanoBot);
+			nanoBot.addListener(new ImputListener());
+		}
+		
+		if(Gdx.app.getType()==ApplicationType.Android) {
+			stage.addActor(control);
+		}
+		
 		stage.addActor(nanoBot);
-//		stage.addActor(laser);
 //		stage.addActor(virus);
-//		stage.addActor(control);
 
-		nanoBot.addListener(new InputListener() {
-			@Override
-			public boolean keyDown(InputEvent event, int keycode) {
-				switch (keycode) {
-				case Input.Keys.S:
-					nanoBot.vectorNanoBot.y = -300;
-					return true;
-
-				case Input.Keys.W:
-					nanoBot.vectorNanoBot.y = 300;
-					// nanoBot.vectorNanoBot.x = 0;
-					return true;
-
-				case Input.Keys.A:
-					nanoBot.vectorNanoBot.x = -300;
-					// nanoBot.vectorNanoBot.y = 0;
-					return true;
-
-				case Input.Keys.D:
-					nanoBot.vectorNanoBot.x = 300;
-					// nanoBot.vectorNanoBot.y = 0;
-					return true;
-
-				default:
-					return false;
-				}
-
-			}
-
-
-			@Override
-			public boolean keyUp(InputEvent event, int keycode) {
-
-//				if(keycode != Input.Keys.SPACE) {
-//					return false;
-//				}
-				switch (keycode) {
-				case Input.Keys.S: // 47
-					//if (keycode != 51)
-						
-						nanoBot.vectorNanoBot.y = 0;
-					return true;
-					
-
-				case Input.Keys.W: // 51
-					if (keycode != 47)
-						nanoBot.vectorNanoBot.y = 0;
-					return true;
-
-				case Input.Keys.A: // 29
-					if (keycode != 32)
-						nanoBot.vectorNanoBot.x = 0;
-					return true;
-
-				case Input.Keys.D: // 32
-					if (keycode != 29)
-						nanoBot.vectorNanoBot.x = 0;
-					return true;
-
-				case Input.Keys.SPACE: // 62
-					Laser laser = new Laser();
-					laser.setPosition(nanoBot.getX() + nanoBot.getWidth(), nanoBot.getY());
-					stage.addActor(laser);
-					return true;
-
-				default:
-					return false;
-
-				}
-			}
-
-		});
-
+		
 	}
 
 	@Override
@@ -160,11 +99,11 @@ public class PantallaJuego extends Pantalla {
 
 	@Override
 	public void render(float delta) {
-		// stage.clear();
 		Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		stage.act(); // Actulizar
+		stage.act(Gdx.graphics.getDeltaTime()); // Actulizar
 		stage.draw(); // Dibujar
+
 	}
 
 	@Override
@@ -176,6 +115,94 @@ public class PantallaJuego extends Pantalla {
 	@Override
 	public void dispose() {
 		stage.dispose(); // Destruir pantalla
+		
 	}
 
+	private final class ImputListener extends InputListener {
+		
+		@Override
+		public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+			// TODO Auto-generated method stub
+			return super.touchDown(event, x, y, pointer, button);
+		}
+		
+		@Override
+		public boolean keyDown(InputEvent event, int keycode) {
+			switch (keycode) {
+			case Input.Keys.S:
+				keyDownS = true;
+				nanoBot.vectorNanoBot.y = -300;
+				return true;
+
+			case Input.Keys.W:
+				keyDownW = true;
+				nanoBot.vectorNanoBot.y = 300;
+				return true;
+
+			case Input.Keys.A:
+				keyDownA = true;
+				nanoBot.vectorNanoBot.x = -300;
+				return true;
+
+			case Input.Keys.D:
+				keyDownD = true;
+				nanoBot.vectorNanoBot.x = 300;
+				return true;
+
+			default:
+				return false;
+			}
+
+		}
+
+		@Override
+		public boolean keyUp(InputEvent event, int keycode) {
+			switch (keycode) {
+			case Input.Keys.S: // 47
+				keyDownS = false;
+				if (keyDownW) {
+					return true;
+				} else {
+					nanoBot.vectorNanoBot.y = 0;
+					return true;
+				}
+
+			case Input.Keys.W: // 51
+				keyDownW = false;
+				if (keyDownS) {
+					return true;
+				} else {
+					nanoBot.vectorNanoBot.y = 0;
+					return true;
+				}
+
+			case Input.Keys.A: // 29
+				keyDownA = false;
+				if (keyDownD) {
+					return true;
+				} else {
+					nanoBot.vectorNanoBot.x = 0;
+					return true;
+				}
+
+			case Input.Keys.D: // 32
+				keyDownD = false;
+				if (keyDownA) {
+					return true;
+				} else {
+					nanoBot.vectorNanoBot.x = 0;
+					return true;
+				}
+
+			case Input.Keys.SPACE: // 62
+				Laser laser = new Laser();
+				laser.setPosition(nanoBot.getX() + nanoBot.getWidth(), nanoBot.getY());
+				stage.addActor(laser);
+				return true;
+
+			default:
+				return false;
+			}
+		}
+	}
 }
