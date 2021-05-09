@@ -68,38 +68,44 @@ public class PantallaJuego extends Pantalla {
 
 		stage = new Stage();
 		Gdx.input.setInputProcessor(stage);
-		control = new Controller();
-		control.setPosition(10, 10);
+	
 		laser = new Laser();
 		virus = new Virus();
+		virus.setPosition(300, 250);
 		nanoBot = new NanoBot();
 		nanoBot.setPosition(20, 250);
+		
+		control = new Controller();
+		control.setPosition(10, 10);
 		
 		if(Gdx.app.getType()==ApplicationType.Desktop) {
 			stage.setKeyboardFocus(nanoBot);
 			nanoBot.addListener(new ImputListener());
+			
+			//test
+			stage.addActor(control);
 		}
-		
+		// Pendiente de testeo
 		if(Gdx.app.getType()==ApplicationType.Android) {
 			stage.addActor(control);
 		}
 		
 		stage.addActor(nanoBot);
-//		stage.addActor(virus);
+		stage.addActor(virus);
 
 		
 	}
 
 	@Override
 	public void resize(int width, int height) {
-		// TODO Auto-generated method stub
+		// Resize en función del tamaño
 		super.resize(width, height);
-		// stage.setViewport
 	}
 
 	@Override
 	public void render(float delta) {
-		Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
+		//Limpiar pantalla para evitar trazos fantasma de los actores
+		Gdx.gl.glClearColor(0f, 0f, 0f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		stage.act(Gdx.graphics.getDeltaTime()); // Actulizar
 		stage.draw(); // Dibujar
@@ -131,22 +137,22 @@ public class PantallaJuego extends Pantalla {
 			switch (keycode) {
 			case Input.Keys.S:
 				keyDownS = true;
-				nanoBot.vectorNanoBot.y = -300;
+				nanoBot.vector.y = -300;
 				return true;
 
 			case Input.Keys.W:
 				keyDownW = true;
-				nanoBot.vectorNanoBot.y = 300;
+				nanoBot.vector.y = 300;
 				return true;
 
 			case Input.Keys.A:
 				keyDownA = true;
-				nanoBot.vectorNanoBot.x = -300;
+				nanoBot.vector.x = -300;
 				return true;
 
 			case Input.Keys.D:
 				keyDownD = true;
-				nanoBot.vectorNanoBot.x = 300;
+				nanoBot.vector.x = 300;
 				return true;
 
 			default:
@@ -163,7 +169,7 @@ public class PantallaJuego extends Pantalla {
 				if (keyDownW) {
 					return true;
 				} else {
-					nanoBot.vectorNanoBot.y = 0;
+					nanoBot.vector.y = 0;
 					return true;
 				}
 
@@ -172,7 +178,7 @@ public class PantallaJuego extends Pantalla {
 				if (keyDownS) {
 					return true;
 				} else {
-					nanoBot.vectorNanoBot.y = 0;
+					nanoBot.vector.y = 0;
 					return true;
 				}
 
@@ -181,7 +187,7 @@ public class PantallaJuego extends Pantalla {
 				if (keyDownD) {
 					return true;
 				} else {
-					nanoBot.vectorNanoBot.x = 0;
+					nanoBot.vector.x = 0;
 					return true;
 				}
 
@@ -190,7 +196,7 @@ public class PantallaJuego extends Pantalla {
 				if (keyDownA) {
 					return true;
 				} else {
-					nanoBot.vectorNanoBot.x = 0;
+					nanoBot.vector.x = 0;
 					return true;
 				}
 

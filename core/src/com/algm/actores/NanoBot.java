@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 public class NanoBot extends Actor {
 	// Área de la textura
 	private TextureRegion nanoBot;
-	public Vector2 vectorNanoBot; 
+	public Vector2 vector; 
 
 
 	public NanoBot() {
@@ -19,7 +19,7 @@ public class NanoBot extends Actor {
 		// Tamaño igual al de la textura
 		setSize(nanoBot.getRegionWidth(), nanoBot.getRegionHeight());
 		// Velocidad inicial 0
-		vectorNanoBot = new Vector2(0, 0); 
+		vector = new Vector2(0, 0); 
 	}
 	
 	@Override
@@ -34,28 +34,30 @@ public class NanoBot extends Actor {
 	public void act(float delta) {
 		// TODO Auto-generated method stub
 		super.act(delta);
-		moveBy(vectorNanoBot.x * delta, vectorNanoBot.y * delta );
+		moveBy(vector.x * delta, vector.y * delta );
 		//Mapear limites de escenario para el actor
 		
 		if(getX() < 0) {
 			setX(0);
-			vectorNanoBot.x = 0;
+			vector.x = 0;
 			
 		}else if(getRight() > getStage().getWidth()) {
 			setX(getStage().getWidth() - getWidth());
-			vectorNanoBot.x = 0;
+			vector.x = 0;
 		}
 		
 		if(getY() < 0) {
 			setY(0);
-			vectorNanoBot.y = 0;
+			vector.y = 0;
 			
 		}else if(getTop() > getStage().getHeight()) {
 			setY(getStage().getHeight() - getHeight());
-			vectorNanoBot.y = 0;
+			vector.y = 0;
 		}
 		
 	}
+	
+	
 	
 
 
@@ -68,11 +70,11 @@ public class NanoBot extends Actor {
 	}
 
 	public Vector2 getVectorNanoBot() {
-		return vectorNanoBot;
+		return vector;
 	}
 
 	public void setVectorNanoBot(Vector2 vectorNanoBot) {
-		this.vectorNanoBot = vectorNanoBot;
+		this.vector = vectorNanoBot;
 	}
 
 }
