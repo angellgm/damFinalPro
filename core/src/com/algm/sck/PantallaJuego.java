@@ -4,6 +4,7 @@
 package com.algm.sck;
 
 import java.awt.event.KeyEvent;
+import java.sql.Time;
 
 import com.algm.actores.Controller;
 import com.algm.actores.Laser;
@@ -57,10 +58,13 @@ public class PantallaJuego extends Pantalla {
 	private boolean keyDownS;
 	private boolean keyDownA;
 	private boolean keyDownD;
+	private float virusSpawn = 1;
 
 	public PantallaJuego(SarsCovKiller juego) {
 		super(juego);
-		// TODO Auto-generated constructor stub
+		// Tiempo de spawn de enemigos calculado con random y se reduce al pasar de
+		// nivel (si da tiempo)
+		virusSpawn += (float) Math.random();
 	}
 
 	@Override
@@ -68,32 +72,31 @@ public class PantallaJuego extends Pantalla {
 
 		stage = new Stage();
 		Gdx.input.setInputProcessor(stage);
-	
+
 		laser = new Laser();
 		virus = new Virus();
-		virus.setPosition(300, 250);
+		// virus.setPosition(20, 250);
+
 		nanoBot = new NanoBot();
 		nanoBot.setPosition(20, 250);
-		
+
 		control = new Controller();
 		control.setPosition(10, 10);
-		
-		if(Gdx.app.getType()==ApplicationType.Desktop) {
+
+		if (Gdx.app.getType() == ApplicationType.Desktop) {
 			stage.setKeyboardFocus(nanoBot);
 			nanoBot.addListener(new ImputListener());
-			
-			//test
+
+			// test
 			stage.addActor(control);
 		}
 		// Pendiente de testeo
-		if(Gdx.app.getType()==ApplicationType.Android) {
+		if (Gdx.app.getType() == ApplicationType.Android) {
 			stage.addActor(control);
 		}
-		
+
 		stage.addActor(nanoBot);
 		stage.addActor(virus);
-
-		
 	}
 
 	@Override
@@ -104,10 +107,28 @@ public class PantallaJuego extends Pantalla {
 
 	@Override
 	public void render(float delta) {
-		//Limpiar pantalla para evitar trazos fantasma de los actores
+		// Limpiar pantalla para evitar trazos fantasma de los actores
 		Gdx.gl.glClearColor(0f, 0f, 0f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		stage.act(Gdx.graphics.getDeltaTime()); // Actulizar
+		// Delta == Tiempo que tarda el ordenador en procesar y renderizar un frame del
+		// videojuego
+		// Al restar DELTA a VIRUSSPAWN si el tiempo es inferior a 0 ya puede respawnear
+		// otro enemigo
+		virusSpawn = delta + (float) Math.random();
+		//System.out.println("virusSpawn == " + virusSpawn);
+		if (virusSpawn > 1) {
+			Virus virus = new Virus();
+			virus.setPosition(stage.getWidth(), stage.getHeight() * (float) Math.random( ));
+			
+			stage.addActor(virus);
+
+			// Hay nuevo spawn
+			virusSpawn = virusSpawn + (float) Math.random();
+			//System.out.println("virusSpawn2 == " + virusSpawn);
+
+		}
+
 		stage.draw(); // Dibujar
 
 	}
@@ -121,17 +142,17 @@ public class PantallaJuego extends Pantalla {
 	@Override
 	public void dispose() {
 		stage.dispose(); // Destruir pantalla
-		
+
 	}
 
 	private final class ImputListener extends InputListener {
-		
+
 		@Override
 		public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 			// TODO Auto-generated method stub
 			return super.touchDown(event, x, y, pointer, button);
 		}
-		
+
 		@Override
 		public boolean keyDown(InputEvent event, int keycode) {
 			switch (keycode) {
@@ -201,9 +222,11 @@ public class PantallaJuego extends Pantalla {
 				}
 
 			case Input.Keys.SPACE: // 62
+				// Genera lasers al pulsar la tecla
 				Laser laser = new Laser();
 				laser.setPosition(nanoBot.getX() + nanoBot.getWidth(), nanoBot.getY());
 				stage.addActor(laser);
+
 				return true;
 
 			default:

@@ -10,7 +10,6 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 public class Laser extends Actor {
 	// Área de la textura
 	private TextureRegion laser;
-	private Vector2 vectorLaser;
 
 	public Laser() {
 		// Inicializar textura
@@ -31,7 +30,7 @@ public class Laser extends Actor {
 		// TODO Auto-generated method stub
 		super.act(delta);
 		//Se mueve solo en el eje x
-		moveBy(500 * delta, 0);
+		moveBy(600 * delta, 0);
 		//Eliminar actor al llegar al final de la pantalla
 		if (getX() > getStage().getWidth()) {
 			remove();
