@@ -6,7 +6,7 @@ package com.algm.sck;
 import java.awt.event.KeyEvent;
 import java.sql.Time;
 
-import com.algm.actores.Controller;
+import com.algm.actores.Pad;
 import com.algm.actores.Laser;
 import com.algm.actores.NanoBot;
 import com.algm.actores.Virus;
@@ -18,6 +18,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.Disposable;
 
 /**
  * @author Angel
@@ -25,46 +26,23 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
  */
 public class PantallaJuego extends Pantalla {
 
-	/**
-	 * https://libgdx.badlogicgames.com/ci/nightlies/docs/api/com/badlogic/gdx/scenes/scene2d/Stage.html
-	 * Un gráfico de escena 2D que contiene jerarquías de actors. Stage maneja la
-	 * ventana gráfica y distribuye eventos de entrada. setViewport(Viewport)
-	 * controla las coordenadas utilizadas dentro del escenario y configura la
-	 * cámara utilizada para convertir entre las coordenadas del escenario y las
-	 * coordenadas de la pantalla. Un escenario debe recibir eventos de entrada para
-	 * que pueda distribuirlos a los actores. Por lo general, esto se hace pasando
-	 * el escenario a Gdx.input.setInputProcessor. Se InputMultiplexerpuede usar
-	 * para manejar eventos de entrada antes o después de que lo haga la etapa. Si
-	 * un actor maneja un evento devolviendo verdadero desde el método de entrada,
-	 * entonces el método de entrada de la etapa también devolverá verdadero, lo que
-	 * provocará que los procesadores de entrada posteriores no reciban el evento.
-	 * El escenario y sus componentes (como Actores y Oyentes) no son seguros para
-	 * subprocesos y solo deben actualizarse y consultarse desde un solo subproceso
-	 * (presumiblemente el subproceso principal de procesamiento). Los métodos deben
-	 * ser reentrantes, por lo que puede actualizar Actores y Etapas desde
-	 * devoluciones de llamada y controladores. Stagepuede ser extremadamente útil
-	 * si necesita controles en pantalla (botones, joystick, etc.) puede usar clases
-	 * de scene2d.ui
-	 * 
-	 * 1200*600 Res. Original
-	 */
-
 	Stage stage;
 	private Laser laser;
 	private NanoBot nanoBot;
 	private Virus virus;
-	private Controller control;
+	private Pad control;
 	private boolean keyDownW;
 	private boolean keyDownS;
 	private boolean keyDownA;
 	private boolean keyDownD;
-	private float virusSpawn = 1;
+	private float velocidadNanoBot;
+	private float virusSpawn;
 
 	public PantallaJuego(SarsCovKiller juego) {
 		super(juego);
-		// Tiempo de spawn de enemigos calculado con random y se reduce al pasar de
-		// nivel (si da tiempo)
+		virusSpawn = 1;
 		virusSpawn += (float) Math.random();
+		velocidadNanoBot = 500;
 	}
 
 	@Override
@@ -80,15 +58,12 @@ public class PantallaJuego extends Pantalla {
 		nanoBot = new NanoBot();
 		nanoBot.setPosition(20, 250);
 
-		control = new Controller();
-		control.setPosition(10, 10);
+		control = new Pad();
+		control.setPosition(15, 15);
 
 		if (Gdx.app.getType() == ApplicationType.Desktop) {
 			stage.setKeyboardFocus(nanoBot);
 			nanoBot.addListener(new ImputListener());
-
-			// test
-			stage.addActor(control);
 		}
 		// Pendiente de testeo
 		if (Gdx.app.getType() == ApplicationType.Android) {
@@ -97,6 +72,7 @@ public class PantallaJuego extends Pantalla {
 
 		stage.addActor(nanoBot);
 		stage.addActor(virus);
+		stage.addActor(control);
 	}
 
 	@Override
@@ -116,21 +92,39 @@ public class PantallaJuego extends Pantalla {
 		// Al restar DELTA a VIRUSSPAWN si el tiempo es inferior a 0 ya puede respawnear
 		// otro enemigo
 		virusSpawn = delta + (float) Math.random();
-		//System.out.println("virusSpawn == " + virusSpawn);
+		// System.out.println("virusSpawn == " + virusSpawn);
 		if (virusSpawn > 1) {
 			Virus virus = new Virus();
-			virus.setPosition(stage.getWidth(), stage.getHeight() * (float) Math.random( ));
-			
+			virus.setPosition(stage.getWidth(), stage.getHeight() * (float) Math.random());
+
 			stage.addActor(virus);
 
 			// Hay nuevo spawn
 			virusSpawn = virusSpawn + (float) Math.random();
-			//System.out.println("virusSpawn2 == " + virusSpawn);
+			// System.out.println("virusSpawn2 == " + virusSpawn);
 
 		}
+		controlPad(control.getKnobPercentX(), control.getKnobPercentY());
 
 		stage.draw(); // Dibujar
 
+	}
+
+	private void controlPad(float knobPercentX, float knobPercentY) {
+		if (control.isTouched()) {
+
+			if (knobPercentY != 0) {
+				nanoBot.vector.y = velocidadNanoBot * knobPercentY;
+			} else {
+				nanoBot.vector.y = 0;
+			}
+			if (knobPercentX != 0) {
+				nanoBot.vector.x = velocidadNanoBot * knobPercentX;
+			} else {
+				nanoBot.vector.x = 0;
+			}
+
+		}
 	}
 
 	@Override
@@ -148,32 +142,26 @@ public class PantallaJuego extends Pantalla {
 	private final class ImputListener extends InputListener {
 
 		@Override
-		public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-			// TODO Auto-generated method stub
-			return super.touchDown(event, x, y, pointer, button);
-		}
-
-		@Override
 		public boolean keyDown(InputEvent event, int keycode) {
 			switch (keycode) {
 			case Input.Keys.S:
 				keyDownS = true;
-				nanoBot.vector.y = -300;
+				nanoBot.vector.y = -velocidadNanoBot;
 				return true;
 
 			case Input.Keys.W:
 				keyDownW = true;
-				nanoBot.vector.y = 300;
+				nanoBot.vector.y = velocidadNanoBot;
 				return true;
 
 			case Input.Keys.A:
 				keyDownA = true;
-				nanoBot.vector.x = -300;
+				nanoBot.vector.x = -velocidadNanoBot;
 				return true;
 
 			case Input.Keys.D:
 				keyDownD = true;
-				nanoBot.vector.x = 300;
+				nanoBot.vector.x = velocidadNanoBot;
 				return true;
 
 			default:
@@ -233,5 +221,43 @@ public class PantallaJuego extends Pantalla {
 				return false;
 			}
 		}
+
 	}
 }
+/*
+ * case Input.Keys.S: keyDownS = true; nanoBot.vector.y = -velocidadNanoBot;
+ * return true;
+ * 
+ * case Input.Keys.W: keyDownW = true; nanoBot.vector.y = velocidadNanoBot;
+ * return true;
+ * 
+ * case Input.Keys.A: keyDownA = true; nanoBot.vector.x = -velocidadNanoBot;
+ * return true;
+ * 
+ * case Input.Keys.D: keyDownD = true; nanoBot.vector.x = velocidadNanoBot;
+ * return true;
+ */
+
+/**
+ * https://libgdx.badlogicgames.com/ci/nightlies/docs/api/com/badlogic/gdx/scenes/scene2d/Stage.html
+ * Un gráfico de escena 2D que contiene jerarquías de actors. Stage maneja la
+ * ventana gráfica y distribuye eventos de entrada. setViewport(Viewport)
+ * controla las coordenadas utilizadas dentro del escenario y configura la
+ * cámara utilizada para convertir entre las coordenadas del escenario y las
+ * coordenadas de la pantalla. Un escenario debe recibir eventos de entrada para
+ * que pueda distribuirlos a los actores. Por lo general, esto se hace pasando
+ * el escenario a Gdx.input.setInputProcessor. Se InputMultiplexerpuede usar
+ * para manejar eventos de entrada antes o después de que lo haga la etapa. Si
+ * un actor maneja un evento devolviendo verdadero desde el método de entrada,
+ * entonces el método de entrada de la etapa también devolverá verdadero, lo que
+ * provocará que los procesadores de entrada posteriores no reciban el evento.
+ * El escenario y sus componentes (como Actores y Oyentes) no son seguros para
+ * subprocesos y solo deben actualizarse y consultarse desde un solo subproceso
+ * (presumiblemente el subproceso principal de procesamiento). Los métodos deben
+ * ser reentrantes, por lo que puede actualizar Actores y Etapas desde
+ * devoluciones de llamada y controladores. Stagepuede ser extremadamente útil
+ * si necesita controles en pantalla (botones, joystick, etc.) puede usar clases
+ * de scene2d.ui
+ * 
+ * 1200*600 Res. Original
+ */

@@ -20,7 +20,6 @@ public class Virus extends Actor {
 
 	private int velX, velY;
 	private Texture texture;
-	private Texture virus2;
 	private TextureRegion virus;
 	private TextureRegion[] texturaRegionMov;
 	private Vector2 vector;
@@ -28,8 +27,8 @@ public class Virus extends Actor {
 	private Animation animacion, animacionActual;
 
 	public Virus() {
-		velX = -150;
-		velY = -800;
+		velX = -500;
+		velY = -100;
 		texture = new Texture(Gdx.files.internal("anivirus.png"));
 		// virus = new TextureRegion(SarsCovKiller.ASSETMANAGER.get("anivirus.png",
 		// Texture.class), 60, 60);
@@ -41,7 +40,7 @@ public class Virus extends Actor {
 			texturaRegionMov[j] = (temporalRegions[0][j]);
 		}
 		// Crear animación (Tiempo del Frame (0.10seg), TextureRegions)
-		animacion = new Animation(0.3f, texturaRegionMov);
+		animacion = new Animation(0.1f, texturaRegionMov);
 		// Objeto para poder variar animación
 		animacionActual = animacion;
 		// Velocidad inicial 0
