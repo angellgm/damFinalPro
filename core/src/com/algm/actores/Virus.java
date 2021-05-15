@@ -1,20 +1,12 @@
 package com.algm.actores;
 
-import java.util.Iterator;
-
-import com.algm.sck.SarsCovKiller;
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.utils.Array;
 
 public class Virus extends Actor {
 
@@ -24,14 +16,13 @@ public class Virus extends Actor {
 	private TextureRegion[] texturaRegionMov;
 	private Vector2 vector;
 	private float tiempo;
-	private Animation animacion, animacionActual;
+	private Animation animacion;
 
 	public Virus() {
 		velX = -500;
 		velY = -100;
 		texture = new Texture(Gdx.files.internal("anivirus.png"));
-		// virus = new TextureRegion(SarsCovKiller.ASSETMANAGER.get("anivirus.png",
-		// Texture.class), 60, 60);
+	
 		// Crear array temporal para dividir textura (10 subtexturas)
 		TextureRegion[][] temporalRegions = TextureRegion.split(texture, texture.getWidth() / 10, texture.getHeight());
 		// Crear regiones en movimiento para TextureRegion;
@@ -42,7 +33,7 @@ public class Virus extends Actor {
 		// Crear animación (Tiempo del Frame (0.10seg), TextureRegions)
 		animacion = new Animation(0.1f, texturaRegionMov);
 		// Objeto para poder variar animación
-		animacionActual = animacion;
+		//animacionActual = animacion;
 		// Velocidad inicial 0
 		vector = new Vector2(0, 0);
 		tiempo = 0f;
@@ -60,11 +51,10 @@ public class Virus extends Actor {
 
 	@Override
 	public void act(float delta) {
-		// TODO Auto-generated method stub
 		super.act(delta);
 		// Tiempo que pasa desde el último frame render.
 		tiempo += Gdx.graphics.getDeltaTime();
-		virus = (TextureRegion) animacionActual.getKeyFrame(tiempo, true);
+		virus = (TextureRegion) animacion.getKeyFrame(tiempo, true);
 		// Se mueve principalmente en el eje X solo unos grados en Y
 		moveBy(velX * delta, (float) ((-velY + (float) (Math.random() * ((velY - (-velY)) + 1)))) * delta);
 		//moveBy(velX * delta, (float) ((-velY + (float) (Math.random() * ((velY - (-velY)) + 1)))) * delta);

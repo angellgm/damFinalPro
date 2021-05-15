@@ -3,22 +3,18 @@
  */
 package com.algm.sck;
 
-import java.awt.event.KeyEvent;
-import java.sql.Time;
-
 import com.algm.actores.Pad;
-import com.algm.actores.Laser;
+import com.algm.actores.Adn;
 import com.algm.actores.NanoBot;
 import com.algm.actores.Virus;
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.Disposable;
 
 /**
  * @author Angel
@@ -27,7 +23,7 @@ import com.badlogic.gdx.utils.Disposable;
 public class PantallaJuego extends Pantalla {
 
 	Stage stage;
-	private Laser laser;
+	private Adn adn;
 	private NanoBot nanoBot;
 	private Virus virus;
 	private Pad control;
@@ -35,6 +31,7 @@ public class PantallaJuego extends Pantalla {
 	private boolean keyDownS;
 	private boolean keyDownA;
 	private boolean keyDownD;
+
 	private float velocidadNanoBot;
 	private float virusSpawn;
 
@@ -51,7 +48,7 @@ public class PantallaJuego extends Pantalla {
 		stage = new Stage();
 		Gdx.input.setInputProcessor(stage);
 
-		laser = new Laser();
+		adn = new Adn();
 		virus = new Virus();
 		// virus.setPosition(20, 250);
 
@@ -65,7 +62,7 @@ public class PantallaJuego extends Pantalla {
 			stage.setKeyboardFocus(nanoBot);
 			nanoBot.addListener(new ImputListener());
 		}
-		// Pendiente de testeo
+		// Usar touchPad solo en Android
 		if (Gdx.app.getType() == ApplicationType.Android) {
 			stage.addActor(control);
 		}
@@ -87,44 +84,12 @@ public class PantallaJuego extends Pantalla {
 		Gdx.gl.glClearColor(0f, 0f, 0f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		stage.act(Gdx.graphics.getDeltaTime()); // Actulizar
-		// Delta == Tiempo que tarda el ordenador en procesar y renderizar un frame del
-		// videojuego
-		// Al restar DELTA a VIRUSSPAWN si el tiempo es inferior a 0 ya puede respawnear
-		// otro enemigo
-		virusSpawn = delta + (float) Math.random();
-		// System.out.println("virusSpawn == " + virusSpawn);
-		if (virusSpawn > 1) {
-			Virus virus = new Virus();
-			virus.setPosition(stage.getWidth(), stage.getHeight() * (float) Math.random());
-
-			stage.addActor(virus);
-
-			// Hay nuevo spawn
-			virusSpawn = virusSpawn + (float) Math.random();
-			// System.out.println("virusSpawn2 == " + virusSpawn);
-
-		}
+		virusVerdeSpawn(delta);
 		controlPad(control.getKnobPercentX(), control.getKnobPercentY());
+		adnSpawnClickDerecho();
 
 		stage.draw(); // Dibujar
 
-	}
-
-	private void controlPad(float knobPercentX, float knobPercentY) {
-		if (control.isTouched()) {
-
-			if (knobPercentY != 0) {
-				nanoBot.vector.y = velocidadNanoBot * knobPercentY;
-			} else {
-				nanoBot.vector.y = 0;
-			}
-			if (knobPercentX != 0) {
-				nanoBot.vector.x = velocidadNanoBot * knobPercentX;
-			} else {
-				nanoBot.vector.x = 0;
-			}
-
-		}
 	}
 
 	@Override
@@ -140,9 +105,17 @@ public class PantallaJuego extends Pantalla {
 	}
 
 	private final class ImputListener extends InputListener {
-
+		/**
+		 * @param InputEvent
+		 * @param keycode
+		 * @category Referente al imput listener del teclado (pulsar la tecla). Modifica
+		 *           la velocidad y dirección del actor principal (NanoBot) y otras
+		 *           funciones como disparar.
+		 * @see https://libgdx.badlogicgames.com/ci/nightlies/docs/api/com/badlogic/gdx/scenes/scene2d/InputListener.html
+		 */
 		@Override
 		public boolean keyDown(InputEvent event, int keycode) {
+
 			switch (keycode) {
 			case Input.Keys.S:
 				keyDownS = true;
@@ -170,6 +143,14 @@ public class PantallaJuego extends Pantalla {
 
 		}
 
+		/**
+		 * @param InputEvent
+		 * @param keycode
+		 * @category Referente al imput listener del teclado (soltar la tecla). Modifica
+		 *           la velocidad y dirección del actor principal (NanoBot) y otras
+		 *           funciones como disparar.
+		 * @see https://libgdx.badlogicgames.com/ci/nightlies/docs/api/com/badlogic/gdx/scenes/scene2d/InputListener.html
+		 */
 		@Override
 		public boolean keyUp(InputEvent event, int keycode) {
 			switch (keycode) {
@@ -210,33 +191,73 @@ public class PantallaJuego extends Pantalla {
 				}
 
 			case Input.Keys.SPACE: // 62
-				// Genera lasers al pulsar la tecla
-				Laser laser = new Laser();
-				laser.setPosition(nanoBot.getX() + nanoBot.getWidth(), nanoBot.getY());
-				stage.addActor(laser);
-
+				// Genera disparos al soltar la tecla
+				Adn adn = new Adn();
+				adn.setPosition(nanoBot.getX() + nanoBot.getWidth(), nanoBot.getY() + (nanoBot.getHeight() / 3));
+				stage.addActor(adn);
 				return true;
 
 			default:
 				return false;
 			}
 		}
+	}
 
+	/**
+	 * @param knobPercentX
+	 * @param knobPercentY
+	 * @category Referente al movimiento del TouchPad. Modifica la velocidad y
+	 *           dirección del actor principal (NanoBot) de forma analógica.
+	 * @see https://libgdx.badlogicgames.com/ci/nightlies/docs/api/com/badlogic/gdx/scenes/scene2d/ui/Touchpad.html
+	 */
+	private void controlPad(float knobPercentX, float knobPercentY) {
+		if (control.isTouched()) {
+
+			if (knobPercentY != 0) {
+				nanoBot.vector.y = velocidadNanoBot * knobPercentY;
+			} else {
+				nanoBot.vector.y = 0;
+			}
+			if (knobPercentX != 0) {
+				nanoBot.vector.x = velocidadNanoBot * knobPercentX;
+			} else {
+				nanoBot.vector.x = 0;
+			}
+		}
+	}
+
+	/**
+	 * @category Referente al imput listener del mouse (soltar la tecla derecha).
+	 *           Función que genera disparos (adn)
+	 * @see https://libgdx.badlogicgames.com/ci/nightlies/docs/api/com/badlogic/gdx/scenes/scene2d/InputListener.html
+	 */
+	private void adnSpawnClickDerecho() {
+		if (Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
+			System.out.println("Mouse clicked!");
+			Adn adn = new Adn();
+			adn.setPosition(nanoBot.getX() + nanoBot.getWidth(), nanoBot.getY() + (nanoBot.getHeight() / 3));
+			stage.addActor(adn);
+		}
+	}
+
+	/**
+	 * @param delta
+	 * @category Genera enemigos "VirusVerdes". Spawn determinado por virusSpawn (la
+	 *           suma de delta y número aleatorio (Math.random())). Cuando
+	 *           virusSpawn es superior a 1 hay un nuevo spawn.
+	 * @see deltaTime: Tiempo que tarda en procesar y renderizar un frame del videojuego.
+	 */
+	private void virusVerdeSpawn(float delta) {
+		virusSpawn = delta + (float) Math.random();
+		if (virusSpawn > 1) {
+			Virus virus = new Virus();
+			virus.setPosition(stage.getWidth(), stage.getHeight() * (float) Math.random());
+			stage.addActor(virus);
+			// Hay nuevo spawn
+			virusSpawn = virusSpawn + (float) Math.random();
+		}
 	}
 }
-/*
- * case Input.Keys.S: keyDownS = true; nanoBot.vector.y = -velocidadNanoBot;
- * return true;
- * 
- * case Input.Keys.W: keyDownW = true; nanoBot.vector.y = velocidadNanoBot;
- * return true;
- * 
- * case Input.Keys.A: keyDownA = true; nanoBot.vector.x = -velocidadNanoBot;
- * return true;
- * 
- * case Input.Keys.D: keyDownD = true; nanoBot.vector.x = velocidadNanoBot;
- * return true;
- */
 
 /**
  * https://libgdx.badlogicgames.com/ci/nightlies/docs/api/com/badlogic/gdx/scenes/scene2d/Stage.html
@@ -259,5 +280,5 @@ public class PantallaJuego extends Pantalla {
  * si necesita controles en pantalla (botones, joystick, etc.) puede usar clases
  * de scene2d.ui
  * 
- * 1200*600 Res. Original
+ * 1200*600 Res. Original auto documentar: Shift-Alt-J
  */

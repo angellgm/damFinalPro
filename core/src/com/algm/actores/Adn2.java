@@ -2,16 +2,24 @@ package com.algm.actores;
 
 import com.algm.sck.SarsCovKiller;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
-public class Laser extends Actor {
+public class Adn2 extends Actor {
 	// Área de la textura
 	private TextureRegion laser;
+	private int velX, velY;
+	private Texture texture;
+	private TextureRegion virus;
+	private TextureRegion[] texturaRegionMov;
+	private Vector2 vector;
+	private float tiempo;
+	private Animation animacion;
 
-	public Laser() {
+	public Adn2() {
 		// Inicializar textura
 		laser = new TextureRegion(SarsCovKiller.ASSETMANAGER.get("laser.png", Texture.class), 120, 80);
 		// Tamaño igual al de la textura

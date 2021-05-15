@@ -57,9 +57,6 @@ public class NanoBot extends Actor {
 		
 	}
 	
-	
-	
-
 
 	public TextureRegion getNanoBot() {
 		return nanoBot;
