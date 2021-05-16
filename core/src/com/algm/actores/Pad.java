@@ -49,15 +49,13 @@ public class Pad extends Touchpad {
 	public void act(float delta) {
 		super.act(delta);
 		if (isTouched()) {
-			System.out.println("getKnobPercentX() " + getKnobPercentX());
-			System.out.println("getKnobPercentY() " + getKnobPercentY());
+			//System.out.println("getKnobPercentX() " + getKnobPercentX());
+			//System.out.println("getKnobPercentY() " + getKnobPercentY());
 			//System.out.println("getKnobX() " + getKnobX());
 			//System.out.println("getKnobY() " + getKnobY()+"\n");
 			//System.out.println("getPrefHeight() " + getPrefHeight());
 			//System.out.println("getPrefWidth() " + getPrefWidth());
-			//setResetOnTouchUp(false);
 			//System.out.println("getResetOnTouchUp() " + getResetOnTouchUp());
-			//System.out.println("isTouched() " + isTouched()+"\n");
 		}
 	}
 }

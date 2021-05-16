@@ -7,6 +7,7 @@ import com.algm.actores.Pad;
 import com.algm.actores.Adn;
 import com.algm.actores.NanoBot;
 import com.algm.actores.Virus;
+import com.algm.actores.Fondo;
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -23,9 +24,10 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 public class PantallaJuego extends Pantalla {
 
 	Stage stage;
-	private Adn adn;
+	private Fondo fondo;
 	private NanoBot nanoBot;
 	private Virus virus;
+	private Adn adn;
 	private Pad control;
 	private boolean keyDownW;
 	private boolean keyDownS;
@@ -48,9 +50,11 @@ public class PantallaJuego extends Pantalla {
 		stage = new Stage();
 		Gdx.input.setInputProcessor(stage);
 
+		fondo= new Fondo();
+		fondo.setPosition(0, 0);
+		
 		adn = new Adn();
 		virus = new Virus();
-		// virus.setPosition(20, 250);
 
 		nanoBot = new NanoBot();
 		nanoBot.setPosition(20, 250);
@@ -67,6 +71,7 @@ public class PantallaJuego extends Pantalla {
 			stage.addActor(control);
 		}
 
+		stage.addActor(fondo);
 		stage.addActor(nanoBot);
 		stage.addActor(virus);
 		stage.addActor(control);
@@ -212,7 +217,6 @@ public class PantallaJuego extends Pantalla {
 	 */
 	private void controlPad(float knobPercentX, float knobPercentY) {
 		if (control.isTouched()) {
-
 			if (knobPercentY != 0) {
 				nanoBot.vector.y = velocidadNanoBot * knobPercentY;
 			} else {
@@ -233,7 +237,6 @@ public class PantallaJuego extends Pantalla {
 	 */
 	private void adnSpawnClickDerecho() {
 		if (Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
-			System.out.println("Mouse clicked!");
 			Adn adn = new Adn();
 			adn.setPosition(nanoBot.getX() + nanoBot.getWidth(), nanoBot.getY() + (nanoBot.getHeight() / 3));
 			stage.addActor(adn);

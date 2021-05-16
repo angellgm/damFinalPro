@@ -57,7 +57,6 @@ public class Virus extends Actor {
 		virus = (TextureRegion) animacion.getKeyFrame(tiempo, true);
 		// Se mueve principalmente en el eje X solo unos grados en Y
 		moveBy(velX * delta, (float) ((-velY + (float) (Math.random() * ((velY - (-velY)) + 1)))) * delta);
-		//moveBy(velX * delta, (float) ((-velY + (float) (Math.random() * ((velY - (-velY)) + 1)))) * delta);
 		// Eliminar actor al llegar al final de la pantalla
 		if (getX() < 0) {
 			remove();
