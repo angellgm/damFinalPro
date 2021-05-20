@@ -5,6 +5,8 @@ package com.algm.sck;
 
 import com.algm.actores.Pad;
 import com.algm.actores.Adn;
+import com.algm.actores.BarraEnergia;
+import com.algm.actores.EnergiaBot;
 import com.algm.actores.NanoBot;
 import com.algm.actores.Virus;
 import com.algm.actores.Fondo;
@@ -29,6 +31,8 @@ public class PantallaJuego extends Pantalla {
 	private Virus virus;
 	private Adn adn;
 	private Pad control;
+	private BarraEnergia barraEnergia;
+	
 	private boolean keyDownW;
 	private boolean keyDownS;
 	private boolean keyDownA;
@@ -61,6 +65,9 @@ public class PantallaJuego extends Pantalla {
 
 		control = new Pad();
 		control.setPosition(15, 15);
+			
+		barraEnergia = new BarraEnergia();
+		barraEnergia.setPosition(50, 15);
 
 		if (Gdx.app.getType() == ApplicationType.Desktop) {
 			stage.setKeyboardFocus(nanoBot);
@@ -75,6 +82,7 @@ public class PantallaJuego extends Pantalla {
 		stage.addActor(nanoBot);
 		stage.addActor(virus);
 		stage.addActor(control);
+		stage.addActor(barraEnergia);
 	}
 
 	@Override
@@ -91,7 +99,7 @@ public class PantallaJuego extends Pantalla {
 		stage.act(Gdx.graphics.getDeltaTime()); // Actulizar
 		virusVerdeSpawn(delta);
 		controlPad(control.getKnobPercentX(), control.getKnobPercentY());
-		adnSpawnClickDerecho();
+		adnSpawnClick();
 
 		stage.draw(); // Dibujar
 
@@ -235,8 +243,8 @@ public class PantallaJuego extends Pantalla {
 	 *           Función que genera disparos (adn)
 	 * @see https://libgdx.badlogicgames.com/ci/nightlies/docs/api/com/badlogic/gdx/scenes/scene2d/InputListener.html
 	 */
-	private void adnSpawnClickDerecho() {
-		if (Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
+	private void adnSpawnClick() {
+		if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
 			Adn adn = new Adn();
 			adn.setPosition(nanoBot.getX() + nanoBot.getWidth(), nanoBot.getY() + (nanoBot.getHeight() / 3));
 			stage.addActor(adn);

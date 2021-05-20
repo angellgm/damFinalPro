@@ -29,7 +29,7 @@ public class Fondo extends Actor {
 			texturaRegionMov[i] = new TextureRegion(new Texture(Gdx.files.internal(png)));
 		}
 		// Crear animación (Tiempo del Frame (0.10seg), TextureRegions)
-		animacion = new Animation(0.09f, texturaRegionMov);
+		animacion = new Animation(0.04f, texturaRegionMov);
 		// Objeto para poder variar animación
 		// animacionActual = animacion;
 		// Velocidad inicial 0
@@ -50,12 +50,6 @@ public class Fondo extends Actor {
 		// Tiempo que pasa desde el último frame render.
 		tiempo += Gdx.graphics.getDeltaTime();
 		fondo = (TextureRegion) animacion.getKeyFrame(tiempo, true);
-		//Se mueve solo en el eje x
-		//moveBy(600 * delta, 0);
-		//Eliminar actor al llegar al final de la pantalla
-//		if (getX() > getStage().getWidth()) {
-//			remove();
-//		}
 		
 	}
 	
