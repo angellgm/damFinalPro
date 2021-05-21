@@ -35,6 +35,9 @@ public class SarsCovKiller extends Game implements Screen {
 		ASSETMANAGER.load("laser.png", Texture.class);
 		ASSETMANAGER.load("virus.png", Texture.class);
 		ASSETMANAGER.load("nanobot.png", Texture.class);
+		ASSETMANAGER.load("ui/mEnergia.png", Texture.class);
+		ASSETMANAGER.load("ui/bEnergia.png", Texture.class);
+		ASSETMANAGER.load("ui/botonDisparo.png", Texture.class);
 		
 		//Pantalla de carga
 		while(!ASSETMANAGER.update()) {

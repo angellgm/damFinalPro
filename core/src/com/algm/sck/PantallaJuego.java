@@ -6,10 +6,12 @@ package com.algm.sck;
 import com.algm.actores.Pad;
 import com.algm.actores.Adn;
 import com.algm.actores.BarraEnergia;
+import com.algm.actores.BotonDisparo;
 import com.algm.actores.EnergiaBot;
 import com.algm.actores.NanoBot;
 import com.algm.actores.Virus;
 import com.algm.actores.Fondo;
+import com.algm.actores.MBarraEnergia;
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -31,8 +33,10 @@ public class PantallaJuego extends Pantalla {
 	private Virus virus;
 	private Adn adn;
 	private Pad control;
+	private MBarraEnergia mBarraEnergia;
 	private BarraEnergia barraEnergia;
-	
+	private BotonDisparo btDisparo;
+
 	private boolean keyDownW;
 	private boolean keyDownS;
 	private boolean keyDownA;
@@ -54,9 +58,9 @@ public class PantallaJuego extends Pantalla {
 		stage = new Stage();
 		Gdx.input.setInputProcessor(stage);
 
-		fondo= new Fondo();
+		fondo = new Fondo();
 		fondo.setPosition(0, 0);
-		
+
 		adn = new Adn();
 		virus = new Virus();
 
@@ -65,24 +69,45 @@ public class PantallaJuego extends Pantalla {
 
 		control = new Pad();
 		control.setPosition(15, 15);
-			
-		barraEnergia = new BarraEnergia();
-		barraEnergia.setPosition(50, 15);
 
+		mBarraEnergia = new MBarraEnergia();
+		mBarraEnergia.setPosition(stage.getWidth() / 5, 0);
+
+		barraEnergia = new BarraEnergia();
+		barraEnergia.setPosition(stage.getWidth() / 5, 0);
+
+		stage.addActor(fondo);
+		stage.addActor(mBarraEnergia);
+		stage.addActor(barraEnergia);
+		stage.addActor(nanoBot);
+		stage.addActor(virus);
+		stage.addActor(control);
+
+		btTactilDisparo();
+
+		// Cargar boton de disparo solo en Android o iOS
+		if ((Gdx.app.getType() == ApplicationType.Android) || (Gdx.app.getType() == ApplicationType.iOS)) {
+			btTactilDisparo();
+		}
+		// cargar listener del teclado si es Desktop
 		if (Gdx.app.getType() == ApplicationType.Desktop) {
 			stage.setKeyboardFocus(nanoBot);
 			nanoBot.addListener(new ImputListener());
 		}
-		// Usar touchPad solo en Android
-		if (Gdx.app.getType() == ApplicationType.Android) {
-			stage.addActor(control);
-		}
 
-		stage.addActor(fondo);
-		stage.addActor(nanoBot);
-		stage.addActor(virus);
-		stage.addActor(control);
-		stage.addActor(barraEnergia);
+	}
+
+	private void btTactilDisparo() {
+		btDisparo = new BotonDisparo();
+		btDisparo.setPosition((stage.getWidth() - btDisparo.getWidth()) - 20, 20);
+		stage.addActor(btDisparo);
+		btDisparo.addListener(new InputListener() {
+			@Override
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+				adnSpawnClick();
+				return true;
+			}
+		});
 	}
 
 	@Override
@@ -256,7 +281,8 @@ public class PantallaJuego extends Pantalla {
 	 * @category Genera enemigos "VirusVerdes". Spawn determinado por virusSpawn (la
 	 *           suma de delta y número aleatorio (Math.random())). Cuando
 	 *           virusSpawn es superior a 1 hay un nuevo spawn.
-	 * @see deltaTime: Tiempo que tarda en procesar y renderizar un frame del videojuego.
+	 * @see deltaTime: Tiempo que tarda en procesar y renderizar un frame del
+	 *      videojuego.
 	 */
 	private void virusVerdeSpawn(float delta) {
 		virusSpawn = delta + (float) Math.random();

@@ -6,25 +6,26 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
-public class BarraEnergia extends Actor {
-	
-	private TextureRegion bEnergia;
+public class MBarraEnergia extends Actor {
 
-	public BarraEnergia() {
+	private TextureRegion mBEnergia;
+
+	public MBarraEnergia() {
 		// Inicializar textura
-		bEnergia = new TextureRegion(SarsCovKiller.ASSETMANAGER.get("ui/bEnergia.png", Texture.class), 250, 85);
+		mBEnergia = new TextureRegion(SarsCovKiller.ASSETMANAGER.get("ui/mEnergia.png", Texture.class), 250,
+				85);
 
 		// Tamaño igual al de la textura
-		setSize(bEnergia.getRegionWidth(), bEnergia.getRegionHeight());
+		setSize(mBEnergia.getRegionWidth(), mBEnergia.getRegionHeight());
 
 	}
 
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
 		// TODO Auto-generated method stub
-
-		batch.draw(bEnergia, getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(), getScaleX(),
+		batch.draw(mBEnergia, getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(), getScaleX(),
 				getScaleY(), getRotation());
+
 	}
 
 	@Override

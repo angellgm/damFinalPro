@@ -36,8 +36,8 @@ public class Pad extends Touchpad {
 	private static TouchpadStyle getTouchPadStyle() {
 
 		Skin controllerSkin = new Skin();
-		controllerSkin.add("touchFondo", new Texture("touchFondo.png"));
-		controllerSkin.add("touchPalanca", new Texture("touchPad.png"));
+		controllerSkin.add("touchFondo", new Texture("ui/touchFondo.png"));
+		controllerSkin.add("touchPalanca", new Texture("ui/touchPad.png"));
 
 		TouchpadStyle touchpadStyle = new TouchpadStyle();
 		touchpadStyle.background = controllerSkin.getDrawable("touchFondo");

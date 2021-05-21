@@ -5,26 +5,32 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 
-public class BarraEnergia extends Actor {
-	
-	private TextureRegion bEnergia;
+public class BotonDisparo extends Button {
 
-	public BarraEnergia() {
+	private TextureRegion btDisparo;
+
+	public BotonDisparo() {
 		// Inicializar textura
-		bEnergia = new TextureRegion(SarsCovKiller.ASSETMANAGER.get("ui/bEnergia.png", Texture.class), 250, 85);
+		btDisparo = new TextureRegion(SarsCovKiller.ASSETMANAGER.get("ui/botonDisparo.png", Texture.class), 90, 90);
 
 		// Tamaño igual al de la textura
-		setSize(bEnergia.getRegionWidth(), bEnergia.getRegionHeight());
+		setSize(btDisparo.getRegionWidth(), btDisparo.getRegionHeight());
 
 	}
 
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
 		// TODO Auto-generated method stub
-
-		batch.draw(bEnergia, getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(), getScaleX(),
+		batch.draw(btDisparo, getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(), getScaleX(),
 				getScaleY(), getRotation());
+
+	}
+
+	private ButtonStyle ButtonStyle() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
