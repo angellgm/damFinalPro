@@ -1,4 +1,4 @@
-package com.algm.actores;
+package com.algm.actorcontrol;
 
 import com.algm.sck.SarsCovKiller;
 import com.badlogic.gdx.graphics.Texture;

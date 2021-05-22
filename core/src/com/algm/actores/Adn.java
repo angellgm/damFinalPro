@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
@@ -18,6 +19,7 @@ public class Adn extends Actor {
 	private Vector2 vector;
 	private float tiempo;
 	private Animation animacion;
+	private Rectangle rectangle;
 
 	public Adn() {
 		texture = new Texture(Gdx.files.internal("adn.png"));
@@ -37,6 +39,9 @@ public class Adn extends Actor {
 		vector = new Vector2(0, 0);
 		tiempo = 0f;
 		adn = temporalRegions[0][0];
+		// Rectangle: Encapsula un rectángulo 2D definido por su punto de esquina en la
+		// parte inferior izquierda y sus extensiones en x (ancho) e y (alto)
+		rectangle = new Rectangle(getX(), getY(), getWidth(), getHeight());
 	}
 
 	@Override
@@ -51,13 +56,93 @@ public class Adn extends Actor {
 		// Tiempo que pasa desde el último frame render.
 		tiempo += Gdx.graphics.getDeltaTime();
 		adn = (TextureRegion) animacion.getKeyFrame(tiempo, true);
-		//Se mueve solo en el eje x
+		// Se mueve solo en el eje x
 		moveBy(600 * delta, 0);
-		//Eliminar actor al llegar al final de la pantalla
+
+		// Posición y tamaño del rectangle igual al actor
+		rectangle.x = getX();
+		rectangle.y = getY();
+		rectangle.width = getWidth();
+		rectangle.height = getHeight();
+
+		// Elimina actor cuando sale de la pantalla visible
 		if (getX() > getStage().getWidth()) {
 			remove();
+			//System.out.println("eliminado actor adn");
 		}
-		
+
 	}
-	
+
+	public int getVelX() {
+		return velX;
+	}
+
+	public void setVelX(int velX) {
+		this.velX = velX;
+	}
+
+	public int getVelY() {
+		return velY;
+	}
+
+	public void setVelY(int velY) {
+		this.velY = velY;
+	}
+
+	public Texture getTexture() {
+		return texture;
+	}
+
+	public void setTexture(Texture texture) {
+		this.texture = texture;
+	}
+
+	public TextureRegion getAdn() {
+		return adn;
+	}
+
+	public void setAdn(TextureRegion adn) {
+		this.adn = adn;
+	}
+
+	public TextureRegion[] getTexturaRegionMov() {
+		return texturaRegionMov;
+	}
+
+	public void setTexturaRegionMov(TextureRegion[] texturaRegionMov) {
+		this.texturaRegionMov = texturaRegionMov;
+	}
+
+	public Vector2 getVector() {
+		return vector;
+	}
+
+	public void setVector(Vector2 vector) {
+		this.vector = vector;
+	}
+
+	public float getTiempo() {
+		return tiempo;
+	}
+
+	public void setTiempo(float tiempo) {
+		this.tiempo = tiempo;
+	}
+
+	public Animation getAnimacion() {
+		return animacion;
+	}
+
+	public void setAnimacion(Animation animacion) {
+		this.animacion = animacion;
+	}
+
+	public Rectangle getRectangle() {
+		return rectangle;
+	}
+
+	public void setRectangle(Rectangle rectangle) {
+		this.rectangle = rectangle;
+	}
+
 }

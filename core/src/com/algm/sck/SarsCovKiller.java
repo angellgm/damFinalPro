@@ -1,6 +1,6 @@
 package com.algm.sck;
 
-import com.algm.movimiento.MovNave;
+import com.algm.actorcontrol.MovNave;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
@@ -64,7 +64,7 @@ public class SarsCovKiller extends Game implements Screen {
 	@Override
 	public void dispose() {
 		super.dispose();
-		//Eliminar ASSETMANAGER despues del juego
+		//Eliminar ASSETMANAGER despues de salir del juego
 		ASSETMANAGER.dispose();
 	}
 

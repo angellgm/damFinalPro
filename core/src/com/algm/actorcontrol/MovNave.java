@@ -1,4 +1,4 @@
-package com.algm.movimiento;
+package com.algm.actorcontrol;
 
 public class MovNave {
 	static int ANCHO;

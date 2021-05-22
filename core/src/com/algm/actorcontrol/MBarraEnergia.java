@@ -1,4 +1,4 @@
-package com.algm.actores;
+package com.algm.actorcontrol;
 
 import com.algm.sck.SarsCovKiller;
 import com.badlogic.gdx.graphics.Texture;
@@ -12,7 +12,7 @@ public class MBarraEnergia extends Actor {
 
 	public MBarraEnergia() {
 		// Inicializar textura
-		mBEnergia = new TextureRegion(SarsCovKiller.ASSETMANAGER.get("ui/mEnergia.png", Texture.class), 250,
+		mBEnergia = new TextureRegion(SarsCovKiller.ASSETMANAGER.get("ui/mEnergia.png", Texture.class), 240,
 				85);
 
 		// Tamaño igual al de la textura

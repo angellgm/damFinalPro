@@ -1,4 +1,4 @@
-package com.algm.actores;
+package com.algm.actorcontrol;
 
 import com.algm.sck.SarsCovKiller;
 import com.badlogic.gdx.graphics.Texture;
@@ -7,12 +7,15 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class BarraEnergia extends Actor {
-	
-	private TextureRegion bEnergia;
 
-	public BarraEnergia() {
+	private TextureRegion bEnergia;
+	private NivelEnergia nivelEnergia;
+
+	public BarraEnergia(NivelEnergia nivelEnergia) {
+		this.nivelEnergia = nivelEnergia;
+
 		// Inicializar textura
-		bEnergia = new TextureRegion(SarsCovKiller.ASSETMANAGER.get("ui/bEnergia.png", Texture.class), 250, 85);
+		bEnergia = new TextureRegion(SarsCovKiller.ASSETMANAGER.get("ui/bEnergia.png", Texture.class), 166, 85);
 
 		// Tamaño igual al de la textura
 		setSize(bEnergia.getRegionWidth(), bEnergia.getRegionHeight());
@@ -21,10 +24,9 @@ public class BarraEnergia extends Actor {
 
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
-		// TODO Auto-generated method stub
 
-		batch.draw(bEnergia, getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(), getScaleX(),
-				getScaleY(), getRotation());
+		batch.draw(bEnergia, getX(), getY(), getOriginX(), getOriginY(), getWidth() * nivelEnergia.getEnergiaRango(),
+				getHeight(), getScaleX(), getScaleY(), getRotation());
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package com.algm.actores;
+package com.algm.actorcontrol;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;

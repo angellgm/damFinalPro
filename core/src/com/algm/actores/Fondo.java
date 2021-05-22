@@ -28,7 +28,7 @@ public class Fondo extends Actor {
             png ="fondo/".concat(i+"").concat(".png");
 			texturaRegionMov[i] = new TextureRegion(new Texture(Gdx.files.internal(png)));
 		}
-		// Crear animación (Tiempo del Frame (0.10seg), TextureRegions)
+		// Crear animación (Tiempo del Frame (0.04seg), TextureRegions)
 		animacion = new Animation(0.04f, texturaRegionMov);
 		// Objeto para poder variar animación
 		// animacionActual = animacion;

@@ -1,10 +1,12 @@
 package com.algm.actores;
 
+import com.algm.sck.PantallaJuego;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
@@ -17,12 +19,14 @@ public class Virus extends Actor {
 	private Vector2 vector;
 	private float tiempo;
 	private Animation animacion;
+	private Rectangle rectangle;
+	private PantallaJuego pantallaJuego;
 
 	public Virus() {
 		velX = -500;
 		velY = -100;
 		texture = new Texture(Gdx.files.internal("anivirus.png"));
-	
+
 		// Crear array temporal para dividir textura (10 subtexturas)
 		TextureRegion[][] temporalRegions = TextureRegion.split(texture, texture.getWidth() / 10, texture.getHeight());
 		// Crear regiones en movimiento para TextureRegion;
@@ -33,11 +37,14 @@ public class Virus extends Actor {
 		// Crear animación (Tiempo del Frame (0.10seg), TextureRegions)
 		animacion = new Animation(0.1f, texturaRegionMov);
 		// Objeto para poder variar animación
-		//animacionActual = animacion;
+		// animacionActual = animacion;
 		// Velocidad inicial 0
 		vector = new Vector2(0, 0);
 		tiempo = 0f;
 		virus = temporalRegions[0][0];
+		// Rectangle: Encapsula un rectángulo 2D definido por su punto de esquina en la
+		// parte inferior izquierda y sus extensiones en x (ancho) e y (alto)
+		rectangle = new Rectangle(getX(), getY(), getWidth(), getHeight());
 
 	}
 
@@ -57,9 +64,89 @@ public class Virus extends Actor {
 		virus = (TextureRegion) animacion.getKeyFrame(tiempo, true);
 		// Se mueve principalmente en el eje X solo unos grados en Y
 		moveBy(velX * delta, (float) ((-velY + (float) (Math.random() * ((velY - (-velY)) + 1)))) * delta);
-		// Eliminar actor al llegar al final de la pantalla
-		if (getX() < 0) {
+
+		rectangle.x = getX();
+		rectangle.y = getY();
+		rectangle.width = getWidth();
+		rectangle.height = getHeight();
+
+		// Elimina actor cuando sale de la pantalla visible
+		if (getX() < 0 || getY() < 0 || getY() > getStage().getHeight()) {
 			remove();
+			// System.out.println("eliminado actor virus");
 		}
 	}
+
+	public int getVelX() {
+		return velX;
+	}
+
+	public void setVelX(int velX) {
+		this.velX = velX;
+	}
+
+	public int getVelY() {
+		return velY;
+	}
+
+	public void setVelY(int velY) {
+		this.velY = velY;
+	}
+
+	public Texture getTexture() {
+		return texture;
+	}
+
+	public void setTexture(Texture texture) {
+		this.texture = texture;
+	}
+
+	public TextureRegion getVirus() {
+		return virus;
+	}
+
+	public void setVirus(TextureRegion virus) {
+		this.virus = virus;
+	}
+
+	public TextureRegion[] getTexturaRegionMov() {
+		return texturaRegionMov;
+	}
+
+	public void setTexturaRegionMov(TextureRegion[] texturaRegionMov) {
+		this.texturaRegionMov = texturaRegionMov;
+	}
+
+	public Vector2 getVector() {
+		return vector;
+	}
+
+	public void setVector(Vector2 vector) {
+		this.vector = vector;
+	}
+
+	public float getTiempo() {
+		return tiempo;
+	}
+
+	public void setTiempo(float tiempo) {
+		this.tiempo = tiempo;
+	}
+
+	public Animation getAnimacion() {
+		return animacion;
+	}
+
+	public void setAnimacion(Animation animacion) {
+		this.animacion = animacion;
+	}
+
+	public Rectangle getRectangle() {
+		return rectangle;
+	}
+
+	public void setRectangle(Rectangle rectangle) {
+		this.rectangle = rectangle;
+	}
+
 }
