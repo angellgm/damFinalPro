@@ -1,5 +1,6 @@
-package com.algm.sck;
+package com.algm.pantallas;
 
+import com.algm.sck.SarsCovKiller;
 import com.badlogic.gdx.Screen;
 
 /**
@@ -36,6 +37,16 @@ public abstract class Pantalla implements Screen {
 	public void resume() {
 		// TODO Auto-generated method stub
 
+	}
+
+
+	public SarsCovKiller getJuego() {
+		return juego;
+	}
+
+
+	public void setJuego(SarsCovKiller juego) {
+		this.juego = juego;
 	}
 
 }

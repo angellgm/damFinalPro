@@ -1,22 +1,27 @@
 /**
  * 
  */
-package com.algm.sck;
+package com.algm.pantallas;
 
 import java.util.ArrayList;
 
 import com.algm.actorcontrol.BarraEnergia;
 import com.algm.actorcontrol.BotonDisparo;
 import com.algm.actorcontrol.MBarraEnergia;
+import com.algm.actorcontrol.NivelPuntuacion;
 import com.algm.actorcontrol.Pad;
 import com.algm.actores.Adn;
 import com.algm.actores.NanoBot;
 import com.algm.actores.Virus;
+import com.algm.sck.SarsCovKiller;
 import com.algm.actores.Fondo;
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -38,13 +43,8 @@ public class PantallaJuego extends Pantalla {
 	private BotonDisparo btDisparo;
 	private ArrayList<Virus> listVirus;
 	private ArrayList<Adn> listAdns;
-	private final float IMPACTO = 0.25f;
-	private final float IMPACTOLETAL = 1f;
+	private NivelPuntuacion puntos;
 
-	private boolean keyDownW;
-	private boolean keyDownS;
-	private boolean keyDownA;
-	private boolean keyDownD;
 
 	private float velocidadNanoBot;
 	private float virusSpawn;
@@ -62,10 +62,15 @@ public class PantallaJuego extends Pantalla {
 		stage = new Stage();
 		// Modo debug gráfico
 		// stage.setDebugAll(true);
+		SarsCovKiller.ASSETMANAGER.get("sonido/fondo.ogg", Sound.class).loop();
+
 		Gdx.input.setInputProcessor(stage);
 
 		fondo = new Fondo();
 		fondo.setPosition(0, 0);
+		
+		puntos = new NivelPuntuacion(new BitmapFont());
+		puntos.setPosition(stage.getWidth()/1.5f, stage.getHeight() - (stage.getHeight()/30));
 
 		listAdns = new ArrayList<Adn>();
 		listVirus = new ArrayList<Virus>();
@@ -81,20 +86,20 @@ public class PantallaJuego extends Pantalla {
 		control.setPosition(stage.getWidth() / 14, 15);
 
 		mBarraEnergia = new MBarraEnergia();
-		mBarraEnergia.setPosition(15, stage.getHeight() - mBarraEnergia.getHeight() - 15);
-
-		// energiaBot = new Energia()96;
+		mBarraEnergia.setPosition(15, stage.getHeight() - mBarraEnergia.getHeight() - 5);
 		barraEnergia = new BarraEnergia(nanoBot);
-		barraEnergia.setPosition(74 + 15, stage.getHeight() - mBarraEnergia.getHeight() - 15);
+		barraEnergia.setPosition(80 + 15, stage.getHeight() - mBarraEnergia.getHeight() - 5);
 
 		stage.addActor(fondo);
+		stage.addActor(puntos);
 		stage.addActor(mBarraEnergia);
 		stage.addActor(barraEnergia);
 		stage.addActor(nanoBot);
 		stage.addActor(virus);
 		stage.addActor(control);
+		
 		// TEMPORAL ELIMINAR
-		btTactilDisparo();
+		//btTactilDisparo();
 
 		// Cargar boton de disparo solo en Android o iOS
 		if ((Gdx.app.getType() == ApplicationType.Android) || (Gdx.app.getType() == ApplicationType.iOS)) {
@@ -169,26 +174,43 @@ public class PantallaJuego extends Pantalla {
 	private void accionColisionesListas() {
 		virus = new Virus();
 		adn = new Adn();
+		float IMPACTO = 0.25f;
+		float IMPACTOLETAL = 1f;
 
 		for (int j = 0; j < listVirus.size(); j++) {
 			virus = listVirus.get(j);
 			// Si hay colision entre Virus - Nanobot. Se elimina alien y vida en el nanoBot
-			if (virus.getRectangle().overlaps(nanoBot.getRectangle()) && virus.getX() != stage.getWidth() ) {
-				if (nanoBot.getEnergiaRango() <= 0) {
+			if (virus.getRectangle().overlaps(nanoBot.getRectangle()) && virus.getX() != stage.getWidth()) {
+				
+				if (nanoBot.getEnergiaRango() <= 0.25) {
+					nanoBot.setEnergia(0);
+					SarsCovKiller.ASSETMANAGER.get("sonido/botKill.ogg", Sound.class).play();
+					SarsCovKiller.ASSETMANAGER.get("sonido/GameOver1.ogg", Sound.class).play();
 
-					System.out.println("BOT SIN ENERGIA * F *");
+
 				} else {
 					nanoBot.setEnergia(nanoBot.getEnergiaRango() - IMPACTO);
+					if(puntos.getMarcador()>50) {
+						puntos.setMarcador(puntos.getMarcador()-50);
+						puntos.setNivel(((int)puntos.getMarcador()/10000)+1);
+					}
+
+					SarsCovKiller.ASSETMANAGER.get("sonido/impactoBot.ogg", Sound.class).play();
+
+
 				}
 				listVirus.remove(j);
 				virus.remove();
 
 			} else
 				for (int i = 0; i < listAdns.size(); i++) {
-					// adn = listAdns.get(i);
 					// Si hay colision entre Virus - Adn. Se elimina alien, adn e incrementa
 					// marcador
 					if (listAdns.get(i).getRectangle().overlaps(virus.getRectangle())) {
+						puntos.setMarcador(puntos.getMarcador()+100);
+						puntos.setNivel(((int)puntos.getMarcador()/10000)+1);
+
+						SarsCovKiller.ASSETMANAGER.get("sonido/impactoVirus.ogg", Sound.class).play();
 						adn = listAdns.get(i);
 						listVirus.remove(j);
 						listAdns.remove(i);
@@ -221,6 +243,12 @@ public class PantallaJuego extends Pantalla {
 		 *           funciones como disparar.
 		 * @see https://libgdx.badlogicgames.com/ci/nightlies/docs/api/com/badlogic/gdx/scenes/scene2d/InputListener.html
 		 */
+
+		private boolean keyDownW;
+		private boolean keyDownS;
+		private boolean keyDownA;
+		private boolean keyDownD;
+		
 		@Override
 		public boolean keyDown(InputEvent event, int keycode) {
 
@@ -301,9 +329,10 @@ public class PantallaJuego extends Pantalla {
 			case Input.Keys.SPACE: // 62
 				// Genera disparos al soltar la tecla
 				Adn adn = new Adn();
-				adn.setPosition(nanoBot.getX() + nanoBot.getWidth(), nanoBot.getY() + (nanoBot.getHeight() / 3));
+				adn.setPosition(nanoBot.getX() + (nanoBot.getWidth() - nanoBot.getWidth() / 4),
+						nanoBot.getY() + (nanoBot.getHeight() / 3));
 				stage.addActor(adn);
-
+				SarsCovKiller.ASSETMANAGER.get("sonido/adn.ogg", Sound.class).play();
 				// Añadir a lista de adn en pantalla
 				listAdns.add(adn);
 				return true;
@@ -344,8 +373,11 @@ public class PantallaJuego extends Pantalla {
 	private void adnSpawnClick() {
 		if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
 			Adn adn = new Adn();
-			adn.setPosition(nanoBot.getX() + nanoBot.getWidth(), nanoBot.getY() + (nanoBot.getHeight() / 3));
+			adn.setPosition(nanoBot.getX() + (nanoBot.getWidth() - nanoBot.getWidth() / 4),
+					nanoBot.getY() + (nanoBot.getHeight() / 3));
 			stage.addActor(adn);
+			SarsCovKiller.ASSETMANAGER.get("sonido/adn.ogg", Sound.class).play();
+
 			// Añadir a lista de adn en pantalla
 			listAdns.add(adn);
 		}
@@ -374,6 +406,10 @@ public class PantallaJuego extends Pantalla {
 
 		}
 	}
+	
+	
+	//******************** LIMPIAR -->
+	
 
 	public Stage getStage() {
 		return stage;
@@ -381,6 +417,110 @@ public class PantallaJuego extends Pantalla {
 
 	public void setStage(Stage stage) {
 		this.stage = stage;
+	}
+
+	public Fondo getFondo() {
+		return fondo;
+	}
+
+	public void setFondo(Fondo fondo) {
+		this.fondo = fondo;
+	}
+
+	public NanoBot getNanoBot() {
+		return nanoBot;
+	}
+
+	public void setNanoBot(NanoBot nanoBot) {
+		this.nanoBot = nanoBot;
+	}
+
+	public Virus getVirus() {
+		return virus;
+	}
+
+	public void setVirus(Virus virus) {
+		this.virus = virus;
+	}
+
+	public Adn getAdn() {
+		return adn;
+	}
+
+	public void setAdn(Adn adn) {
+		this.adn = adn;
+	}
+
+	public Pad getControl() {
+		return control;
+	}
+
+	public void setControl(Pad control) {
+		this.control = control;
+	}
+
+	public MBarraEnergia getmBarraEnergia() {
+		return mBarraEnergia;
+	}
+
+	public void setmBarraEnergia(MBarraEnergia mBarraEnergia) {
+		this.mBarraEnergia = mBarraEnergia;
+	}
+
+	public BarraEnergia getBarraEnergia() {
+		return barraEnergia;
+	}
+
+	public void setBarraEnergia(BarraEnergia barraEnergia) {
+		this.barraEnergia = barraEnergia;
+	}
+
+	public BotonDisparo getBtDisparo() {
+		return btDisparo;
+	}
+
+	public void setBtDisparo(BotonDisparo btDisparo) {
+		this.btDisparo = btDisparo;
+	}
+
+	public ArrayList<Virus> getListVirus() {
+		return listVirus;
+	}
+
+	public void setListVirus(ArrayList<Virus> listVirus) {
+		this.listVirus = listVirus;
+	}
+
+	public ArrayList<Adn> getListAdns() {
+		return listAdns;
+	}
+
+	public void setListAdns(ArrayList<Adn> listAdns) {
+		this.listAdns = listAdns;
+	}
+
+	public NivelPuntuacion getPuntos() {
+		return puntos;
+	}
+
+	public void setPuntos(NivelPuntuacion puntos) {
+		this.puntos = puntos;
+	}
+
+	public float getVelocidadNanoBot() {
+		return velocidadNanoBot;
+	}
+
+	public void setVelocidadNanoBot(float velocidadNanoBot) {
+		this.velocidadNanoBot = velocidadNanoBot;
+	}
+
+	public float getVirusSpawn() {
+		return virusSpawn;
+	}
+
+	public void setVirusSpawn(float virusSpawn) {
+		this.virusSpawn = virusSpawn;
 	}
 
 }

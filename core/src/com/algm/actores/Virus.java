@@ -1,6 +1,6 @@
 package com.algm.actores;
 
-import com.algm.sck.PantallaJuego;
+import com.algm.pantallas.PantallaJuego;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;

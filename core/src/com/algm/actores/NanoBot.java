@@ -70,7 +70,6 @@ public class NanoBot extends Actor implements NivelEnergia {
 		if (energia < 1 && autoIncrementoEnergia > 10) {
 			energia += 0.05f;
 			autoIncrementoEnergia = 0;
-			System.out.println("energia++");
 		}
 
 	}

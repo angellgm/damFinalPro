@@ -1,9 +1,10 @@
 package com.algm.sck;
 
-import com.algm.actorcontrol.MovNave;
+import com.algm.pantallas.PantallaJuego;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -32,13 +33,21 @@ public class SarsCovKiller extends Game implements Screen {
 	@Override
 	public void create() {
 		
-		ASSETMANAGER.load("laser.png", Texture.class);
 		ASSETMANAGER.load("virus.png", Texture.class);
 		ASSETMANAGER.load("nanobot.png", Texture.class);
 		ASSETMANAGER.load("adn.png", Texture.class);	
 		ASSETMANAGER.load("ui/mEnergia.png", Texture.class);
 		ASSETMANAGER.load("ui/bEnergia.png", Texture.class);
 		ASSETMANAGER.load("ui/botonDisparo.png", Texture.class);
+		ASSETMANAGER.load("sonido/fondo.ogg", Sound.class);
+		ASSETMANAGER.load("sonido/adn.ogg", Sound.class);
+		ASSETMANAGER.load("sonido/botKill.ogg", Sound.class);
+		ASSETMANAGER.load("sonido/GameOver1.ogg", Sound.class);
+		ASSETMANAGER.load("sonido/impactoBot.ogg", Sound.class);
+		ASSETMANAGER.load("sonido/impactoVirus.ogg", Sound.class);
+		ASSETMANAGER.load("sonido/virusKill.ogg", Sound.class);
+		
+		
 		
 		//Pantalla de carga
 		while(!ASSETMANAGER.update()) {
@@ -46,6 +55,8 @@ public class SarsCovKiller extends Game implements Screen {
 		}
 		//Primera pantalla Test
 		setScreen(new PantallaJuego(this));
+		
+
 	}
 	@Override
 	public void show() {
