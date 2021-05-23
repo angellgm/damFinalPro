@@ -13,8 +13,9 @@ public class NanoBot extends Actor implements NivelEnergia {
 	// Área de la textura
 	private TextureRegion nanoBot;
 	private Vector2 vector;
-	private float energiaBot;
+	private float energia;
 	private Rectangle rectangle;
+	private float autoIncrementoEnergia;
 
 	public NanoBot() {
 		// Inicializar textura
@@ -59,15 +60,39 @@ public class NanoBot extends Actor implements NivelEnergia {
 			setY(getStage().getHeight() - getHeight());
 			vector.y = 0;
 		}
-		
+
 		rectangle.x = getX();
 		rectangle.y = getY();
 		rectangle.width = getWidth();
 		rectangle.height = getHeight();
-				
-		
-		
 
+		autoIncrementoEnergia += delta;
+		if (energia < 1 && autoIncrementoEnergia > 10) {
+			energia += 0.05f;
+			autoIncrementoEnergia = 0;
+			System.out.println("energia++");
+		}
+
+	}
+
+	@Override
+	public float getEnergiaRango() {
+		if (energia < 0) {
+			energia = 0;
+		} else if (energia > 1) {
+			energia = 1;
+		}
+		return energia;
+	}
+
+	@Override
+	public void setEnergia(float energia) {
+		this.energia = energia;
+	}
+
+	@Override
+	public void subirEnergia(float energia) {
+		this.energia += energia;
 	}
 
 	public TextureRegion getNanoBot() {
@@ -86,38 +111,12 @@ public class NanoBot extends Actor implements NivelEnergia {
 		this.vector = vectorNanoBot;
 	}
 
-	@Override
-	public float getEnergiaRango() {
-		// TODO Auto-generated method stub
-		return energiaBot;
-	}
-
-	@Override
-	public void setEnergia(float energiaBot) {
-		// TODO Auto-generated method stub
-		this.energiaBot = energiaBot;
-
-	}
-
-	@Override
-	public void subirEnergia(float energia) {
-		energiaBot += energia;
-	}
-
 	public Vector2 getVector() {
 		return vector;
 	}
 
 	public void setVector(Vector2 vector) {
 		this.vector = vector;
-	}
-
-	public float getEnergiaBot() {
-		return energiaBot;
-	}
-
-	public void setEnergiaBot(float energiaBot) {
-		this.energiaBot = energiaBot;
 	}
 
 	public Rectangle getRectangle() {

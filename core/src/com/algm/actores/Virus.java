@@ -42,6 +42,8 @@ public class Virus extends Actor {
 		vector = new Vector2(0, 0);
 		tiempo = 0f;
 		virus = temporalRegions[0][0];
+		setSize(virus.getRegionWidth(), virus.getRegionHeight());
+
 		// Rectangle: Encapsula un rectángulo 2D definido por su punto de esquina en la
 		// parte inferior izquierda y sus extensiones en x (ancho) e y (alto)
 		rectangle = new Rectangle(getX(), getY(), getWidth(), getHeight());
@@ -53,6 +55,8 @@ public class Virus extends Actor {
 		// Color color = getColor();
 		// batch.setColor(color.r, color.g, color.b, color.a * parentAlpha);
 		batch.draw(virus, getX(), getY(), virus.getRegionWidth(), virus.getRegionHeight());
+		//System.out.println("Rectangle VIRUS x: "+rectangle.getX()+" y: "+rectangle.getY()+ " "+rectangle.getHeight()+" "+rectangle.getWidth());
+
 
 	}
 

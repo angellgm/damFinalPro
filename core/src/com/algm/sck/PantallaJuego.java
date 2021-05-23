@@ -7,7 +7,6 @@ import java.util.ArrayList;
 
 import com.algm.actorcontrol.BarraEnergia;
 import com.algm.actorcontrol.BotonDisparo;
-import com.algm.actorcontrol.Energia;
 import com.algm.actorcontrol.MBarraEnergia;
 import com.algm.actorcontrol.Pad;
 import com.algm.actores.Adn;
@@ -37,7 +36,6 @@ public class PantallaJuego extends Pantalla {
 	private MBarraEnergia mBarraEnergia;
 	private BarraEnergia barraEnergia;
 	private BotonDisparo btDisparo;
-	private Energia energiaBot;
 	private ArrayList<Virus> listVirus;
 	private ArrayList<Adn> listAdns;
 	private final float IMPACTO = 0.25f;
@@ -62,6 +60,8 @@ public class PantallaJuego extends Pantalla {
 	public void show() {
 
 		stage = new Stage();
+		// Modo debug gráfico
+		// stage.setDebugAll(true);
 		Gdx.input.setInputProcessor(stage);
 
 		fondo = new Fondo();
@@ -150,18 +150,16 @@ public class PantallaJuego extends Pantalla {
 		// Eliminar actor adn al salir de la pantalla
 		for (int i = 0; i < listAdns.size(); i++) {
 			if (listAdns.get(i).getX() > stage.getWidth()) {
-				listAdns.remove(i);			
+				listAdns.remove(i);
 			}
 		}
 		// Eliminar actor virus al salir de la pantalla
 		for (int j = 0; j < listVirus.size(); j++) {
-			if (listVirus.get(j).getX() < 0
-					|| listVirus.get(j).getY() < 0
+			if (listVirus.get(j).getX() < 0 || listVirus.get(j).getY() < 0
 					|| listVirus.get(j).getY() > stage.getHeight()) {
 				listVirus.remove(j);
 			}
 		}
-
 	}
 
 	/**
@@ -175,25 +173,27 @@ public class PantallaJuego extends Pantalla {
 		for (int j = 0; j < listVirus.size(); j++) {
 			virus = listVirus.get(j);
 			// Si hay colision entre Virus - Nanobot. Se elimina alien y vida en el nanoBot
-			if (virus.getRectangle().overlaps(nanoBot.getRectangle())) {
-				nanoBot.setEnergia(nanoBot.getEnergiaBot() - IMPACTO);
+			if (virus.getRectangle().overlaps(nanoBot.getRectangle()) && virus.getX() != stage.getWidth() ) {
+				if (nanoBot.getEnergiaRango() <= 0) {
+
+					System.out.println("BOT SIN ENERGIA * F *");
+				} else {
+					nanoBot.setEnergia(nanoBot.getEnergiaRango() - IMPACTO);
+				}
 				listVirus.remove(j);
 				virus.remove();
 
 			} else
 				for (int i = 0; i < listAdns.size(); i++) {
-					//adn = listAdns.get(i);
+					// adn = listAdns.get(i);
 					// Si hay colision entre Virus - Adn. Se elimina alien, adn e incrementa
 					// marcador
 					if (listAdns.get(i).getRectangle().overlaps(virus.getRectangle())) {
+						adn = listAdns.get(i);
 						listVirus.remove(j);
 						listAdns.remove(i);
-						if (adn.remove()) {
-							System.out.println("eliminado adn colisión nave");
-						}
-						if (virus.remove()) {
-							System.out.println("eliminado virus colisión nave");
-						}
+						adn.remove();
+						virus.remove();
 					}
 				}
 		}

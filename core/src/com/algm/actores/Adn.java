@@ -39,14 +39,19 @@ public class Adn extends Actor {
 		vector = new Vector2(0, 0);
 		tiempo = 0f;
 		adn = temporalRegions[0][0];
+		setSize(adn.getRegionWidth(), adn.getRegionHeight());
+
 		// Rectangle: Encapsula un rectángulo 2D definido por su punto de esquina en la
 		// parte inferior izquierda y sus extensiones en x (ancho) e y (alto)
 		rectangle = new Rectangle(getX(), getY(), getWidth(), getHeight());
+
 	}
 
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
 		batch.draw(adn, getX(), getY(), adn.getRegionWidth(), adn.getRegionHeight());
+		//System.out.println("Rectangle ADN x: "+rectangle.getX()+" y: "+rectangle.getY()+ " "+rectangle.getHeight()+" "+rectangle.getWidth());
+
 	}
 
 	@Override
