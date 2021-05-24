@@ -68,10 +68,9 @@ public class NanoBot extends Actor implements NivelEnergia {
 
 		autoIncrementoEnergia += delta;
 		if (energia < 1 && autoIncrementoEnergia > 10) {
-			energia += 0.05f;
+			energia += 0.08f;
 			autoIncrementoEnergia = 0;
 		}
-
 	}
 
 	@Override

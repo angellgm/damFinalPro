@@ -13,7 +13,7 @@ import com.badlogic.gdx.Screen;
  */
 public abstract class Pantalla implements Screen {
 	// Conexión con la clase principal
-	protected SarsCovKiller juego;
+	public SarsCovKiller juego;
 
 	
 	public Pantalla(SarsCovKiller juego) {

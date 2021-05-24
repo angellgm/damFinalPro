@@ -20,11 +20,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 /**
  * @author Angel
@@ -32,6 +35,8 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
  */
 public class PantallaJuego extends Pantalla {
 
+	private Camera camera;
+	private Viewport viewport;
 	private Stage stage;
 	private Fondo fondo;
 	private NanoBot nanoBot;
@@ -44,8 +49,6 @@ public class PantallaJuego extends Pantalla {
 	private ArrayList<Virus> listVirus;
 	private ArrayList<Adn> listAdns;
 	private NivelPuntuacion puntos;
-
-
 	private float velocidadNanoBot;
 	private float virusSpawn;
 
@@ -58,19 +61,24 @@ public class PantallaJuego extends Pantalla {
 
 	@Override
 	public void show() {
-
-		stage = new Stage();
+		//Cargar escena para actores
+		//camera = new PerspectiveCamera();
+	    viewport = new StretchViewport(Gdx.graphics.getWidth(),  Gdx.graphics.getHeight());
+	    stage= new Stage();
+		//stage = new Stage(viewport, juego.sckBatch);
+		//stage = new Stage (Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true, juego.sckBatch);
 		// Modo debug gráfico
-		// stage.setDebugAll(true);
+		//stage.setDebugAll(true);
+
 		SarsCovKiller.ASSETMANAGER.get("sonido/fondo.ogg", Sound.class).loop();
 
 		Gdx.input.setInputProcessor(stage);
 
 		fondo = new Fondo();
 		fondo.setPosition(0, 0);
-		
+
 		puntos = new NivelPuntuacion(new BitmapFont());
-		puntos.setPosition(stage.getWidth()/1.5f, stage.getHeight() - (stage.getHeight()/30));
+		puntos.setPosition(stage.getWidth() / 1.5f, stage.getHeight() - (stage.getHeight() / 30));
 
 		listAdns = new ArrayList<Adn>();
 		listVirus = new ArrayList<Virus>();
@@ -86,9 +94,9 @@ public class PantallaJuego extends Pantalla {
 		control.setPosition(stage.getWidth() / 14, 15);
 
 		mBarraEnergia = new MBarraEnergia();
-		mBarraEnergia.setPosition(15, stage.getHeight() - mBarraEnergia.getHeight() - 5);
+		mBarraEnergia.setPosition(15, stage.getHeight() - mBarraEnergia.getHeight() - 7);
 		barraEnergia = new BarraEnergia(nanoBot);
-		barraEnergia.setPosition(80 + 15, stage.getHeight() - mBarraEnergia.getHeight() - 5);
+		barraEnergia.setPosition(22 + 15, stage.getHeight() - mBarraEnergia.getHeight() - 7);
 
 		stage.addActor(fondo);
 		stage.addActor(puntos);
@@ -97,9 +105,9 @@ public class PantallaJuego extends Pantalla {
 		stage.addActor(nanoBot);
 		stage.addActor(virus);
 		stage.addActor(control);
-		
+
 		// TEMPORAL ELIMINAR
-		//btTactilDisparo();
+		// btTactilDisparo();
 
 		// Cargar boton de disparo solo en Android o iOS
 		if ((Gdx.app.getType() == ApplicationType.Android) || (Gdx.app.getType() == ApplicationType.iOS)) {
@@ -111,19 +119,6 @@ public class PantallaJuego extends Pantalla {
 			nanoBot.addListener(new ImputListener());
 		}
 
-	}
-
-	private void btTactilDisparo() {
-		btDisparo = new BotonDisparo();
-		btDisparo.setPosition((stage.getWidth() - btDisparo.getWidth()) - (stage.getWidth() / 14), 20);
-		stage.addActor(btDisparo);
-		btDisparo.addListener(new InputListener() {
-			@Override
-			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-				adnSpawnClick();
-				return true;
-			}
-		});
 	}
 
 	@Override
@@ -144,7 +139,32 @@ public class PantallaJuego extends Pantalla {
 		eliminarActoresNoVisibles();
 		accionColisionesListas();
 		stage.draw(); // Dibujar
+	}
 
+	@Override
+	public void hide() {
+		// Destruir pantalla en el hide para que no se acumulen al cambiar de pantalla
+		stage.dispose(); 
+
+	}
+
+	@Override
+	public void dispose() {
+		//stage.dispose(); 
+
+	}
+
+	private void btTactilDisparo() {
+		btDisparo = new BotonDisparo();
+		btDisparo.setPosition((stage.getWidth() - btDisparo.getWidth()) - (stage.getWidth() / 14), 20);
+		stage.addActor(btDisparo);
+		btDisparo.addListener(new InputListener() {
+			@Override
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+				adnSpawnClick();
+				return true;
+			}
+		});
 	}
 
 	/**
@@ -179,24 +199,23 @@ public class PantallaJuego extends Pantalla {
 
 		for (int j = 0; j < listVirus.size(); j++) {
 			virus = listVirus.get(j);
-			// Si hay colision entre Virus - Nanobot. Se elimina alien y vida en el nanoBot
+			// Si hay colision entre Virus - Nanobot. Se elimina alien, energia y puntuación
 			if (virus.getRectangle().overlaps(nanoBot.getRectangle()) && virus.getX() != stage.getWidth()) {
-				
+
 				if (nanoBot.getEnergiaRango() <= 0.25) {
 					nanoBot.setEnergia(0);
 					SarsCovKiller.ASSETMANAGER.get("sonido/botKill.ogg", Sound.class).play();
 					SarsCovKiller.ASSETMANAGER.get("sonido/GameOver1.ogg", Sound.class).play();
-
+					juego.setScreen(juego.P_GAMEOVER);
 
 				} else {
 					nanoBot.setEnergia(nanoBot.getEnergiaRango() - IMPACTO);
-					if(puntos.getMarcador()>50) {
-						puntos.setMarcador(puntos.getMarcador()-50);
-						puntos.setNivel(((int)puntos.getMarcador()/10000)+1);
+					if (puntos.getMarcador() > 50) {
+						puntos.setMarcador(puntos.getMarcador() - 50);
+						puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
 					}
 
 					SarsCovKiller.ASSETMANAGER.get("sonido/impactoBot.ogg", Sound.class).play();
-
 
 				}
 				listVirus.remove(j);
@@ -207,8 +226,8 @@ public class PantallaJuego extends Pantalla {
 					// Si hay colision entre Virus - Adn. Se elimina alien, adn e incrementa
 					// marcador
 					if (listAdns.get(i).getRectangle().overlaps(virus.getRectangle())) {
-						puntos.setMarcador(puntos.getMarcador()+100);
-						puntos.setNivel(((int)puntos.getMarcador()/10000)+1);
+						puntos.setMarcador(puntos.getMarcador() + 100);
+						puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
 
 						SarsCovKiller.ASSETMANAGER.get("sonido/impactoVirus.ogg", Sound.class).play();
 						adn = listAdns.get(i);
@@ -219,18 +238,6 @@ public class PantallaJuego extends Pantalla {
 					}
 				}
 		}
-
-	}
-
-	@Override
-	public void hide() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void dispose() {
-		stage.dispose(); // Destruir pantalla
 
 	}
 
@@ -248,7 +255,7 @@ public class PantallaJuego extends Pantalla {
 		private boolean keyDownS;
 		private boolean keyDownA;
 		private boolean keyDownD;
-		
+
 		@Override
 		public boolean keyDown(InputEvent event, int keycode) {
 
@@ -333,6 +340,9 @@ public class PantallaJuego extends Pantalla {
 						nanoBot.getY() + (nanoBot.getHeight() / 3));
 				stage.addActor(adn);
 				SarsCovKiller.ASSETMANAGER.get("sonido/adn.ogg", Sound.class).play();
+				// Generar adn resta energía
+				nanoBot.setEnergia(nanoBot.getEnergiaRango() - 0.005f);
+
 				// Añadir a lista de adn en pantalla
 				listAdns.add(adn);
 				return true;
@@ -377,6 +387,8 @@ public class PantallaJuego extends Pantalla {
 					nanoBot.getY() + (nanoBot.getHeight() / 3));
 			stage.addActor(adn);
 			SarsCovKiller.ASSETMANAGER.get("sonido/adn.ogg", Sound.class).play();
+			// Generar adn resta energía
+			nanoBot.setEnergia(nanoBot.getEnergiaRango() - 0.005f);
 
 			// Añadir a lista de adn en pantalla
 			listAdns.add(adn);
@@ -406,10 +418,8 @@ public class PantallaJuego extends Pantalla {
 
 		}
 	}
-	
-	
-	//******************** LIMPIAR -->
-	
+
+	// ******************** LIMPIAR -->
 
 	public Stage getStage() {
 		return stage;

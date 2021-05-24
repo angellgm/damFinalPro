@@ -15,7 +15,9 @@ public class BarraEnergia extends Actor {
 		this.nivelEnergia = nivelEnergia;
 
 		// Inicializar textura
-		bEnergia = new TextureRegion(SarsCovKiller.ASSETMANAGER.get("ui/bEnergia.png", Texture.class), 166, 85);
+		bEnergia = new TextureRegion(SarsCovKiller.ASSETMANAGER.get("ui/bEnergia.png", Texture.class), 166,
+				70);
+
 
 		// Tamaño igual al de la textura
 		setSize(bEnergia.getRegionWidth(), bEnergia.getRegionHeight());
