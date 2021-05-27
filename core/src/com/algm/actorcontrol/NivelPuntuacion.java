@@ -15,8 +15,8 @@ public class NivelPuntuacion extends Actor {
 		this.marcadorInicial = 0;
 		this.nivel=1;
 		this.fuente = bitmapFont;
-		bitmapFont.setColor(255,255,0,100); 		
-		bitmapFont.getData().setScale(1.5f);		
+		//bitmapFont.setColor(255,255,0,100); 		
+		//bitmapFont.getData().setScale(1.2f);		
 	}
 
 	@Override

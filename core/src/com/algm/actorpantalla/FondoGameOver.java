@@ -21,10 +21,10 @@ public class FondoGameOver extends Actor {
 
 	public FondoGameOver() {
 
-//		// Crear regiones en movimiento para TextureRegion;
+//	 Crear regiones en movimiento para TextureRegion;
 		texturaRegionMov = new TextureRegion[9];
 		for (int i = 0; i < 9; i++) {
-            png ="gameOver/".concat(i+"").concat(".png");
+            png ="fondo/pGameOver/".concat(i+"").concat(".png");
 			texturaRegionMov[i] = new TextureRegion(new Texture(Gdx.files.internal(png)));
 		}
 		// Crear animación (Tiempo del Frame (0.04seg), TextureRegions)
@@ -34,8 +34,8 @@ public class FondoGameOver extends Actor {
 		// Velocidad inicial 0
 		vector = new Vector2(0, 0);
 		tiempo = 0f;
-		//adn = temporalRegions[0][0];
 	}
+
 
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
@@ -49,7 +49,7 @@ public class FondoGameOver extends Actor {
 		// Tiempo que pasa desde el último frame render.
 		tiempo += Gdx.graphics.getDeltaTime();
 		fondo = (TextureRegion) animacion.getKeyFrame(tiempo, true);
-		
+
 	}
-	
+
 }

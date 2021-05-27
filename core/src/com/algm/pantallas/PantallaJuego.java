@@ -13,8 +13,8 @@ import com.algm.actorcontrol.Pad;
 import com.algm.actores.Adn;
 import com.algm.actores.NanoBot;
 import com.algm.actores.Virus;
+import com.algm.actorpantalla.FondoPantallaJuego;
 import com.algm.sck.SarsCovKiller;
-import com.algm.actores.Fondo;
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -35,10 +35,9 @@ import com.badlogic.gdx.utils.viewport.Viewport;
  */
 public class PantallaJuego extends Pantalla {
 
-	private Camera camera;
 	private Viewport viewport;
-	private Stage stage;
-	private Fondo fondo;
+	private Stage stageJuego;
+	private FondoPantallaJuego fondo;
 	private NanoBot nanoBot;
 	private Virus virus;
 	private Adn adn;
@@ -48,10 +47,13 @@ public class PantallaJuego extends Pantalla {
 	private BotonDisparo btDisparo;
 	private ArrayList<Virus> listVirus;
 	private ArrayList<Adn> listAdns;
-	private NivelPuntuacion puntos;
+	static NivelPuntuacion puntos;
 	private float velocidadNanoBot;
 	private float virusSpawn;
-
+	private int nivel;
+	private int puntuacion;
+	
+	
 	public PantallaJuego(SarsCovKiller juego) {
 		super(juego);
 		virusSpawn = 1;
@@ -62,23 +64,20 @@ public class PantallaJuego extends Pantalla {
 	@Override
 	public void show() {
 		//Cargar escena para actores
-		//camera = new PerspectiveCamera();
 	    viewport = new StretchViewport(Gdx.graphics.getWidth(),  Gdx.graphics.getHeight());
-	    stage= new Stage();
-		//stage = new Stage(viewport, juego.sckBatch);
+		stageJuego = new Stage(viewport, juego.sckBatch);
 		//stage = new Stage (Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true, juego.sckBatch);
 		// Modo debug gráfico
 		//stage.setDebugAll(true);
-
+		
 		SarsCovKiller.ASSETMANAGER.get("sonido/fondo.ogg", Sound.class).loop();
+		
 
-		Gdx.input.setInputProcessor(stage);
-
-		fondo = new Fondo();
+		fondo = new FondoPantallaJuego();
 		fondo.setPosition(0, 0);
 
-		puntos = new NivelPuntuacion(new BitmapFont());
-		puntos.setPosition(stage.getWidth() / 1.5f, stage.getHeight() - (stage.getHeight() / 30));
+		puntos = new NivelPuntuacion(new BitmapFont(Gdx.files.internal("fuentes/fuenteNormal.fnt"), Gdx.files.internal("fuentes/fuenteNormal.png"),false));
+		puntos.setPosition(stageJuego.getWidth() / 2.5f, stageJuego.getHeight() - (stageJuego.getHeight() / 30));
 
 		listAdns = new ArrayList<Adn>();
 		listVirus = new ArrayList<Virus>();
@@ -87,24 +86,21 @@ public class PantallaJuego extends Pantalla {
 		virus = new Virus();
 
 		nanoBot = new NanoBot();
-		nanoBot.setPosition(stage.getWidth() / 14, stage.getHeight() / 2);
+		nanoBot.setPosition(stageJuego.getWidth() / 14, stageJuego.getHeight() / 2);
 		nanoBot.setEnergia((float) 1);
 
 		control = new Pad();
-		control.setPosition(stage.getWidth() / 14, 15);
+		control.setPosition(stageJuego.getWidth() / 14, 15);
 
-		mBarraEnergia = new MBarraEnergia();
-		mBarraEnergia.setPosition(15, stage.getHeight() - mBarraEnergia.getHeight() - 7);
-		barraEnergia = new BarraEnergia(nanoBot);
-		barraEnergia.setPosition(22 + 15, stage.getHeight() - mBarraEnergia.getHeight() - 7);
+		cargarBarraEnergia();
 
-		stage.addActor(fondo);
-		stage.addActor(puntos);
-		stage.addActor(mBarraEnergia);
-		stage.addActor(barraEnergia);
-		stage.addActor(nanoBot);
-		stage.addActor(virus);
-		stage.addActor(control);
+		stageJuego.addActor(fondo);
+		stageJuego.addActor(puntos);
+		stageJuego.addActor(mBarraEnergia);
+		stageJuego.addActor(barraEnergia);
+		stageJuego.addActor(nanoBot);
+		stageJuego.addActor(virus);
+		stageJuego.addActor(control);
 
 		// TEMPORAL ELIMINAR
 		// btTactilDisparo();
@@ -114,12 +110,18 @@ public class PantallaJuego extends Pantalla {
 			btTactilDisparo();
 		}
 		// cargar listener del teclado si es Desktop
-		if (Gdx.app.getType() == ApplicationType.Desktop) {
-			stage.setKeyboardFocus(nanoBot);
-			nanoBot.addListener(new ImputListener());
-		}
+//		if (Gdx.app.getType() == ApplicationType.Desktop) {
+//			stageJuego.setKeyboardFocus(nanoBot);
+//			nanoBot.addListener(new ImputListener());
+//		}
+		
+		Gdx.input.setInputProcessor(stageJuego);
+		stageJuego.setKeyboardFocus(nanoBot);
+		nanoBot.addListener(new ImputListener());
 
 	}
+
+	
 
 	@Override
 	public void resize(int width, int height) {
@@ -132,19 +134,19 @@ public class PantallaJuego extends Pantalla {
 		// Limpiar pantalla para evitar trazos fantasma de los actores
 		Gdx.gl.glClearColor(0f, 0f, 0f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		stage.act(Gdx.graphics.getDeltaTime()); // Actulizar
+		stageJuego.act(Gdx.graphics.getDeltaTime()); // Actualizar
 		virusVerdeSpawn(delta);
 		controlPad(control.getKnobPercentX(), control.getKnobPercentY());
 		adnSpawnClick();
 		eliminarActoresNoVisibles();
 		accionColisionesListas();
-		stage.draw(); // Dibujar
+		stageJuego.draw(); // Dibujar
 	}
 
 	@Override
 	public void hide() {
-		// Destruir pantalla en el hide para que no se acumulen al cambiar de pantalla
-		stage.dispose(); 
+		// Se destrulle la pantalla en el hide para que no se acumulen al cambiar de pantalla
+		stageJuego.dispose(); 
 
 	}
 
@@ -153,11 +155,18 @@ public class PantallaJuego extends Pantalla {
 		//stage.dispose(); 
 
 	}
+	
+	private void cargarBarraEnergia() {
+		mBarraEnergia = new MBarraEnergia();
+		mBarraEnergia.setPosition(15, stageJuego.getHeight() - mBarraEnergia.getHeight() - 7);
+		barraEnergia = new BarraEnergia(nanoBot);
+		barraEnergia.setPosition(22 + 15, stageJuego.getHeight() - mBarraEnergia.getHeight() - 7);
+	}
 
 	private void btTactilDisparo() {
 		btDisparo = new BotonDisparo();
-		btDisparo.setPosition((stage.getWidth() - btDisparo.getWidth()) - (stage.getWidth() / 14), 20);
-		stage.addActor(btDisparo);
+		btDisparo.setPosition((stageJuego.getWidth() - btDisparo.getWidth()) - (stageJuego.getWidth() / 14), 20);
+		stageJuego.addActor(btDisparo);
 		btDisparo.addListener(new InputListener() {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -174,14 +183,14 @@ public class PantallaJuego extends Pantalla {
 	private void eliminarActoresNoVisibles() {
 		// Eliminar actor adn al salir de la pantalla
 		for (int i = 0; i < listAdns.size(); i++) {
-			if (listAdns.get(i).getX() > stage.getWidth()) {
+			if (listAdns.get(i).getX() > stageJuego.getWidth()) {
 				listAdns.remove(i);
 			}
 		}
 		// Eliminar actor virus al salir de la pantalla
 		for (int j = 0; j < listVirus.size(); j++) {
 			if (listVirus.get(j).getX() < 0 || listVirus.get(j).getY() < 0
-					|| listVirus.get(j).getY() > stage.getHeight()) {
+					|| listVirus.get(j).getY() > stageJuego.getHeight()) {
 				listVirus.remove(j);
 			}
 		}
@@ -200,12 +209,18 @@ public class PantallaJuego extends Pantalla {
 		for (int j = 0; j < listVirus.size(); j++) {
 			virus = listVirus.get(j);
 			// Si hay colision entre Virus - Nanobot. Se elimina alien, energia y puntuación
-			if (virus.getRectangle().overlaps(nanoBot.getRectangle()) && virus.getX() != stage.getWidth()) {
+			if (virus.getRectangle().overlaps(nanoBot.getRectangle()) && virus.getX() != stageJuego.getWidth()) {
 
 				if (nanoBot.getEnergiaRango() <= 0.25) {
 					nanoBot.setEnergia(0);
 					SarsCovKiller.ASSETMANAGER.get("sonido/botKill.ogg", Sound.class).play();
 					SarsCovKiller.ASSETMANAGER.get("sonido/GameOver1.ogg", Sound.class).play();
+					
+					if (puntos.getMarcador() > 50) {
+					puntos.setMarcador(puntos.getMarcador() - 50);
+					puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
+					}
+					// PANTALLA GAME OVER
 					juego.setScreen(juego.P_GAMEOVER);
 
 				} else {
@@ -241,7 +256,7 @@ public class PantallaJuego extends Pantalla {
 
 	}
 
-	private final class ImputListener extends InputListener {
+	public final class ImputListener extends InputListener {
 		/**
 		 * @param InputEvent
 		 * @param keycode
@@ -338,10 +353,10 @@ public class PantallaJuego extends Pantalla {
 				Adn adn = new Adn();
 				adn.setPosition(nanoBot.getX() + (nanoBot.getWidth() - nanoBot.getWidth() / 4),
 						nanoBot.getY() + (nanoBot.getHeight() / 3));
-				stage.addActor(adn);
+				stageJuego.addActor(adn);
 				SarsCovKiller.ASSETMANAGER.get("sonido/adn.ogg", Sound.class).play();
 				// Generar adn resta energía
-				nanoBot.setEnergia(nanoBot.getEnergiaRango() - 0.005f);
+				nanoBot.setEnergia(nanoBot.getEnergiaRango() - 0.003f);
 
 				// Añadir a lista de adn en pantalla
 				listAdns.add(adn);
@@ -385,10 +400,10 @@ public class PantallaJuego extends Pantalla {
 			Adn adn = new Adn();
 			adn.setPosition(nanoBot.getX() + (nanoBot.getWidth() - nanoBot.getWidth() / 4),
 					nanoBot.getY() + (nanoBot.getHeight() / 3));
-			stage.addActor(adn);
+			stageJuego.addActor(adn);
 			SarsCovKiller.ASSETMANAGER.get("sonido/adn.ogg", Sound.class).play();
 			// Generar adn resta energía
-			nanoBot.setEnergia(nanoBot.getEnergiaRango() - 0.005f);
+			nanoBot.setEnergia(nanoBot.getEnergiaRango() - 0.003f);
 
 			// Añadir a lista de adn en pantalla
 			listAdns.add(adn);
@@ -407,8 +422,8 @@ public class PantallaJuego extends Pantalla {
 		virusSpawn = delta + (float) Math.random();
 		if (virusSpawn > 1) {
 			Virus virus = new Virus();
-			virus.setPosition(stage.getWidth(), stage.getHeight() * (float) Math.random());
-			stage.addActor(virus);
+			virus.setPosition(stageJuego.getWidth(), stageJuego.getHeight() * (float) Math.random());
+			stageJuego.addActor(virus);
 
 			// Añadir a lista de adn en pantalla
 			listVirus.add(virus);
@@ -422,18 +437,18 @@ public class PantallaJuego extends Pantalla {
 	// ******************** LIMPIAR -->
 
 	public Stage getStage() {
-		return stage;
+		return stageJuego;
 	}
 
 	public void setStage(Stage stage) {
-		this.stage = stage;
+		this.stageJuego = stage;
 	}
 
-	public Fondo getFondo() {
+	public FondoPantallaJuego getFondo() {
 		return fondo;
 	}
 
-	public void setFondo(Fondo fondo) {
+	public void setFondo(FondoPantallaJuego fondo) {
 		this.fondo = fondo;
 	}
 
@@ -514,7 +529,7 @@ public class PantallaJuego extends Pantalla {
 	}
 
 	public void setPuntos(NivelPuntuacion puntos) {
-		this.puntos = puntos;
+		PantallaJuego.puntos = puntos;
 	}
 
 	public float getVelocidadNanoBot() {

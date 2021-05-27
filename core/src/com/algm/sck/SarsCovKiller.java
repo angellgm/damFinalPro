@@ -56,7 +56,22 @@ public class SarsCovKiller extends Game  {
 	@Override
 	public void create() {
 		sckBatch  = new SpriteBatch();
-		
+		//cargar Assets
+		assetsLoad();
+		//Primera pantalla 
+		setScreen(P_CARGA);
+	}
+	
+	@Override
+	public void dispose() {
+		super.dispose();
+		//Eliminar ASSETMANAGER despues de salir del juego
+		ASSETMANAGER.dispose();
+		sckBatch.dispose();
+	}
+
+
+	private void assetsLoad() {
 		ASSETMANAGER.load("fondo/sckCarga.png", Texture.class);
 		ASSETMANAGER.load("virus.png", Texture.class);
 		ASSETMANAGER.load("nanobot.png", Texture.class);
@@ -65,6 +80,18 @@ public class SarsCovKiller extends Game  {
 		ASSETMANAGER.load("ui/mEnergia.png", Texture.class);
 		ASSETMANAGER.load("ui/bEnergia.png", Texture.class);
 		ASSETMANAGER.load("ui/botonDisparo.png", Texture.class);
+		ASSETMANAGER.load("ui/btSalir.png", Texture.class);
+		ASSETMANAGER.load("ui/btMenu.png", Texture.class);
+		ASSETMANAGER.load("ui/btContinuar.png", Texture.class);
+		ASSETMANAGER.load("ui/btOpciones.png", Texture.class);
+		ASSETMANAGER.load("ui/btComoJugar.png", Texture.class);
+		
+		ASSETMANAGER.load("ui/esc.png", Texture.class);
+		ASSETMANAGER.load("ui/m.png", Texture.class);
+		ASSETMANAGER.load("ui/c.png", Texture.class);
+		ASSETMANAGER.load("ui/o.png", Texture.class);
+		ASSETMANAGER.load("ui/c.png", Texture.class);
+		
 		ASSETMANAGER.load("sonido/fondo.ogg", Sound.class);
 		ASSETMANAGER.load("sonido/adn.ogg", Sound.class);
 		ASSETMANAGER.load("sonido/botKill.ogg", Sound.class);
@@ -72,22 +99,9 @@ public class SarsCovKiller extends Game  {
 		ASSETMANAGER.load("sonido/impactoBot.ogg", Sound.class);
 		ASSETMANAGER.load("sonido/impactoVirus.ogg", Sound.class);
 		ASSETMANAGER.load("sonido/virusKill.ogg", Sound.class);
-		//Primera pantalla carga assets
-		//setScreen(new PantallaJuego(this));
-		//
-		setScreen(P_CARGA);
-		
-
 	}
 
 		
-	@Override
-	public void dispose() {
-		super.dispose();
-		//Eliminar ASSETMANAGER despues de salir del juego
-		ASSETMANAGER.dispose();
-		sckBatch.dispose();
-	}
 
 
 }
