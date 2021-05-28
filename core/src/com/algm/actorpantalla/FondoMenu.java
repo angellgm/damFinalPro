@@ -22,9 +22,9 @@ public class FondoMenu extends Actor {
 	public FondoMenu() {
 
 //		Crear regiones en movimiento para TextureRegion;
-		texturaRegionMov = new TextureRegion[202];
-		for (int i = 0; i < 202; i++) {
-			png = "fondo/pMenu/".concat("fondo-" + i + "").concat(".png");
+		texturaRegionMov = new TextureRegion[101];
+		for (int i = 0; i < 101; i++) {
+			png = "fondo/pMenu/".concat("fondo (" + i + ")").concat(".png");
 			texturaRegionMov[i] = new TextureRegion(new Texture(Gdx.files.internal(png)));
 		}
 		// Crear animación (Tiempo del Frame (0.04seg), TextureRegions)

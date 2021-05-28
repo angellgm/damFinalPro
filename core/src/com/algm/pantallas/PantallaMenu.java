@@ -26,19 +26,30 @@ public class PantallaMenu extends Pantalla {
 	private Stage stageMenu;
 	private FondoMenu fondoMenu;
 	private Viewport viewport;
-	//private NivelPuntuacion puntos;
-	private Texture btMenu;
+	// private NivelPuntuacion puntos;
+	private Texture btJugar;
+	private Texture btComoJugar;
 	private Texture btContinuar;
 	private Texture btSalir;
-	private Texture btMenuTecla;
+	
+	private Texture btJugarTecla;
+	private Texture btComoJugarTecla;
 	private Texture btContinuarTecla;
 	private Texture btSalirTecla;
-	private Image imageMenu;
+	
+	private Texture logoSCK;
+
+	private Image imageJugar;
+	private Image imageComoJugar;
 	private Image imageContinuar;
 	private Image imageSalir;
-	private Image imageMenuTecla;
+	
+	private Image imageJugarTecla;
+	private Image imageComoJugarTecla;
 	private Image imageContinuarTecla;
 	private Image imageSalirTecla;
+	
+	private Image imageLogoSCK;
 
 	public PantallaMenu(SarsCovKiller juego) {
 		super(juego);
@@ -54,29 +65,30 @@ public class PantallaMenu extends Pantalla {
 
 		fondoMenu = new FondoMenu();
 		fondoMenu.setPosition(0, 0);
-
+		stageMenu.addActor(fondoMenu);
+		
 //		puntos = PantallaJuego.puntos;
 //		puntos.setPosition(stageMenu.getWidth() / 3f, stageMenu.getHeight() / 1.2f);
-		stageMenu.addActor(fondoMenu);
 //		stageMenu.addActor(puntos);
-		
+
 		btContinuar();
-		btMenu();
+		btJugar();
 		btSalir();
-		
+		btComoJugar();
+		logoSCK();
+
 		if (Gdx.app.getType() == ApplicationType.Desktop) {
 			btContinuarTecla();
-			btMenuTecla();
+			btJugarTecla();
 			btSalirTecla();
+			btComoJugarTecla();
 		}
-
 
 		Gdx.input.setInputProcessor(stageMenu);
 		stageMenu.setKeyboardFocus(fondoMenu);
 		fondoMenu.addListener(new InpLGameOver());
 	}
 
-	
 	@Override
 	public void render(float delta) {
 		// Limpiar pantalla para evitar trazos fantasma de los actores
@@ -97,38 +109,38 @@ public class PantallaMenu extends Pantalla {
 	@Override
 	public void dispose() {
 	}
-	
+
 	private void btSalir() {
 		btSalir = SarsCovKiller.ASSETMANAGER.get("ui/btSalir.png", Texture.class);
 		imageSalir = new Image(btSalir);
 		imageSalir.setPosition((imageContinuar.getX() + imageContinuar.getWidth()) + (stageMenu.getWidth() / 50),
 				stageMenu.getHeight() / 7f);
 		stageMenu.addActor(imageSalir);
-		
+
 		imageSalir.addListener(new InputListener() {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				// Salir de la app
 				Gdx.app.exit();
-				//System.out.println("Touch SALIR");
+				// System.out.println("Touch SALIR");
 				return true;
 			}
 		});
 	}
 
-	private void btMenu() {
-		btMenu = SarsCovKiller.ASSETMANAGER.get("ui/btMenu.png", Texture.class);
-		imageMenu = new Image(btMenu);
-		imageMenu.setPosition(imageContinuar.getX() - (imageMenu.getWidth() + (stageMenu.getWidth() / 50)),
+	private void btJugar() {
+		btJugar = SarsCovKiller.ASSETMANAGER.get("ui/btJugar.png", Texture.class);
+		imageJugar = new Image(btJugar);
+		imageJugar.setPosition(imageContinuar.getX() - (imageJugar.getWidth() + (stageMenu.getWidth() / 50)),
 				stageMenu.getHeight() / 7f);
-		stageMenu.addActor(imageMenu);
-		
-		imageMenu.addListener(new InputListener() {
+		stageMenu.addActor(imageJugar);
+
+		imageJugar.addListener(new InputListener() {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				// PANTALLA MENU
-				juego.setScreen(juego.P_MENU);
-				//System.out.println("Touch MENU");
+				juego.setScreen(juego.P_JUEGO);
+				// System.out.println("Touch MENU");
 				return true;
 			}
 		});
@@ -140,25 +152,42 @@ public class PantallaMenu extends Pantalla {
 		imageContinuar.setPosition(stageMenu.getWidth() / 2f - (imageContinuar.getWidth() / 2),
 				stageMenu.getHeight() / 7f);
 		stageMenu.addActor(imageContinuar);
-		
+
 		imageContinuar.addListener(new InputListener() {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				// PANTALLA JUEGO
 				juego.setScreen(juego.P_JUEGO);
-				//System.out.println("Touch CONTINUAR");
+				// System.out.println("Touch CONTINUAR");
 				return true;
 			}
 
 		});
 	}
 	
-	private void btMenuTecla() {
-		btMenuTecla = SarsCovKiller.ASSETMANAGER.get("ui/m.png", Texture.class);
-		imageMenuTecla = new Image(btMenuTecla);
-		imageMenuTecla.setPosition((imageMenu.getX() + imageMenu.getWidth() / 2) - (imageMenuTecla.getWidth() / 2),
-				imageMenu.getY() - imageMenuTecla.getHeight());		
-		stageMenu.addActor(imageMenuTecla);
+	private void btComoJugar() {
+		btComoJugar = SarsCovKiller.ASSETMANAGER.get("ui/btComoJugar.png", Texture.class);
+		imageComoJugar = new Image(btComoJugar);
+		imageComoJugar.setPosition(stageMenu.getWidth() - (imageComoJugar.getWidth()+15),
+				stageMenu.getHeight() - (imageComoJugar.getHeight()+15));
+		stageMenu.addActor(imageComoJugar);
+
+		imageJugar.addListener(new InputListener() {
+			@Override
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+				// PANTALLA COMO JUGAR?
+				juego.setScreen(juego.P_COMOJUGAR);
+				return true;
+			}
+		});
+	}
+
+	private void btJugarTecla() {
+		btJugarTecla = SarsCovKiller.ASSETMANAGER.get("ui/j.png", Texture.class);
+		imageJugarTecla = new Image(btJugarTecla);
+		imageJugarTecla.setPosition((imageJugar.getX() + imageJugar.getWidth() / 2) - (imageJugarTecla.getWidth() / 2),
+				imageJugar.getY() - imageJugarTecla.getHeight());
+		stageMenu.addActor(imageJugarTecla);
 	}
 
 	private void btContinuarTecla() {
@@ -169,17 +198,30 @@ public class PantallaMenu extends Pantalla {
 				imageContinuar.getY() - imageContinuarTecla.getHeight());
 		stageMenu.addActor(imageContinuarTecla);
 	}
-	
+
 	private void btSalirTecla() {
 		btSalirTecla = SarsCovKiller.ASSETMANAGER.get("ui/esc.png", Texture.class);
 		imageSalirTecla = new Image(btSalirTecla);
-		imageSalirTecla.setPosition((imageSalir.getX() + imageSalir.getWidth()/2) - (imageSalirTecla.getWidth()/2),
+		imageSalirTecla.setPosition((imageSalir.getX() + imageSalir.getWidth() / 2) - (imageSalirTecla.getWidth() / 2),
 				imageSalir.getY() - imageSalirTecla.getHeight());
 		stageMenu.addActor(imageSalirTecla);
 	}
-
-
+	private void btComoJugarTecla() {
+		btComoJugarTecla = SarsCovKiller.ASSETMANAGER.get("ui/q.png", Texture.class);
+		imageComoJugarTecla = new Image(btComoJugarTecla);
+		imageComoJugarTecla.setPosition(
+				(imageComoJugar.getX() + imageComoJugar.getWidth() / 2) - (imageComoJugarTecla.getWidth() / 2),
+				imageComoJugar.getY() - imageComoJugarTecla.getHeight());
+		stageMenu.addActor(imageComoJugarTecla);
+	}
 	
+	private void logoSCK() {
+		logoSCK = SarsCovKiller.ASSETMANAGER.get("ui/sckLogo.png", Texture.class);
+		imageLogoSCK = new Image(logoSCK);
+		imageLogoSCK.setPosition(20, stageMenu.getHeight() - (imageLogoSCK.getHeight() + 20));
+		stageMenu.addActor(imageLogoSCK);
+	}
+
 	private final class InpLGameOver extends InputListener {
 		/**
 		 * @param InputEvent
@@ -202,9 +244,14 @@ public class PantallaMenu extends Pantalla {
 				juego.setScreen(juego.P_JUEGO);
 				return true;
 
-			case Input.Keys.M:
+			case Input.Keys.J:
 				// PANTALLA MENU
-				juego.setScreen(juego.P_MENU);
+				juego.setScreen(juego.P_JUEGO);
+				return true;
+				
+			case Input.Keys.Q:
+				// PANTALLA MENU
+				juego.setScreen(juego.P_COMOJUGAR);
 				return true;
 
 			default:

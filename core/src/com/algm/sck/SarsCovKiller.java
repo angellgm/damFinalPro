@@ -4,7 +4,7 @@ import com.algm.pantallas.Pantalla;
 import com.algm.pantallas.PantallaCargaAssets;
 import com.algm.pantallas.PantallaGameOver;
 import com.algm.pantallas.PantallaMenu;
-import com.algm.pantallas.PantallaMenuOpc1;
+import com.algm.pantallas.PantallaComoJugar;
 import com.algm.pantallas.PantallaMenuOpc2;
 import com.algm.pantallas.PantallaJuego;
 import com.badlogic.gdx.Game;
@@ -40,19 +40,25 @@ public class SarsCovKiller extends Game  {
 	public final Pantalla P_MENU;
 	public final Pantalla P_JUEGO;
 	public final Pantalla P_GAMEOVER;
-	public final Pantalla P_MENU_OPC1;
+	public final Pantalla P_COMOJUGAR;
 	public final Pantalla P_MENU_OPC2;
 	
+	/**
+	 * 
+	 */
 	public SarsCovKiller() {
 		P_CARGA = new PantallaCargaAssets(this);
 		P_MENU = new PantallaMenu(this);
 		P_JUEGO = new PantallaJuego(this);
 		P_GAMEOVER = new PantallaGameOver(this);
-		P_MENU_OPC1 = new PantallaMenuOpc1(this);
+		P_COMOJUGAR = new PantallaComoJugar(this);
 		P_MENU_OPC2 = new PantallaMenuOpc2(this);
 	}
 	
 	
+	/**
+	 *
+	 */
 	@Override
 	public void create() {
 		sckBatch  = new SpriteBatch();
@@ -62,6 +68,9 @@ public class SarsCovKiller extends Game  {
 		setScreen(P_CARGA);
 	}
 	
+	/**
+	 *
+	 */
 	@Override
 	public void dispose() {
 		super.dispose();
@@ -77,20 +86,27 @@ public class SarsCovKiller extends Game  {
 		ASSETMANAGER.load("nanobot.png", Texture.class);
 		ASSETMANAGER.load("adn.png", Texture.class);
 		ASSETMANAGER.load("fondo/menu.png", Texture.class);
+		ASSETMANAGER.load("ui/sckLogo.png", Texture.class);
+		ASSETMANAGER.load("ui/pausa.png", Texture.class);
 		ASSETMANAGER.load("ui/mEnergia.png", Texture.class);
 		ASSETMANAGER.load("ui/bEnergia.png", Texture.class);
 		ASSETMANAGER.load("ui/botonDisparo.png", Texture.class);
 		ASSETMANAGER.load("ui/btSalir.png", Texture.class);
 		ASSETMANAGER.load("ui/btMenu.png", Texture.class);
+		ASSETMANAGER.load("ui/menuIcon60.png", Texture.class);
+		ASSETMANAGER.load("ui/pausaIcon60.png", Texture.class);
 		ASSETMANAGER.load("ui/btContinuar.png", Texture.class);
 		ASSETMANAGER.load("ui/btOpciones.png", Texture.class);
 		ASSETMANAGER.load("ui/btComoJugar.png", Texture.class);
+		ASSETMANAGER.load("ui/btJugar.png", Texture.class);
 		
 		ASSETMANAGER.load("ui/esc.png", Texture.class);
 		ASSETMANAGER.load("ui/m.png", Texture.class);
 		ASSETMANAGER.load("ui/c.png", Texture.class);
 		ASSETMANAGER.load("ui/o.png", Texture.class);
 		ASSETMANAGER.load("ui/c.png", Texture.class);
+		ASSETMANAGER.load("ui/q.png", Texture.class);
+		ASSETMANAGER.load("ui/j.png", Texture.class);
 		
 		ASSETMANAGER.load("sonido/fondo.ogg", Sound.class);
 		ASSETMANAGER.load("sonido/adn.ogg", Sound.class);

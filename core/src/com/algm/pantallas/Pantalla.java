@@ -21,7 +21,6 @@ public abstract class Pantalla implements Screen {
 		this.juego = juego;
 	}
 
-
 	@Override
 	public void resize(int width, int height) {
 		// TODO Auto-generated method stub
@@ -30,15 +29,12 @@ public abstract class Pantalla implements Screen {
 	@Override
 	public void pause() {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void resume() {
 		// TODO Auto-generated method stub
-
 	}
-
 
 	public SarsCovKiller getJuego() {
 		return juego;
