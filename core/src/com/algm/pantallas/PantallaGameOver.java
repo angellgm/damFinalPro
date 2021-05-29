@@ -11,11 +11,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.utils.Scaling;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -43,22 +46,22 @@ public class PantallaGameOver extends Pantalla {
 
 	public PantallaGameOver(SarsCovKiller juego) {
 		super(juego);
-		// juego.setScreen(juego.P_GAMEOVER);
 	}
 
 	@Override
 	public void show() {
 
-		// Cargar escena para actores
-		// camera = new PerspectiveCamera();
+		//Cargar escena para actores
+//		camera = new PerspectiveCamera();
 		viewport = new StretchViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		stageGameOver = new Stage(viewport, juego.sckBatch);
-
+		
 		fondoGameOver = new FondoGameOver();
 		fondoGameOver.setPosition(0, 0);
+		fondoGameOver.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
 		puntos = PantallaJuego.puntos;
-		puntos.setPosition(stageGameOver.getWidth() / 3f, stageGameOver.getHeight() / 1.2f);
+		puntos.setPosition(stageGameOver.getWidth() / 3.6f, stageGameOver.getHeight() / 1.2f);
 
 		stageGameOver.addActor(fondoGameOver);
 		stageGameOver.addActor(puntos);
@@ -78,16 +81,27 @@ public class PantallaGameOver extends Pantalla {
 		fondoGameOver.addListener(new InpLGameOver());
 
 	}
+	
+	@Override
+	public void resize(int width, int height) {
+		//juego.sckBatch.getProjectionMatrix().setToOrtho2D(0, 0, width, height);
+		viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		super.resize(width, height);
+	}
 
+	// Bucle principal
 	@Override
 	public void render(float delta) {
 		// Limpiar pantalla para evitar trazos fantasma de los actores
 		Gdx.gl.glClearColor(0f, 0f, 0f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
 		stageGameOver.act(Gdx.graphics.getDeltaTime()); // Actulizar
 		stageGameOver.draw(); // Dibujar
 
 	}
+	
+
 
 	@Override
 	public void hide() {
@@ -150,6 +164,7 @@ public class PantallaGameOver extends Pantalla {
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				SarsCovKiller.ASSETMANAGER.get("sonido/fondo.ogg", Sound.class).stop();
 				// PANTALLA JUEGO
+				SarsCovKiller.esContinuarPartida = true;
 				juego.setScreen(juego.P_JUEGO);
 				// System.out.println("Touch CONTINUAR");
 				return true;
@@ -203,6 +218,7 @@ public class PantallaGameOver extends Pantalla {
 			case Input.Keys.C:
 				SarsCovKiller.ASSETMANAGER.get("sonido/fondo.ogg", Sound.class).stop();
 				// PANTALLA JUEGO
+				SarsCovKiller.esContinuarPartida = true;
 				juego.setScreen(juego.P_JUEGO);
 				return true;
 

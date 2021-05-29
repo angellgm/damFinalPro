@@ -39,7 +39,9 @@ public class FondoGameOver extends Actor {
 
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
-		batch.draw(fondo, getX(), getY(), fondo.getRegionWidth(), fondo.getRegionHeight());
+		//batch.draw(fondo, getX(), getY(), fondo.getRegionWidth(), fondo.getRegionHeight());
+		batch.draw(fondo, getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(), getScaleX(),
+				getScaleY(), getRotation());
 	}
 
 	@Override

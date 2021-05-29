@@ -5,6 +5,8 @@ package com.algm.pantallas;
 
 import java.util.ArrayList;
 
+import javax.management.Query;
+
 import com.algm.actorcontrol.BarraEnergia;
 import com.algm.actorcontrol.BotonDisparo;
 import com.algm.actorcontrol.MBarraEnergia;
@@ -19,16 +21,14 @@ import com.algm.sck.SarsCovKiller;
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -39,10 +39,9 @@ import com.badlogic.gdx.utils.viewport.Viewport;
  */
 public class PantallaJuego extends Pantalla {
 
-	private State state;
 	private Viewport viewport;
 	private Stage stageJuego;
-	private FondoPantallaJuego fondo;
+	private FondoPantallaJuego fondoPJuego;
 	private NanoBot nanoBot;
 	private Virus virus;
 	private Adn adn;
@@ -58,6 +57,12 @@ public class PantallaJuego extends Pantalla {
 	private float virusSpawn;
 	private Texture btPausa, btMenu;
 	private Image imagePausa, imageMenu;
+	private State state;
+	private String jugador;
+	public Preferences preferences;
+	private int virusKill;
+	private int maxPuntos;
+	private int nivel;
 
 	public enum State {
 		PAUSE, RUN,
@@ -75,20 +80,24 @@ public class PantallaJuego extends Pantalla {
 		// Modo debug gráfico
 		// stage.setDebugAll(true);
 
-		// Cargar escena para actores
 		viewport = new StretchViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		stageJuego = new Stage(viewport, juego.sckBatch);
 		// Estado inicial RUN
 		state = State.RUN;
 
-		SarsCovKiller.ASSETMANAGER.get("sonido/fondo.ogg", Sound.class).loop();
+		// SarsCovKiller.ASSETMANAGER.get("sonido/fondo.ogg", Sound.class).loop();
 
-		fondo = new FondoPantallaJuego();
-		fondo.setPosition(0, 0);
+		fondoPJuego = new FondoPantallaJuego();
+		fondoPJuego.setPosition(0, 0);
+		fondoPJuego.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
 		puntos = new NivelPuntuacion(new BitmapFont(Gdx.files.internal("fuentes/fuenteNormal.fnt"),
 				Gdx.files.internal("fuentes/fuenteNormal.png"), false));
-		puntos.setPosition(stageJuego.getWidth() / 2.5f, stageJuego.getHeight() - (stageJuego.getHeight() / 30));
+		puntos.setPosition(stageJuego.getWidth() / 3.6f, stageJuego.getHeight() - (stageJuego.getHeight() / 30));
+		virusKill = 0;
+		nivel = 1;
+		maxPuntos = 0;
+		// Cargar datos de la mejor partida dependiendo del slot seleccionado.
 
 		listAdns = new ArrayList<Adn>();
 		listVirus = new ArrayList<Virus>();
@@ -105,7 +114,7 @@ public class PantallaJuego extends Pantalla {
 
 		cargarBarraEnergia();
 
-		stageJuego.addActor(fondo);
+		stageJuego.addActor(fondoPJuego);
 		stageJuego.addActor(puntos);
 		stageJuego.addActor(mBarraEnergia);
 		stageJuego.addActor(barraEnergia);
@@ -116,18 +125,26 @@ public class PantallaJuego extends Pantalla {
 		btTactilMenu();
 		btTactilPausa();
 
-		// TEMPORAL ELIMINAR
-		// btTactilDisparo();
-
 		// Cargar boton de disparo solo en Android o iOS
 		if ((Gdx.app.getType() == ApplicationType.Android) || (Gdx.app.getType() == ApplicationType.iOS)) {
 			btTactilDisparo();
+			btTactilMenu();
+			btTactilPausa();
 		}
+
 		// cargar listener del teclado si es Desktop
 //		if (Gdx.app.getType() == ApplicationType.Desktop) {
 //			stageJuego.setKeyboardFocus(nanoBot);
 //			nanoBot.addListener(new ImputListener());
 //		}
+
+		preferences = Gdx.app.getPreferences("sckPersist");
+		if (SarsCovKiller.esContinuarPartida) {
+			cargarDatosPersistencia();
+		}
+		puntos.setNivel(nivel);
+		puntos.setMarcador(maxPuntos);
+		puntos.setSck(virusKill);
 
 		Gdx.input.setInputProcessor(stageJuego);
 		stageJuego.setKeyboardFocus(nanoBot);
@@ -137,17 +154,19 @@ public class PantallaJuego extends Pantalla {
 
 	@Override
 	public void resize(int width, int height) {
-		// Resize en función del tamaño
+		// juego.sckBatch.getProjectionMatrix().setToOrtho2D(0, 0, width, height);
+		viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		// fondoPJuego.setSize(stageJuego.getWidth(), stageJuego.getHeight());
 		super.resize(width, height);
 	}
 
-	// bucle principal
+	// Bucle principal
 	@Override
 	public void render(float delta) {
-		// Limpiar pantalla para evitar trazos fantasma de los actores
 
 		switch (state) {
 		case RUN:
+			// Limpiar pantalla para evitar trazos fantasma de los actores
 			Gdx.gl.glClearColor(0f, 0f, 0f, 1);
 			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 			stageJuego.act(Gdx.graphics.getDeltaTime()); // Actualizar
@@ -169,14 +188,17 @@ public class PantallaJuego extends Pantalla {
 
 	@Override
 	public void hide() {
-		// Se destrulle la pantalla en el hide para que no se acumulen al cambiar de
-		// pantalla
+		// Persistir datos de la patida
+		persistirDatosPartida();
+		// Se destrulle la pantalla en el hide (evitar acumulación de pantallas)
 		stageJuego.dispose();
+		// System.out.println("hide de pJue PUNTOS:" + puntos.getMarcador());
 	}
 
 	@Override
 	public void dispose() {
-		// stage.dispose();
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
@@ -191,11 +213,29 @@ public class PantallaJuego extends Pantalla {
 		super.resume();
 	}
 
+	private void cargarDatosPersistencia() {
+		nivel = preferences.getInteger("Nivel ".concat(SarsCovKiller.slotGuardado), 1);
+		maxPuntos = preferences.getInteger("MaxPuntos ".concat(SarsCovKiller.slotGuardado), 0);
+		virusKill = preferences.getInteger("VirusKill ".concat(SarsCovKiller.slotGuardado), 0);
+
+	}
+
+	private void persistirDatosPartida() {
+		//ANULADO
+//		if ((preferences.getInteger("MaxPuntos ".concat(SarsCovKiller.slotGuardado)) > puntos.getMarcador())) {
+//			System.out.println("menos puntos que lo guardado!");
+//		}
+		preferences.putInteger("Nivel ".concat(SarsCovKiller.slotGuardado), puntos.getNivel());
+		preferences.putInteger("MaxPuntos ".concat(SarsCovKiller.slotGuardado), puntos.getMarcador());
+		preferences.putInteger("VirusKill ".concat(SarsCovKiller.slotGuardado), puntos.getSck());
+		preferences.flush();
+	}
+
 	private void cargarBarraEnergia() {
 		mBarraEnergia = new MBarraEnergia();
-		mBarraEnergia.setPosition(15, stageJuego.getHeight() - mBarraEnergia.getHeight() - 7);
+		mBarraEnergia.setPosition(5, stageJuego.getHeight() - mBarraEnergia.getHeight() - 7);
 		barraEnergia = new BarraEnergia(nanoBot);
-		barraEnergia.setPosition(22 + 15, stageJuego.getHeight() - mBarraEnergia.getHeight() - 7);
+		barraEnergia.setPosition(87, stageJuego.getHeight() - mBarraEnergia.getHeight() - 7);
 	}
 
 	private void btTactilDisparo() {
@@ -245,7 +285,7 @@ public class PantallaJuego extends Pantalla {
 			virus = listVirus.get(j);
 			// Si hay colision entre Virus - Nanobot. Se elimina alien, energia y puntuación
 			if (virus.getRectangle().overlaps(nanoBot.getRectangle()) && virus.getX() != stageJuego.getWidth()) {
-
+				virusKill++;
 				if (nanoBot.getEnergiaRango() <= 0.25) {
 					nanoBot.setEnergia(0);
 					SarsCovKiller.ASSETMANAGER.get("sonido/botKill.ogg", Sound.class).play();
@@ -254,6 +294,7 @@ public class PantallaJuego extends Pantalla {
 					if (puntos.getMarcador() > 50) {
 						puntos.setMarcador(puntos.getMarcador() - 50);
 						puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
+						puntos.setSck(virusKill);
 					}
 					// PANTALLA GAME OVER
 					juego.setScreen(juego.P_GAMEOVER);
@@ -263,6 +304,7 @@ public class PantallaJuego extends Pantalla {
 					if (puntos.getMarcador() > 50) {
 						puntos.setMarcador(puntos.getMarcador() - 50);
 						puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
+						puntos.setSck(virusKill);
 					}
 
 					SarsCovKiller.ASSETMANAGER.get("sonido/impactoBot.ogg", Sound.class).play();
@@ -273,12 +315,12 @@ public class PantallaJuego extends Pantalla {
 
 			} else
 				for (int i = 0; i < listAdns.size(); i++) {
-					// Si hay colision entre Virus - Adn. Se elimina alien, adn e incrementa
-					// marcador
+					// Colision entre Virus - Adn. Se elimina alien, adn y marcador++
 					if (listAdns.get(i).getRectangle().overlaps(virus.getRectangle())) {
+						virusKill++;
 						puntos.setMarcador(puntos.getMarcador() + 100);
 						puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
-
+						puntos.setSck(virusKill);
 						SarsCovKiller.ASSETMANAGER.get("sonido/impactoVirus.ogg", Sound.class).play();
 						adn = listAdns.get(i);
 						listVirus.remove(j);
@@ -337,7 +379,12 @@ public class PantallaJuego extends Pantalla {
 					pausa.setVisible(false);
 					setGameState(state.RUN);
 				}
+				return true;
 
+			case Input.Keys.ESCAPE: // 32
+				// PANTALLA MENU
+				SarsCovKiller.ASSETMANAGER.get("sonido/fondo.ogg", Sound.class).stop();
+				juego.setScreen(juego.P_MENU);
 				return true;
 
 			default:
@@ -393,10 +440,6 @@ public class PantallaJuego extends Pantalla {
 					return true;
 				}
 
-			case Input.Keys.ESCAPE: // 32
-				// PANTALLA GAME OVER
-				juego.setScreen(juego.P_MENU);
-
 			case Input.Keys.SPACE: // 62
 				// Genera disparos al soltar la tecla
 				Adn adn = new Adn();
@@ -449,6 +492,7 @@ public class PantallaJuego extends Pantalla {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				// PANTALLA MENU
+				SarsCovKiller.ASSETMANAGER.get("sonido/fondo.ogg", Sound.class).stop();
 				juego.setScreen(juego.P_MENU);
 				return true;
 			}
@@ -550,11 +594,11 @@ public class PantallaJuego extends Pantalla {
 	}
 
 	public FondoPantallaJuego getFondo() {
-		return fondo;
+		return fondoPJuego;
 	}
 
 	public void setFondo(FondoPantallaJuego fondo) {
-		this.fondo = fondo;
+		this.fondoPJuego = fondo;
 	}
 
 	public NanoBot getNanoBot() {
@@ -661,6 +705,19 @@ public class PantallaJuego extends Pantalla {
 		this.state = s;
 	}
 
+	/**
+	 * @return the jugador
+	 */
+	public String getJugador() {
+		return jugador;
+	}
+
+	/**
+	 * @param jugador the jugador to set
+	 */
+	public void setJugador(String jugador) {
+		this.jugador = jugador;
+	}
 }
 
 /**

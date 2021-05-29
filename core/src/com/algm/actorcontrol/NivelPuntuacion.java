@@ -6,13 +6,13 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class NivelPuntuacion extends Actor {
 	private int marcador;
-	private int marcadorInicial;
+	private int sck;
 	private int nivel;
 	private BitmapFont fuente;
 
 	public NivelPuntuacion(BitmapFont bitmapFont) {
 		super();
-		this.marcadorInicial = 0;
+		this.sck = 0;
 		this.nivel=1;
 		this.fuente = bitmapFont;
 		//bitmapFont.setColor(255,255,0,100); 		
@@ -22,8 +22,9 @@ public class NivelPuntuacion extends Actor {
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
 		super.draw(batch, parentAlpha);
-		fuente.draw(batch,"NIVEL: "+Integer.toString(nivel)+"      "
-				+ "PUNTOS: "+Integer.toString(marcador), getX(), getY());
+		fuente.draw(batch,"NIVEL: "+Integer.toString(nivel)+"    "
+				+ "PUNTOS: "+Integer.toString(marcador)+"    "
+				+ "SCK: "+Integer.toString(sck), getX(), getY());
 		
 	}
 
@@ -36,12 +37,20 @@ public class NivelPuntuacion extends Actor {
 		this.marcador = marcador;
 	}
 
-	public int getMarcadorInicial() {
-		return marcadorInicial;
+
+
+	/**
+	 * @return the sck
+	 */
+	public int getSck() {
+		return sck;
 	}
 
-	public void setMarcadorInicial(int marcadorInicial) {
-		this.marcadorInicial = marcadorInicial;
+	/**
+	 * @param sck the sck to set
+	 */
+	public void setSck(int sck) {
+		this.sck = sck;
 	}
 
 	public int getNivel() {
