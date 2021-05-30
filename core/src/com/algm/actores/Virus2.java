@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
-public class Virus extends Actor {
+public class Virus2 extends Actor {
 
 	private int velX, velY;
 	private Texture texture;
@@ -23,12 +23,12 @@ public class Virus extends Actor {
 	private PantallaJuego pantallaJuego;
 	private float velAnimacion;
 
-	public Virus() {
-		velX = -500;
-		velY = -100;
+	public Virus2() {
+		velX = -700;
+		velY = 100;
 		velAnimacion = 0.1f;
 
-		texture = new Texture(Gdx.files.internal("anivirus.png"));
+		texture = new Texture(Gdx.files.internal("anivirus2.png"));
 
 		// Crear array temporal para dividir textura (10 subtexturas)
 		TextureRegion[][] temporalRegions = TextureRegion.split(texture, texture.getWidth() / 10, texture.getHeight());
@@ -70,7 +70,7 @@ public class Virus extends Actor {
 		tiempo += Gdx.graphics.getDeltaTime();
 		virus = (TextureRegion) animacion.getKeyFrame(tiempo, true);
 		// Se mueve principalmente en el eje X solo unos grados en Y
-		moveBy(velX * delta, velY * delta);
+		moveBy(velX * delta, velY* delta);
 
 		rectangle.x = getX();
 		rectangle.y = getY();

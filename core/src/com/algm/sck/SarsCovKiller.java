@@ -86,9 +86,20 @@ public class SarsCovKiller extends Game {
 
 	private void assetsLoad() {
 		ASSETMANAGER.load("fondo/sckCarga.png", Texture.class);
-		ASSETMANAGER.load("virus.png", Texture.class);
+		ASSETMANAGER.load("anivirus.png", Texture.class);
+		ASSETMANAGER.load("anivirus2.png", Texture.class);
+		ASSETMANAGER.load("anivirus3.png", Texture.class);
+		ASSETMANAGER.load("anivirus4.png", Texture.class);
+		ASSETMANAGER.load("anivirus5.png", Texture.class);
+		ASSETMANAGER.load("anivirus6.png", Texture.class);
+		ASSETMANAGER.load("anivirus7.png", Texture.class);
+		ASSETMANAGER.load("anivirus8.png", Texture.class);
 		ASSETMANAGER.load("nanobot.png", Texture.class);
 		ASSETMANAGER.load("adn.png", Texture.class);
+		ASSETMANAGER.load("bonusAdn.png", Texture.class);
+		ASSETMANAGER.load("bonusEnergia.png", Texture.class);
+		ASSETMANAGER.load("bonusPuntos.png", Texture.class);
+		ASSETMANAGER.load("bonusVelocidad.png", Texture.class);
 		ASSETMANAGER.load("fondo/menu.png", Texture.class);
 		ASSETMANAGER.load("ui/sckLogo.png", Texture.class);
 		ASSETMANAGER.load("ui/pausa.png", Texture.class);

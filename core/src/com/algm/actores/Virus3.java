@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
-public class Virus extends Actor {
+public class Virus3 extends Actor {
 
 	private int velX, velY;
 	private Texture texture;
@@ -23,12 +23,12 @@ public class Virus extends Actor {
 	private PantallaJuego pantallaJuego;
 	private float velAnimacion;
 
-	public Virus() {
-		velX = -500;
+	public Virus3() {
+		velX = -400;
 		velY = -100;
-		velAnimacion = 0.1f;
+		velAnimacion = 0.15f;
 
-		texture = new Texture(Gdx.files.internal("anivirus.png"));
+		texture = new Texture(Gdx.files.internal("anivirus3.png"));
 
 		// Crear array temporal para dividir textura (10 subtexturas)
 		TextureRegion[][] temporalRegions = TextureRegion.split(texture, texture.getWidth() / 10, texture.getHeight());
@@ -58,8 +58,8 @@ public class Virus extends Actor {
 		// Color color = getColor();
 		// batch.setColor(color.r, color.g, color.b, color.a * parentAlpha);
 		batch.draw(virus, getX(), getY(), virus.getRegionWidth(), virus.getRegionHeight());
-		//System.out.println("Rectangle VIRUS x: "+rectangle.getX()+" y: "+rectangle.getY()+ " "+rectangle.getHeight()+" "+rectangle.getWidth());
-
+		// System.out.println("Rectangle VIRUS x: "+rectangle.getX()+" y:
+		// "+rectangle.getY()+ " "+rectangle.getHeight()+" "+rectangle.getWidth());
 
 	}
 

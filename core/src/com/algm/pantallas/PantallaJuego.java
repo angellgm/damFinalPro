@@ -14,8 +14,19 @@ import com.algm.actorcontrol.NivelPuntuacion;
 import com.algm.actorcontrol.Pad;
 import com.algm.actorcontrol.Pausa;
 import com.algm.actores.Adn;
+import com.algm.actores.BonusAdn;
+import com.algm.actores.BonusEnergia;
+import com.algm.actores.BonusPuntos;
+import com.algm.actores.BonusVelocidad;
 import com.algm.actores.NanoBot;
 import com.algm.actores.Virus;
+import com.algm.actores.Virus2;
+import com.algm.actores.Virus3;
+import com.algm.actores.Virus4;
+import com.algm.actores.Virus5;
+import com.algm.actores.Virus6;
+import com.algm.actores.Virus7;
+import com.algm.actores.Virus8;
 import com.algm.actorpantalla.FondoPantallaJuego;
 import com.algm.sck.SarsCovKiller;
 import com.badlogic.gdx.Application.ApplicationType;
@@ -26,6 +37,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -44,13 +56,31 @@ public class PantallaJuego extends Pantalla {
 	private FondoPantallaJuego fondoPJuego;
 	private NanoBot nanoBot;
 	private Virus virus;
+	private Virus2 virus2;
+	private Virus3 virus3;
+	private Virus4 virus4;
+	private Virus5 virus5;
+	private Virus6 virus6;
+	private Virus7 virus7;
+	private Virus8 virus8;
 	private Adn adn;
+	private BonusAdn bonusAdn;
+	private BonusEnergia bonusEnergia;
+	private BonusPuntos bonusPuntos;
+	private BonusVelocidad bonusVelocidad;
 	private Pad control;
 	private Pausa pausa;
 	private MBarraEnergia mBarraEnergia;
 	private BarraEnergia barraEnergia;
 	private BotonDisparo btDisparo;
-	private ArrayList<Virus> listVirus;
+	private ArrayList<Actor> listVirus;
+//	private ArrayList<Virus2> listVirus2;
+//	private ArrayList<Virus3> listVirus3;
+//	private ArrayList<Virus4> listVirus4;
+//	private ArrayList<Virus5> listVirus5;
+//	private ArrayList<Virus6> listVirus6;
+//	private ArrayList<Virus7> listVirus7;
+//	private ArrayList<Virus8> listVirus8;
 	private ArrayList<Adn> listAdns;
 	static NivelPuntuacion puntos;
 	private float velocidadNanoBot;
@@ -63,6 +93,8 @@ public class PantallaJuego extends Pantalla {
 	private int virusKill;
 	private int maxPuntos;
 	private int nivel;
+	private double spawnIncre;
+	private int maxSpawn;
 
 	public enum State {
 		PAUSE, RUN,
@@ -70,22 +102,26 @@ public class PantallaJuego extends Pantalla {
 
 	public PantallaJuego(SarsCovKiller juego) {
 		super(juego);
-		virusSpawn = 1;
-		virusSpawn += (float) Math.random();
 		velocidadNanoBot = 500;
+		// Rango ideal entre 0.975 (Facil) y 0.965 (Dificil)
+		spawnIncre = 1;
+		// "Maximos" enemigos en pantalla
+		maxSpawn = 6;
 	}
 
 	@Override
 	public void show() {
-		// Modo debug gráfico
-		// stage.setDebugAll(true);
 
 		viewport = new StretchViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		stageJuego = new Stage(viewport, juego.sckBatch);
+
+		// Modo debug gráfico
+		//stageJuego.setDebugAll(true);
+
 		// Estado inicial RUN
 		state = State.RUN;
 
-		// SarsCovKiller.ASSETMANAGER.get("sonido/fondo.ogg", Sound.class).loop();
+		SarsCovKiller.ASSETMANAGER.get("sonido/fondo.ogg", Sound.class).loop();
 
 		fondoPJuego = new FondoPantallaJuego();
 		fondoPJuego.setPosition(0, 0);
@@ -97,13 +133,23 @@ public class PantallaJuego extends Pantalla {
 		virusKill = 0;
 		nivel = 1;
 		maxPuntos = 0;
-		// Cargar datos de la mejor partida dependiendo del slot seleccionado.
 
 		listAdns = new ArrayList<Adn>();
-		listVirus = new ArrayList<Virus>();
+		listVirus = new ArrayList<Actor>();
 
 		adn = new Adn();
 		virus = new Virus();
+		virus2 = new Virus2();
+		virus3 = new Virus3();
+		virus4 = new Virus4();
+		virus5 = new Virus5();
+		virus6 = new Virus6();
+		virus7 = new Virus7();
+		virus8 = new Virus8();
+		bonusAdn = new BonusAdn();
+		bonusEnergia = new BonusEnergia();
+		bonusPuntos = new BonusPuntos();
+		bonusVelocidad = new BonusVelocidad();
 
 		nanoBot = new NanoBot();
 		nanoBot.setPosition(stageJuego.getWidth() / 14, stageJuego.getHeight() / 2);
@@ -120,32 +166,36 @@ public class PantallaJuego extends Pantalla {
 		stageJuego.addActor(barraEnergia);
 		stageJuego.addActor(nanoBot);
 		stageJuego.addActor(virus);
+		stageJuego.addActor(virus2);
+		stageJuego.addActor(virus3);
+		stageJuego.addActor(virus4);
+		stageJuego.addActor(virus5);
+		stageJuego.addActor(virus6);
+		stageJuego.addActor(virus7);
+		stageJuego.addActor(virus8);
 		stageJuego.addActor(control);
 		pausa();
-		btTactilMenu();
-		btTactilPausa();
 
-		// Cargar boton de disparo solo en Android o iOS
+		// Cargar boton de disparo, pausa y menu solo en Android o iOS
 		if ((Gdx.app.getType() == ApplicationType.Android) || (Gdx.app.getType() == ApplicationType.iOS)) {
 			btTactilDisparo();
 			btTactilMenu();
 			btTactilPausa();
 		}
-
+		// Cargar datos del slot seleccionado si no es partida nueva.
+		preferences = Gdx.app.getPreferences("sckPersist");
+		if (SarsCovKiller.esContinuarPartida) {
+			cargarDatosPersistencia();
+		}
+		// Settear datos de partida al hud
+		puntos.setNivel(nivel);
+		puntos.setMarcador(maxPuntos);
+		puntos.setSck(virusKill);
 		// cargar listener del teclado si es Desktop
 //		if (Gdx.app.getType() == ApplicationType.Desktop) {
 //			stageJuego.setKeyboardFocus(nanoBot);
 //			nanoBot.addListener(new ImputListener());
 //		}
-
-		preferences = Gdx.app.getPreferences("sckPersist");
-		if (SarsCovKiller.esContinuarPartida) {
-			cargarDatosPersistencia();
-		}
-		puntos.setNivel(nivel);
-		puntos.setMarcador(maxPuntos);
-		puntos.setSck(virusKill);
-
 		Gdx.input.setInputProcessor(stageJuego);
 		stageJuego.setKeyboardFocus(nanoBot);
 		nanoBot.addListener(new ImputListener());
@@ -170,10 +220,15 @@ public class PantallaJuego extends Pantalla {
 			Gdx.gl.glClearColor(0f, 0f, 0f, 1);
 			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 			stageJuego.act(Gdx.graphics.getDeltaTime()); // Actualizar
-			virusVerdeSpawn(delta);
+			eliminarActoresNoVisibles();
+
+			// System.out.println("LIST VIRUS " + listVirus.size());
+			if (listVirus.size() < maxSpawn) {
+				virusVerdeAzulRojoSpawn(delta);
+			}
 			controlPad(control.getKnobPercentX(), control.getKnobPercentY());
 			adnSpawnClick();
-			eliminarActoresNoVisibles();
+
 			accionColisionesListas();
 			stageJuego.draw(); // Dibujar
 			break;
@@ -221,7 +276,7 @@ public class PantallaJuego extends Pantalla {
 	}
 
 	private void persistirDatosPartida() {
-		//ANULADO
+		// ANULADO
 //		if ((preferences.getInteger("MaxPuntos ".concat(SarsCovKiller.slotGuardado)) > puntos.getMarcador())) {
 //			System.out.println("menos puntos que lo guardado!");
 //		}
@@ -258,79 +313,62 @@ public class PantallaJuego extends Pantalla {
 	private void eliminarActoresNoVisibles() {
 		// Eliminar actor adn al salir de la pantalla
 		for (int i = 0; i < listAdns.size(); i++) {
-			if (listAdns.get(i).getX() > stageJuego.getWidth()) {
+			if (listAdns.get(i).getX() > Gdx.graphics.getWidth()) {
 				listAdns.remove(i);
 			}
 		}
 		// Eliminar actor virus al salir de la pantalla
 		for (int j = 0; j < listVirus.size(); j++) {
-			if (listVirus.get(j).getX() < 0 || listVirus.get(j).getY() < 0
-					|| listVirus.get(j).getY() > stageJuego.getHeight()) {
+			if (listVirus.get(j).getX() <= 0 || listVirus.get(j).getX() >= Gdx.graphics.getWidth()
+					|| listVirus.get(j).getY() <= 0 || listVirus.get(j).getY() >= Gdx.graphics.getHeight()) {
+				// System.out.println(listVirus.get(j).getClass().getSimpleName());
 				listVirus.remove(j);
 			}
 		}
 	}
 
-	/**
-	 * @category Comprueba las colisiones entre actores Virus-Nanobot y Virus-Adn y
-	 *           aplica remove
-	 */
-	private void accionColisionesListas() {
-		virus = new Virus();
-		adn = new Adn();
-		float IMPACTO = 0.25f;
-		float IMPACTOLETAL = 1f;
+	
+	private void adnVirusColision(int j, int i) {
+		virusKill++;
+		puntos.setMarcador(puntos.getMarcador() + 100);
+		puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
+		puntos.setSck(virusKill);
+		SarsCovKiller.ASSETMANAGER.get("sonido/impactoVirus.ogg", Sound.class).play();
+		adn = listAdns.get(i);
+		listVirus.remove(j);
+		listAdns.remove(i);
+		adn.remove();
+		virus.remove();
+	}
 
-		for (int j = 0; j < listVirus.size(); j++) {
-			virus = listVirus.get(j);
-			// Si hay colision entre Virus - Nanobot. Se elimina alien, energia y puntuación
-			if (virus.getRectangle().overlaps(nanoBot.getRectangle()) && virus.getX() != stageJuego.getWidth()) {
-				virusKill++;
-				if (nanoBot.getEnergiaRango() <= 0.25) {
-					nanoBot.setEnergia(0);
-					SarsCovKiller.ASSETMANAGER.get("sonido/botKill.ogg", Sound.class).play();
-					SarsCovKiller.ASSETMANAGER.get("sonido/GameOver1.ogg", Sound.class).play();
+	private void virusBotColision(float IMPACTO, int j) {
+		virusKill++;
+		if (nanoBot.getEnergiaRango() <= 0.25) {
+			nanoBot.setEnergia(0);
+			SarsCovKiller.ASSETMANAGER.get("sonido/botKill.ogg", Sound.class).play();
+			SarsCovKiller.ASSETMANAGER.get("sonido/GameOver1.ogg", Sound.class).play();
 
-					if (puntos.getMarcador() > 50) {
-						puntos.setMarcador(puntos.getMarcador() - 50);
-						puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
-						puntos.setSck(virusKill);
-					}
-					// PANTALLA GAME OVER
-					juego.setScreen(juego.P_GAMEOVER);
+			if (puntos.getMarcador() > 50) {
+				puntos.setMarcador(puntos.getMarcador() - 50);
+				puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
+				puntos.setSck(virusKill);
+			}
+			// PANTALLA GAME OVER
+			juego.setScreen(juego.P_GAMEOVER);
 
-				} else {
-					nanoBot.setEnergia(nanoBot.getEnergiaRango() - IMPACTO);
-					if (puntos.getMarcador() > 50) {
-						puntos.setMarcador(puntos.getMarcador() - 50);
-						puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
-						puntos.setSck(virusKill);
-					}
+		} else {
+			nanoBot.setEnergia(nanoBot.getEnergiaRango() - IMPACTO);
+			if (puntos.getMarcador() > 50) {
+				puntos.setMarcador(puntos.getMarcador() - 50);
+				puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
+				puntos.setSck(virusKill);
+			}
 
-					SarsCovKiller.ASSETMANAGER.get("sonido/impactoBot.ogg", Sound.class).play();
+			SarsCovKiller.ASSETMANAGER.get("sonido/impactoBot.ogg", Sound.class).play();
 
-				}
-				listVirus.remove(j);
-				virus.remove();
-
-			} else
-				for (int i = 0; i < listAdns.size(); i++) {
-					// Colision entre Virus - Adn. Se elimina alien, adn y marcador++
-					if (listAdns.get(i).getRectangle().overlaps(virus.getRectangle())) {
-						virusKill++;
-						puntos.setMarcador(puntos.getMarcador() + 100);
-						puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
-						puntos.setSck(virusKill);
-						SarsCovKiller.ASSETMANAGER.get("sonido/impactoVirus.ogg", Sound.class).play();
-						adn = listAdns.get(i);
-						listVirus.remove(j);
-						listAdns.remove(i);
-						adn.remove();
-						virus.remove();
-					}
-				}
 		}
-
+		listVirus.remove(j);
+		virus.remove();
 	}
 
 	public final class ImputListener extends InputListener {
@@ -373,11 +411,11 @@ public class PantallaJuego extends Pantalla {
 				return true;
 
 			case Input.Keys.P:
-				if (getState() == state.RUN) {
-					setGameState(state.PAUSE);
+				if (getState() == State.RUN) {
+					setGameState(State.PAUSE);
 				} else {
 					pausa.setVisible(false);
-					setGameState(state.RUN);
+					setGameState(State.RUN);
 				}
 				return true;
 
@@ -508,11 +546,11 @@ public class PantallaJuego extends Pantalla {
 		imagePausa.addListener(new InputListener() {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-				if (getState() == state.RUN) {
-					setGameState(state.PAUSE);
+				if (getState() == State.RUN) {
+					setGameState(State.PAUSE);
 				} else {
 					pausa.setVisible(false);
-					setGameState(state.RUN);
+					setGameState(State.RUN);
 				}
 				return true;
 			}
@@ -527,13 +565,12 @@ public class PantallaJuego extends Pantalla {
 	private void adnSpawnClick() {
 		if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
 			Adn adn = new Adn();
-			adn.setPosition(nanoBot.getX() + (nanoBot.getWidth() - nanoBot.getWidth() / 4),
+			adn.setPosition(nanoBot.getX() + (nanoBot.getWidth() - nanoBot.getWidth() / 6),
 					nanoBot.getY() + (nanoBot.getHeight() / 3));
 			stageJuego.addActor(adn);
 			SarsCovKiller.ASSETMANAGER.get("sonido/adn.ogg", Sound.class).play();
 			// Generar adn resta energía
-			nanoBot.setEnergia(nanoBot.getEnergiaRango() - 0.003f);
-
+			nanoBot.setEnergia(nanoBot.getEnergiaRango() - 0.001f);
 			// Añadir a lista de adn en pantalla
 			listAdns.add(adn);
 		}
@@ -550,11 +587,11 @@ public class PantallaJuego extends Pantalla {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-					if (getState() == state.RUN) {
-						setGameState(state.PAUSE);
+					if (getState() == State.RUN) {
+						setGameState(State.PAUSE);
 					} else {
 						pausa.setVisible(false);
-						setGameState(state.RUN);
+						setGameState(State.RUN);
 					}
 				}
 
@@ -565,25 +602,450 @@ public class PantallaJuego extends Pantalla {
 
 	/**
 	 * @param delta
-	 * @category Genera enemigos "VirusVerdes". Spawn determinado por virusSpawn (la
-	 *           suma de delta y número aleatorio (Math.random())). Cuando
-	 *           virusSpawn es superior a 1 hay un nuevo spawn.
+	 * @category Genera enemigos "VirusVerde/Azul/Rojo/Azul-Rojo " Spawn determinado
+	 *           por virusSpawn (la suma de delta y número aleatorio
+	 *           (Math.random())). Cuando virusSpawn es superior a 1 hay un nuevo
+	 *           spawn.
 	 * @see deltaTime: Tiempo que tarda en procesar y renderizar un frame del
 	 *      videojuego.
 	 */
-	private void virusVerdeSpawn(float delta) {
+	private void virusVerdeAzulRojoSpawn(float delta) {
+		// si delta es inferior (problemas renderizado) se induce menos SPAWN
 		virusSpawn = delta + (float) Math.random();
-		if (virusSpawn > 1) {
+
+		if (virusSpawn > spawnIncre) {
+			// System.out.println("virusSpawn " + virusSpawn + ">SpawnI " + spawnIncre);
 			Virus virus = new Virus();
 			virus.setPosition(stageJuego.getWidth(), stageJuego.getHeight() * (float) Math.random());
 			stageJuego.addActor(virus);
-			// Añadir a lista de adn en pantalla
+			// Añadir a lista de virus en pantalla
 			listVirus.add(virus);
-			// Hay nuevo spawn
-			virusSpawn = virusSpawn + (float) Math.random();
+		}
+		if (virusSpawn > spawnIncre + 0.004) {
+			Virus2 virus2 = new Virus2();
+			virus2.setPosition(stageJuego.getWidth(), stageJuego.getHeight() * (float) Math.random());
+			stageJuego.addActor(virus2);
+			// Añadir a lista de virus en pantalla
+			listVirus.add(virus2);
+		}
+		if (virusSpawn > spawnIncre + 0.006) {
+			Virus3 virus3 = new Virus3();
+			virus3.setPosition(stageJuego.getWidth(), stageJuego.getHeight() * (float) Math.random());
+			stageJuego.addActor(virus3);
+			// Añadir a lista de virus en pantalla
+			listVirus.add(virus3);
+		}
+		if (virusSpawn > spawnIncre + 0.008) {
+			Virus4 virus4 = new Virus4();
+			virus4.setPosition(stageJuego.getWidth(), stageJuego.getHeight() * (float) Math.random());
+			stageJuego.addActor(virus4);
+			// Añadir a lista de virus en pantalla
+			listVirus.add(virus4);
+		}
+		if (virusSpawn > spawnIncre + 0.0010) {
+			Virus5 virus5 = new Virus5();
+			virus5.setPosition(stageJuego.getWidth(), stageJuego.getHeight() * (float) Math.random());
+			stageJuego.addActor(virus5);
+			// Añadir a lista de virus en pantalla
+			listVirus.add(virus5);
+		}
+		if (virusSpawn > spawnIncre + 0.012) {
+			Virus6 virus6 = new Virus6();
+			virus6.setPosition(stageJuego.getWidth(), stageJuego.getHeight() * (float) Math.random());
+			stageJuego.addActor(virus6);
+			// Añadir a lista de virus en pantalla
+			listVirus.add(virus6);
+		}
+		if (virusSpawn > spawnIncre + 0.014) {
+			Virus7 virus7 = new Virus7();
+			virus7.setPosition(stageJuego.getWidth(), stageJuego.getHeight() * (float) Math.random());
+			stageJuego.addActor(virus7);
+			// Añadir a lista de virus en pantalla
+			listVirus.add(virus7);
+		}
+		if (virusSpawn > spawnIncre + 0.016) {
+			Virus8 virus8 = new Virus8();
+			virus8.setPosition(stageJuego.getWidth(), stageJuego.getHeight() * (float) Math.random());
+			stageJuego.addActor(virus8);
+			// Añadir a lista de virus en pantalla
+			listVirus.add(virus8);
+		}
+
+	}
+
+	/**
+	 * @category Comprueba las colisiones entre actores Virus-Nanobot y Virus-Adn y
+	 *           aplica remove
+	 */
+	private void accionColisionesListas() {
+		// Se que es una cutrada..... pero no doy con la clave para que funcionen
+		// algunos métodos necesarios (getRectangle()) mediante la herencia con Actor.
+		adn = new Adn();
+		// Hay virus que son letales xD
+		float IMPACTO = 0.25f;
+		float IMPACTOLETAL = 1f;
+		
+		// Si hay colision entre Virus - Nanobot. Se elimina alien, energia y puntuación
+		// Si hay colision entre Virus - Adn. Se elimina alien, adn y marcador++
+		for (int j = 0; j < listVirus.size(); j++) {
+			if (listVirus.get(j).getClass().getSimpleName().equals("Virus")) {
+				Virus virus = new Virus();
+				virus = (Virus) listVirus.get(j);
+				if (virus.getRectangle().overlaps(nanoBot.getRectangle()) && virus.getX() != stageJuego.getWidth()) {
+					virusKill++;
+					if (nanoBot.getEnergiaRango() <= 0.25) {
+						nanoBot.setEnergia(0);
+						SarsCovKiller.ASSETMANAGER.get("sonido/botKill.ogg", Sound.class).play();
+						SarsCovKiller.ASSETMANAGER.get("sonido/GameOver1.ogg", Sound.class).play();
+						if (puntos.getMarcador() > 50) {
+							puntos.setMarcador(puntos.getMarcador() - 50);
+							puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
+							puntos.setSck(virusKill);
+						}
+						// PANTALLA GAME OVER
+						juego.setScreen(juego.P_GAMEOVER);
+
+					} else {
+						nanoBot.setEnergia(nanoBot.getEnergiaRango() - IMPACTO);
+						if (puntos.getMarcador() > 50) {
+							puntos.setMarcador(puntos.getMarcador() - 50);
+							puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
+							puntos.setSck(virusKill);
+						}
+						SarsCovKiller.ASSETMANAGER.get("sonido/impactoBot.ogg", Sound.class).play();
+					}
+					listVirus.remove(j);
+					virus.remove();
+				} else
+					for (int i = 0; i < listAdns.size(); i++) {
+						// Colision entre Virus - Adn. Se elimina alien, adn y marcador++
+						if (listAdns.get(i).getRectangle().overlaps(virus.getRectangle())) {
+							virusKill++;
+							puntos.setMarcador(puntos.getMarcador() + 100);
+							puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
+							puntos.setSck(virusKill);
+							SarsCovKiller.ASSETMANAGER.get("sonido/impactoVirus.ogg", Sound.class).play();
+							adn = listAdns.get(i);
+							listVirus.remove(j);
+							listAdns.remove(i);
+							adn.remove();
+							virus.remove();
+						}
+					}
+			} else if (listVirus.get(j).getClass().getSimpleName().equals("Virus2")) {
+				Virus2 virus = new Virus2();
+				virus = (Virus2) listVirus.get(j);
+				if (virus.getRectangle().overlaps(nanoBot.getRectangle()) && virus.getX() != stageJuego.getWidth()) {
+					virusKill++;					
+					if (nanoBot.getEnergiaRango() <= 0.25) {
+						nanoBot.setEnergia(0);
+						SarsCovKiller.ASSETMANAGER.get("sonido/botKill.ogg", Sound.class).play();
+						SarsCovKiller.ASSETMANAGER.get("sonido/GameOver1.ogg", Sound.class).play();
+						if (puntos.getMarcador() > 50) {
+							puntos.setMarcador(puntos.getMarcador() - 50);
+							puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
+							puntos.setSck(virusKill);
+						}
+						// PANTALLA GAME OVER
+						juego.setScreen(juego.P_GAMEOVER);
+
+					} else {
+						nanoBot.setEnergia(nanoBot.getEnergiaRango() - IMPACTO);
+						if (puntos.getMarcador() > 50) {
+							puntos.setMarcador(puntos.getMarcador() - 50);
+							puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
+							puntos.setSck(virusKill);
+						}
+						SarsCovKiller.ASSETMANAGER.get("sonido/impactoBot.ogg", Sound.class).play();
+					}
+					listVirus.remove(j);
+					virus.remove();
+				} else
+					for (int i = 0; i < listAdns.size(); i++) {
+						// Colision entre Virus - Adn. Se elimina alien, adn y marcador++
+						if (listAdns.get(i).getRectangle().overlaps(virus.getRectangle())) {
+							virusKill++;
+							puntos.setMarcador(puntos.getMarcador() + 100);
+							puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
+							puntos.setSck(virusKill);
+							SarsCovKiller.ASSETMANAGER.get("sonido/impactoVirus.ogg", Sound.class).play();
+							adn = listAdns.get(i);
+							listVirus.remove(j);
+							listAdns.remove(i);
+							adn.remove();
+							virus.remove();
+						}
+					}
+			} else if (listVirus.get(j).getClass().getSimpleName().equals("Virus3")) {
+				Virus3 virus = new Virus3();
+				virus = (Virus3) listVirus.get(j);
+				if (virus.getRectangle().overlaps(nanoBot.getRectangle()) && virus.getX() != stageJuego.getWidth()) {
+					virusKill++;
+					if (nanoBot.getEnergiaRango() <= 0.25) {
+						nanoBot.setEnergia(0);
+						SarsCovKiller.ASSETMANAGER.get("sonido/botKill.ogg", Sound.class).play();
+						SarsCovKiller.ASSETMANAGER.get("sonido/GameOver1.ogg", Sound.class).play();
+						if (puntos.getMarcador() > 50) {
+							puntos.setMarcador(puntos.getMarcador() - 50);
+							puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
+							puntos.setSck(virusKill);
+						}
+						// PANTALLA GAME OVER
+						juego.setScreen(juego.P_GAMEOVER);
+
+					} else {
+						nanoBot.setEnergia(nanoBot.getEnergiaRango() - IMPACTO);
+						if (puntos.getMarcador() > 50) {
+							puntos.setMarcador(puntos.getMarcador() - 50);
+							puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
+							puntos.setSck(virusKill);
+						}
+						SarsCovKiller.ASSETMANAGER.get("sonido/impactoBot.ogg", Sound.class).play();
+					}
+					listVirus.remove(j);
+					virus.remove();
+				} else
+					for (int i = 0; i < listAdns.size(); i++) {
+						// Colision entre Virus - Adn. Se elimina alien, adn y marcador++
+						if (listAdns.get(i).getRectangle().overlaps(virus.getRectangle())) {
+							virusKill++;
+							puntos.setMarcador(puntos.getMarcador() + 100);
+							puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
+							puntos.setSck(virusKill);
+							SarsCovKiller.ASSETMANAGER.get("sonido/impactoVirus.ogg", Sound.class).play();
+							adn = listAdns.get(i);
+							listVirus.remove(j);
+							listAdns.remove(i);
+							adn.remove();
+							virus.remove();
+						}
+					}
+			} else if (listVirus.get(j).getClass().getSimpleName().equals("Virus4")) {
+				Virus4 virus = new Virus4();
+				virus = (Virus4) listVirus.get(j);
+				if (virus.getRectangle().overlaps(nanoBot.getRectangle()) && virus.getX() != stageJuego.getWidth()) {
+					virusKill++;
+					if (nanoBot.getEnergiaRango() <= 0.25) {
+						nanoBot.setEnergia(0);
+						SarsCovKiller.ASSETMANAGER.get("sonido/botKill.ogg", Sound.class).play();
+						SarsCovKiller.ASSETMANAGER.get("sonido/GameOver1.ogg", Sound.class).play();
+						if (puntos.getMarcador() > 50) {
+							puntos.setMarcador(puntos.getMarcador() - 50);
+							puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
+							puntos.setSck(virusKill);
+						}
+						// PANTALLA GAME OVER
+						juego.setScreen(juego.P_GAMEOVER);
+
+					} else {
+						nanoBot.setEnergia(nanoBot.getEnergiaRango() - IMPACTO);
+						if (puntos.getMarcador() > 50) {
+							puntos.setMarcador(puntos.getMarcador() - 50);
+							puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
+							puntos.setSck(virusKill);
+						}
+						SarsCovKiller.ASSETMANAGER.get("sonido/impactoBot.ogg", Sound.class).play();
+					}
+					listVirus.remove(j);
+					virus.remove();
+				} else
+					for (int i = 0; i < listAdns.size(); i++) {
+						// Colision entre Virus - Adn. Se elimina alien, adn y marcador++
+						if (listAdns.get(i).getRectangle().overlaps(virus.getRectangle())) {
+							virusKill++;
+							puntos.setMarcador(puntos.getMarcador() + 100);
+							puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
+							puntos.setSck(virusKill);
+							SarsCovKiller.ASSETMANAGER.get("sonido/impactoVirus.ogg", Sound.class).play();
+							adn = listAdns.get(i);
+							listVirus.remove(j);
+							listAdns.remove(i);
+							adn.remove();
+							virus.remove();
+						}
+					}
+			} else if (listVirus.get(j).getClass().getSimpleName().equals("Virus5")) {
+				Virus5 virus = new Virus5();
+				virus = (Virus5) listVirus.get(j);
+				if (virus.getRectangle().overlaps(nanoBot.getRectangle()) && virus.getX() != stageJuego.getWidth()) {
+					virusKill++;
+					if (nanoBot.getEnergiaRango() <= 0.25) {
+						nanoBot.setEnergia(0);
+						SarsCovKiller.ASSETMANAGER.get("sonido/botKill.ogg", Sound.class).play();
+						SarsCovKiller.ASSETMANAGER.get("sonido/GameOver1.ogg", Sound.class).play();
+						if (puntos.getMarcador() > 50) {
+							puntos.setMarcador(puntos.getMarcador() - 50);
+							puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
+							puntos.setSck(virusKill);
+						}
+						// PANTALLA GAME OVER
+						juego.setScreen(juego.P_GAMEOVER);
+
+					} else {
+						nanoBot.setEnergia(nanoBot.getEnergiaRango() - IMPACTO);
+						if (puntos.getMarcador() > 50) {
+							puntos.setMarcador(puntos.getMarcador() - 50);
+							puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
+							puntos.setSck(virusKill);
+						}
+						SarsCovKiller.ASSETMANAGER.get("sonido/impactoBot.ogg", Sound.class).play();
+					}
+					listVirus.remove(j);
+					virus.remove();
+				} else
+					for (int i = 0; i < listAdns.size(); i++) {
+						// Colision entre Virus - Adn. Se elimina alien, adn y marcador++
+						if (listAdns.get(i).getRectangle().overlaps(virus.getRectangle())) {
+							virusKill++;
+							puntos.setMarcador(puntos.getMarcador() + 100);
+							puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
+							puntos.setSck(virusKill);
+							SarsCovKiller.ASSETMANAGER.get("sonido/impactoVirus.ogg", Sound.class).play();
+							adn = listAdns.get(i);
+							listVirus.remove(j);
+							listAdns.remove(i);
+							adn.remove();
+							virus.remove();
+						}
+					}
+			} else if (listVirus.get(j).getClass().getSimpleName().equals("Virus6")) {
+				Virus6 virus = new Virus6();
+				virus = (Virus6) listVirus.get(j);
+				if (virus.getRectangle().overlaps(nanoBot.getRectangle()) && virus.getX() != stageJuego.getWidth()) {
+					virusKill++;
+					if (nanoBot.getEnergiaRango() <= 0.25) {
+						nanoBot.setEnergia(0);
+						SarsCovKiller.ASSETMANAGER.get("sonido/botKill.ogg", Sound.class).play();
+						SarsCovKiller.ASSETMANAGER.get("sonido/GameOver1.ogg", Sound.class).play();
+						if (puntos.getMarcador() > 50) {
+							puntos.setMarcador(puntos.getMarcador() - 50);
+							puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
+							puntos.setSck(virusKill);
+						}
+						// PANTALLA GAME OVER
+						juego.setScreen(juego.P_GAMEOVER);
+
+					} else {
+						nanoBot.setEnergia(nanoBot.getEnergiaRango() - IMPACTO);
+						if (puntos.getMarcador() > 50) {
+							puntos.setMarcador(puntos.getMarcador() - 50);
+							puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
+							puntos.setSck(virusKill);
+						}
+						SarsCovKiller.ASSETMANAGER.get("sonido/impactoBot.ogg", Sound.class).play();
+					}
+					listVirus.remove(j);
+					virus.remove();
+				} else
+					for (int i = 0; i < listAdns.size(); i++) {
+						// Colision entre Virus - Adn. Se elimina alien, adn y marcador++
+						if (listAdns.get(i).getRectangle().overlaps(virus.getRectangle())) {
+							virusKill++;
+							puntos.setMarcador(puntos.getMarcador() + 100);
+							puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
+							puntos.setSck(virusKill);
+							SarsCovKiller.ASSETMANAGER.get("sonido/impactoVirus.ogg", Sound.class).play();
+							adn = listAdns.get(i);
+							listVirus.remove(j);
+							listAdns.remove(i);
+							adn.remove();
+							virus.remove();
+						}
+					}
+			} else if (listVirus.get(j).getClass().getSimpleName().equals("Virus7")) {
+				Virus7 virus = new Virus7();
+				virus = (Virus7) listVirus.get(j);
+				if (virus.getRectangle().overlaps(nanoBot.getRectangle()) && virus.getX() != stageJuego.getWidth()) {
+					virusKill++;
+					if (nanoBot.getEnergiaRango() <= 0.25) {
+						nanoBot.setEnergia(0);
+						SarsCovKiller.ASSETMANAGER.get("sonido/botKill.ogg", Sound.class).play();
+						SarsCovKiller.ASSETMANAGER.get("sonido/GameOver1.ogg", Sound.class).play();
+						if (puntos.getMarcador() > 50) {
+							puntos.setMarcador(puntos.getMarcador() - 50);
+							puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
+							puntos.setSck(virusKill);
+						}
+						// PANTALLA GAME OVER
+						juego.setScreen(juego.P_GAMEOVER);
+
+					} else {
+						nanoBot.setEnergia(nanoBot.getEnergiaRango() - IMPACTOLETAL);
+						if (puntos.getMarcador() > 50) {
+							puntos.setMarcador(puntos.getMarcador() - 50);
+							puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
+							puntos.setSck(virusKill);
+						}
+						SarsCovKiller.ASSETMANAGER.get("sonido/impactoBot.ogg", Sound.class).play();
+					}
+					listVirus.remove(j);
+					virus.remove();
+				} else
+					for (int i = 0; i < listAdns.size(); i++) {
+						// Colision entre Virus - Adn. Se elimina alien, adn y marcador++
+						if (listAdns.get(i).getRectangle().overlaps(virus.getRectangle())) {
+							virusKill++;
+							puntos.setMarcador(puntos.getMarcador() + 100);
+							puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
+							puntos.setSck(virusKill);
+							SarsCovKiller.ASSETMANAGER.get("sonido/impactoVirus.ogg", Sound.class).play();
+							adn = listAdns.get(i);
+							listVirus.remove(j);
+							listAdns.remove(i);
+							adn.remove();
+							virus.remove();
+						}
+					}
+			} else if (listVirus.get(j).getClass().getSimpleName().equals("Virus8")) {
+				Virus8 virus = new Virus8();
+				virus = (Virus8) listVirus.get(j);
+				if (virus.getRectangle().overlaps(nanoBot.getRectangle()) && virus.getX() != stageJuego.getWidth()) {
+					virusKill++;
+					if (nanoBot.getEnergiaRango() <= 0.25) {
+						nanoBot.setEnergia(0);
+						SarsCovKiller.ASSETMANAGER.get("sonido/botKill.ogg", Sound.class).play();
+						SarsCovKiller.ASSETMANAGER.get("sonido/GameOver1.ogg", Sound.class).play();
+						if (puntos.getMarcador() > 50) {
+							puntos.setMarcador(puntos.getMarcador() - 50);
+							puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
+							puntos.setSck(virusKill);
+						}
+						// PANTALLA GAME OVER
+						juego.setScreen(juego.P_GAMEOVER);
+
+					} else {
+						nanoBot.setEnergia(nanoBot.getEnergiaRango() - IMPACTOLETAL);
+						if (puntos.getMarcador() > 50) {
+							puntos.setMarcador(puntos.getMarcador() - 50);
+							puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
+							puntos.setSck(virusKill);
+						}
+						SarsCovKiller.ASSETMANAGER.get("sonido/impactoBot.ogg", Sound.class).play();
+					}
+					listVirus.remove(j);
+					virus.remove();
+				} else
+					for (int i = 0; i < listAdns.size(); i++) {
+						// Colision entre Virus - Adn. Se elimina alien, adn y marcador++
+						if (listAdns.get(i).getRectangle().overlaps(virus.getRectangle())) {
+							virusKill++;
+							puntos.setMarcador(puntos.getMarcador() + 100);
+							puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
+							puntos.setSck(virusKill);
+							SarsCovKiller.ASSETMANAGER.get("sonido/impactoVirus.ogg", Sound.class).play();
+							adn = listAdns.get(i);
+							listVirus.remove(j);
+							listAdns.remove(i);
+							adn.remove();
+							virus.remove();
+						}
+					}
+			}
 
 		}
+
 	}
+
 
 	public Stage getStage() {
 		return stageJuego;
@@ -609,10 +1071,16 @@ public class PantallaJuego extends Pantalla {
 		this.nanoBot = nanoBot;
 	}
 
+	/**
+	 * @return the virus
+	 */
 	public Virus getVirus() {
 		return virus;
 	}
 
+	/**
+	 * @param virus the virus to set
+	 */
 	public void setVirus(Virus virus) {
 		this.virus = virus;
 	}
@@ -657,11 +1125,11 @@ public class PantallaJuego extends Pantalla {
 		this.btDisparo = btDisparo;
 	}
 
-	public ArrayList<Virus> getListVirus() {
+	public ArrayList<Actor> getListVirus() {
 		return listVirus;
 	}
 
-	public void setListVirus(ArrayList<Virus> listVirus) {
+	public void setListVirus(ArrayList<Actor> listVirus) {
 		this.listVirus = listVirus;
 	}
 

@@ -1,6 +1,5 @@
 package com.algm.actores;
 
-import com.algm.pantallas.PantallaJuego;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -10,42 +9,36 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
-public class Virus extends Actor {
+public class BonusAdn extends Actor {
 
 	private int velX, velY;
 	private Texture texture;
-	private TextureRegion virus;
+	private TextureRegion bonusAdn;
 	private TextureRegion[] texturaRegionMov;
 	private Vector2 vector;
 	private float tiempo;
 	private Animation animacion;
 	private Rectangle rectangle;
-	private PantallaJuego pantallaJuego;
-	private float velAnimacion;
 
-	public Virus() {
-		velX = -500;
-		velY = -100;
-		velAnimacion = 0.1f;
+	public BonusAdn() {
+		texture = new Texture(Gdx.files.internal("bonusAdn.png"));
 
-		texture = new Texture(Gdx.files.internal("anivirus.png"));
-
-		// Crear array temporal para dividir textura (10 subtexturas)
-		TextureRegion[][] temporalRegions = TextureRegion.split(texture, texture.getWidth() / 10, texture.getHeight());
+		// Crear array temporal para dividir textura (9 subtexturas)
+		TextureRegion[][] temporalRegions = TextureRegion.split(texture, texture.getWidth() / 9, texture.getHeight());
 		// Crear regiones en movimiento para TextureRegion;
-		texturaRegionMov = new TextureRegion[10];
-		for (int j = 0; j < 10; j++) {
+		texturaRegionMov = new TextureRegion[9];
+		for (int j = 0; j < 9; j++) {
 			texturaRegionMov[j] = (temporalRegions[0][j]);
 		}
 		// Crear animación (Tiempo del Frame (0.10seg), TextureRegions)
-		animacion = new Animation(velAnimacion, texturaRegionMov);
+		animacion = new Animation(0.1f, texturaRegionMov);
 		// Objeto para poder variar animación
 		// animacionActual = animacion;
 		// Velocidad inicial 0
 		vector = new Vector2(0, 0);
 		tiempo = 0f;
-		virus = temporalRegions[0][0];
-		setSize(virus.getRegionWidth(), virus.getRegionHeight());
+		bonusAdn = temporalRegions[0][0];
+		setSize(bonusAdn.getRegionWidth(), bonusAdn.getRegionHeight());
 
 		// Rectangle: Encapsula un rectángulo 2D definido por su punto de esquina en la
 		// parte inferior izquierda y sus extensiones en x (ancho) e y (alto)
@@ -55,33 +48,33 @@ public class Virus extends Actor {
 
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
-		// Color color = getColor();
-		// batch.setColor(color.r, color.g, color.b, color.a * parentAlpha);
-		batch.draw(virus, getX(), getY(), virus.getRegionWidth(), virus.getRegionHeight());
-		//System.out.println("Rectangle VIRUS x: "+rectangle.getX()+" y: "+rectangle.getY()+ " "+rectangle.getHeight()+" "+rectangle.getWidth());
-
+		batch.draw(bonusAdn, getX(), getY(), bonusAdn.getRegionWidth(), bonusAdn.getRegionHeight());
+		//System.out.println("Rectangle ADN x: "+rectangle.getX()+" y: "+rectangle.getY()+ " "+rectangle.getHeight()+" "+rectangle.getWidth());
 
 	}
 
 	@Override
 	public void act(float delta) {
+		// TODO Auto-generated method stub
 		super.act(delta);
 		// Tiempo que pasa desde el último frame render.
 		tiempo += Gdx.graphics.getDeltaTime();
-		virus = (TextureRegion) animacion.getKeyFrame(tiempo, true);
-		// Se mueve principalmente en el eje X solo unos grados en Y
-		moveBy(velX * delta, velY * delta);
+		bonusAdn = (TextureRegion) animacion.getKeyFrame(tiempo, true);
+		// Se mueve solo en el eje x
+		moveBy(200 * delta, 0);
 
+		// Posición y tamaño del rectangle igual al actor
 		rectangle.x = getX();
 		rectangle.y = getY();
 		rectangle.width = getWidth();
 		rectangle.height = getHeight();
 
 		// Elimina actor cuando sale de la pantalla visible
-		if (getX() < 0 || getY() < 0 || getY() > getStage().getHeight()) {
+		if (getX() > getStage().getWidth()) {
 			remove();
-			// System.out.println("eliminado actor virus");
+			//System.out.println("eliminado actor adn");
 		}
+
 	}
 
 	public int getVelX() {
@@ -108,12 +101,12 @@ public class Virus extends Actor {
 		this.texture = texture;
 	}
 
-	public TextureRegion getVirus() {
-		return virus;
+	public TextureRegion getAdn() {
+		return bonusAdn;
 	}
 
-	public void setVirus(TextureRegion virus) {
-		this.virus = virus;
+	public void setAdn(TextureRegion adn) {
+		this.bonusAdn = adn;
 	}
 
 	public TextureRegion[] getTexturaRegionMov() {
