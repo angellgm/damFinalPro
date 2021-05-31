@@ -61,7 +61,7 @@ public class BonusVelocidad extends Actor {
 		tiempo += Gdx.graphics.getDeltaTime();
 		bonusVelicidad = (TextureRegion) animacion.getKeyFrame(tiempo, true);
 		// Se mueve solo en el eje x
-		moveBy(200 * delta, 0);
+		moveBy(-200 * delta, 0);
 
 		// Posición y tamaño del rectangle igual al actor
 		rectangle.x = getX();

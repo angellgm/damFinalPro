@@ -55,32 +55,13 @@ public class PantallaJuego extends Pantalla {
 	private Stage stageJuego;
 	private FondoPantallaJuego fondoPJuego;
 	private NanoBot nanoBot;
-	private Virus virus;
-	private Virus2 virus2;
-	private Virus3 virus3;
-	private Virus4 virus4;
-	private Virus5 virus5;
-	private Virus6 virus6;
-	private Virus7 virus7;
-	private Virus8 virus8;
 	private Adn adn;
-	private BonusAdn bonusAdn;
-	private BonusEnergia bonusEnergia;
-	private BonusPuntos bonusPuntos;
-	private BonusVelocidad bonusVelocidad;
 	private Pad control;
 	private Pausa pausa;
 	private MBarraEnergia mBarraEnergia;
 	private BarraEnergia barraEnergia;
 	private BotonDisparo btDisparo;
-	private ArrayList<Actor> listVirus;
-//	private ArrayList<Virus2> listVirus2;
-//	private ArrayList<Virus3> listVirus3;
-//	private ArrayList<Virus4> listVirus4;
-//	private ArrayList<Virus5> listVirus5;
-//	private ArrayList<Virus6> listVirus6;
-//	private ArrayList<Virus7> listVirus7;
-//	private ArrayList<Virus8> listVirus8;
+	private ArrayList<Actor> listActores;
 	private ArrayList<Adn> listAdns;
 	static NivelPuntuacion puntos;
 	private float velocidadNanoBot;
@@ -93,6 +74,7 @@ public class PantallaJuego extends Pantalla {
 	private int virusKill;
 	private int maxPuntos;
 	private int nivel;
+	private int contadorParaBonus;
 	private double spawnIncre;
 	private int maxSpawn;
 
@@ -102,11 +84,6 @@ public class PantallaJuego extends Pantalla {
 
 	public PantallaJuego(SarsCovKiller juego) {
 		super(juego);
-		velocidadNanoBot = 500;
-		// Rango ideal entre 0.975 (Facil) y 0.965 (Dificil)
-		spawnIncre = 1;
-		// "Maximos" enemigos en pantalla
-		maxSpawn = 6;
 	}
 
 	@Override
@@ -114,18 +91,24 @@ public class PantallaJuego extends Pantalla {
 
 		viewport = new StretchViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		stageJuego = new Stage(viewport, juego.sckBatch);
-
+		//-------------------------------
 		// Modo debug gráfico
-		//stageJuego.setDebugAll(true);
-
+		// stageJuego.setDebugAll(true);
+		//-------------------------------
 		// Estado inicial RUN
 		state = State.RUN;
 
 		SarsCovKiller.ASSETMANAGER.get("sonido/fondo.ogg", Sound.class).loop();
 
+		velocidadNanoBot = 500;
+		// Rango ideal entre 5 (Facil) y 1 (Dificil)
+		spawnIncre = 1;
+		// "Maximos" enemigos en pantalla
+		maxSpawn = 6;
+
 		fondoPJuego = new FondoPantallaJuego();
 		fondoPJuego.setPosition(0, 0);
-		fondoPJuego.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		fondoPJuego.setSize(stageJuego.getWidth(), stageJuego.getHeight());
 
 		puntos = new NivelPuntuacion(new BitmapFont(Gdx.files.internal("fuentes/fuenteNormal.fnt"),
 				Gdx.files.internal("fuentes/fuenteNormal.png"), false));
@@ -135,21 +118,7 @@ public class PantallaJuego extends Pantalla {
 		maxPuntos = 0;
 
 		listAdns = new ArrayList<Adn>();
-		listVirus = new ArrayList<Actor>();
-
-		adn = new Adn();
-		virus = new Virus();
-		virus2 = new Virus2();
-		virus3 = new Virus3();
-		virus4 = new Virus4();
-		virus5 = new Virus5();
-		virus6 = new Virus6();
-		virus7 = new Virus7();
-		virus8 = new Virus8();
-		bonusAdn = new BonusAdn();
-		bonusEnergia = new BonusEnergia();
-		bonusPuntos = new BonusPuntos();
-		bonusVelocidad = new BonusVelocidad();
+		listActores = new ArrayList<Actor>();
 
 		nanoBot = new NanoBot();
 		nanoBot.setPosition(stageJuego.getWidth() / 14, stageJuego.getHeight() / 2);
@@ -159,22 +128,6 @@ public class PantallaJuego extends Pantalla {
 		control.setPosition(stageJuego.getWidth() / 14, 15);
 
 		cargarBarraEnergia();
-
-		stageJuego.addActor(fondoPJuego);
-		stageJuego.addActor(puntos);
-		stageJuego.addActor(mBarraEnergia);
-		stageJuego.addActor(barraEnergia);
-		stageJuego.addActor(nanoBot);
-		stageJuego.addActor(virus);
-		stageJuego.addActor(virus2);
-		stageJuego.addActor(virus3);
-		stageJuego.addActor(virus4);
-		stageJuego.addActor(virus5);
-		stageJuego.addActor(virus6);
-		stageJuego.addActor(virus7);
-		stageJuego.addActor(virus8);
-		stageJuego.addActor(control);
-		pausa();
 
 		// Cargar boton de disparo, pausa y menu solo en Android o iOS
 		if ((Gdx.app.getType() == ApplicationType.Android) || (Gdx.app.getType() == ApplicationType.iOS)) {
@@ -191,7 +144,10 @@ public class PantallaJuego extends Pantalla {
 		puntos.setNivel(nivel);
 		puntos.setMarcador(maxPuntos);
 		puntos.setSck(virusKill);
+		contadorParaBonus = virusKill;
+
 		// cargar listener del teclado si es Desktop
+		// (anulado, en android tb se puede usar teclado)
 //		if (Gdx.app.getType() == ApplicationType.Desktop) {
 //			stageJuego.setKeyboardFocus(nanoBot);
 //			nanoBot.addListener(new ImputListener());
@@ -200,6 +156,13 @@ public class PantallaJuego extends Pantalla {
 		stageJuego.setKeyboardFocus(nanoBot);
 		nanoBot.addListener(new ImputListener());
 
+		stageJuego.addActor(fondoPJuego);
+		stageJuego.addActor(puntos);
+		stageJuego.addActor(mBarraEnergia);
+		stageJuego.addActor(barraEnergia);
+		stageJuego.addActor(control);
+		stageJuego.addActor(nanoBot);
+		pausa();
 	}
 
 	@Override
@@ -223,22 +186,32 @@ public class PantallaJuego extends Pantalla {
 			eliminarActoresNoVisibles();
 
 			// System.out.println("LIST VIRUS " + listVirus.size());
-			if (listVirus.size() < maxSpawn) {
+			if (listActores.size() < maxSpawn) {
 				virusVerdeAzulRojoSpawn(delta);
 			}
 			controlPad(control.getKnobPercentX(), control.getKnobPercentY());
-			adnSpawnClick();
 
-			accionColisionesListas();
+			if (Gdx.app.getType() == ApplicationType.Desktop) {
+				adnSpawnClick();
+			}
+
+			incrementarDificultad();
+			System.out.println();
+			generarBonus();
+
+			try {
+				accionColisionesListas();
+			} catch (Exception e) {
+			}
 			stageJuego.draw(); // Dibujar
 			break;
+			
 		case PAUSE:
 			pausa.setVisible(true);
 			stageJuego.draw();
 		default:
 			break;
 		}
-
 	}
 
 	@Override
@@ -253,7 +226,6 @@ public class PantallaJuego extends Pantalla {
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -272,14 +244,9 @@ public class PantallaJuego extends Pantalla {
 		nivel = preferences.getInteger("Nivel ".concat(SarsCovKiller.slotGuardado), 1);
 		maxPuntos = preferences.getInteger("MaxPuntos ".concat(SarsCovKiller.slotGuardado), 0);
 		virusKill = preferences.getInteger("VirusKill ".concat(SarsCovKiller.slotGuardado), 0);
-
 	}
 
 	private void persistirDatosPartida() {
-		// ANULADO
-//		if ((preferences.getInteger("MaxPuntos ".concat(SarsCovKiller.slotGuardado)) > puntos.getMarcador())) {
-//			System.out.println("menos puntos que lo guardado!");
-//		}
 		preferences.putInteger("Nivel ".concat(SarsCovKiller.slotGuardado), puntos.getNivel());
 		preferences.putInteger("MaxPuntos ".concat(SarsCovKiller.slotGuardado), puntos.getMarcador());
 		preferences.putInteger("VirusKill ".concat(SarsCovKiller.slotGuardado), puntos.getSck());
@@ -307,7 +274,7 @@ public class PantallaJuego extends Pantalla {
 	}
 
 	/**
-	 * @category Elimina objetos Adn y Virus que ya no son visibles en pantalla para
+	 * @category Elimina actores Adn y Virus que ya no son visibles en pantalla para
 	 *           ahorrar recursos
 	 */
 	private void eliminarActoresNoVisibles() {
@@ -318,57 +285,13 @@ public class PantallaJuego extends Pantalla {
 			}
 		}
 		// Eliminar actor virus al salir de la pantalla
-		for (int j = 0; j < listVirus.size(); j++) {
-			if (listVirus.get(j).getX() <= 0 || listVirus.get(j).getX() >= Gdx.graphics.getWidth()
-					|| listVirus.get(j).getY() <= 0 || listVirus.get(j).getY() >= Gdx.graphics.getHeight()) {
+		for (int j = 0; j < listActores.size(); j++) {
+			if (listActores.get(j).getX() <= 0 || listActores.get(j).getX() >= Gdx.graphics.getWidth()
+					|| listActores.get(j).getY() <= 0 || listActores.get(j).getY() >= Gdx.graphics.getHeight()) {
 				// System.out.println(listVirus.get(j).getClass().getSimpleName());
-				listVirus.remove(j);
+				listActores.remove(j);
 			}
 		}
-	}
-
-	
-	private void adnVirusColision(int j, int i) {
-		virusKill++;
-		puntos.setMarcador(puntos.getMarcador() + 100);
-		puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
-		puntos.setSck(virusKill);
-		SarsCovKiller.ASSETMANAGER.get("sonido/impactoVirus.ogg", Sound.class).play();
-		adn = listAdns.get(i);
-		listVirus.remove(j);
-		listAdns.remove(i);
-		adn.remove();
-		virus.remove();
-	}
-
-	private void virusBotColision(float IMPACTO, int j) {
-		virusKill++;
-		if (nanoBot.getEnergiaRango() <= 0.25) {
-			nanoBot.setEnergia(0);
-			SarsCovKiller.ASSETMANAGER.get("sonido/botKill.ogg", Sound.class).play();
-			SarsCovKiller.ASSETMANAGER.get("sonido/GameOver1.ogg", Sound.class).play();
-
-			if (puntos.getMarcador() > 50) {
-				puntos.setMarcador(puntos.getMarcador() - 50);
-				puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
-				puntos.setSck(virusKill);
-			}
-			// PANTALLA GAME OVER
-			juego.setScreen(juego.P_GAMEOVER);
-
-		} else {
-			nanoBot.setEnergia(nanoBot.getEnergiaRango() - IMPACTO);
-			if (puntos.getMarcador() > 50) {
-				puntos.setMarcador(puntos.getMarcador() - 50);
-				puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
-				puntos.setSck(virusKill);
-			}
-
-			SarsCovKiller.ASSETMANAGER.get("sonido/impactoBot.ogg", Sound.class).play();
-
-		}
-		listVirus.remove(j);
-		virus.remove();
 	}
 
 	public final class ImputListener extends InputListener {
@@ -486,7 +409,7 @@ public class PantallaJuego extends Pantalla {
 				stageJuego.addActor(adn);
 				SarsCovKiller.ASSETMANAGER.get("sonido/adn.ogg", Sound.class).play();
 				// Generar adn resta energía
-				nanoBot.setEnergia(nanoBot.getEnergiaRango() - 0.003f);
+				nanoBot.setEnergia(nanoBot.getEnergiaRango() - 0.0001f);
 
 				// Añadir a lista de adn en pantalla
 				listAdns.add(adn);
@@ -570,9 +493,42 @@ public class PantallaJuego extends Pantalla {
 			stageJuego.addActor(adn);
 			SarsCovKiller.ASSETMANAGER.get("sonido/adn.ogg", Sound.class).play();
 			// Generar adn resta energía
-			nanoBot.setEnergia(nanoBot.getEnergiaRango() - 0.001f);
+			nanoBot.setEnergia(nanoBot.getEnergiaRango() - 0.0001f);
 			// Añadir a lista de adn en pantalla
 			listAdns.add(adn);
+		}
+	}
+	
+	private void incrementarDificultad() {
+		double nivelActual= puntos.getNivel();
+		//spawnIncre = 
+	}
+	
+	private void generarBonus() {
+		// Rango de muertes para spawn del bonus
+		int rango = 50;
+		if (contadorParaBonus + rango == puntos.getSck()) {
+			// Bonus aleatorio
+			contadorParaBonus = puntos.getSck();
+			double bonusAzar = Math.random() * 3;
+			if ((int) bonusAzar == 0) {
+				BonusEnergia bonusEnergia = new BonusEnergia();
+				bonusEnergia.setPosition(stageJuego.getWidth(), stageJuego.getHeight() / 2);
+				stageJuego.addActor(bonusEnergia);
+				listActores.add(bonusEnergia);
+			}
+			if ((int) bonusAzar == 1) {
+				BonusPuntos bonusPuntos = new BonusPuntos();
+				bonusPuntos.setPosition(stageJuego.getWidth(), stageJuego.getHeight() / 2);
+				stageJuego.addActor(bonusPuntos);
+				listActores.add(bonusPuntos);
+			}
+			if ((int) bonusAzar == 2) {
+				BonusVelocidad bonusVelocidad = new BonusVelocidad();
+				bonusVelocidad.setPosition(stageJuego.getWidth(), stageJuego.getHeight() / 2);
+				stageJuego.addActor(bonusVelocidad);
+				listActores.add(bonusVelocidad);
+			}
 		}
 	}
 
@@ -594,7 +550,6 @@ public class PantallaJuego extends Pantalla {
 						setGameState(State.RUN);
 					}
 				}
-
 				return true;
 			}
 		});
@@ -611,86 +566,89 @@ public class PantallaJuego extends Pantalla {
 	 */
 	private void virusVerdeAzulRojoSpawn(float delta) {
 		// si delta es inferior (problemas renderizado) se induce menos SPAWN
-		virusSpawn = delta + (float) Math.random();
-
+		virusSpawn += delta + ((float) Math.random() / 100);
+		System.out.println("virusSpawn: "+virusSpawn+" >");
 		if (virusSpawn > spawnIncre) {
-			// System.out.println("virusSpawn " + virusSpawn + ">SpawnI " + spawnIncre);
+			//System.out.println("virusSpawn " + virusSpawn + ">SpawnI " + spawnIncre);
+			//System.out.println("diferencia " + (virusSpawn - spawnIncre));
 			Virus virus = new Virus();
 			virus.setPosition(stageJuego.getWidth(), stageJuego.getHeight() * (float) Math.random());
 			stageJuego.addActor(virus);
 			// Añadir a lista de virus en pantalla
-			listVirus.add(virus);
+			listActores.add(virus);
 		}
-		if (virusSpawn > spawnIncre + 0.004) {
+		if (virusSpawn > spawnIncre + 0.005) {
 			Virus2 virus2 = new Virus2();
 			virus2.setPosition(stageJuego.getWidth(), stageJuego.getHeight() * (float) Math.random());
 			stageJuego.addActor(virus2);
 			// Añadir a lista de virus en pantalla
-			listVirus.add(virus2);
+			listActores.add(virus2);
 		}
-		if (virusSpawn > spawnIncre + 0.006) {
+		if (virusSpawn > spawnIncre + 0.007) {
 			Virus3 virus3 = new Virus3();
 			virus3.setPosition(stageJuego.getWidth(), stageJuego.getHeight() * (float) Math.random());
 			stageJuego.addActor(virus3);
 			// Añadir a lista de virus en pantalla
-			listVirus.add(virus3);
+			listActores.add(virus3);
 		}
-		if (virusSpawn > spawnIncre + 0.008) {
+		if (virusSpawn > spawnIncre + 0.009) {
 			Virus4 virus4 = new Virus4();
 			virus4.setPosition(stageJuego.getWidth(), stageJuego.getHeight() * (float) Math.random());
 			stageJuego.addActor(virus4);
 			// Añadir a lista de virus en pantalla
-			listVirus.add(virus4);
+			listActores.add(virus4);
 		}
-		if (virusSpawn > spawnIncre + 0.0010) {
+		if (virusSpawn > spawnIncre + 0.011) {
 			Virus5 virus5 = new Virus5();
 			virus5.setPosition(stageJuego.getWidth(), stageJuego.getHeight() * (float) Math.random());
 			stageJuego.addActor(virus5);
 			// Añadir a lista de virus en pantalla
-			listVirus.add(virus5);
+			listActores.add(virus5);
 		}
-		if (virusSpawn > spawnIncre + 0.012) {
+		if (virusSpawn > spawnIncre + 0.013) {
 			Virus6 virus6 = new Virus6();
 			virus6.setPosition(stageJuego.getWidth(), stageJuego.getHeight() * (float) Math.random());
 			stageJuego.addActor(virus6);
 			// Añadir a lista de virus en pantalla
-			listVirus.add(virus6);
+			listActores.add(virus6);
 		}
-		if (virusSpawn > spawnIncre + 0.014) {
+		if (virusSpawn > spawnIncre + 0.016) {
 			Virus7 virus7 = new Virus7();
 			virus7.setPosition(stageJuego.getWidth(), stageJuego.getHeight() * (float) Math.random());
 			stageJuego.addActor(virus7);
 			// Añadir a lista de virus en pantalla
-			listVirus.add(virus7);
+			listActores.add(virus7);
 		}
-		if (virusSpawn > spawnIncre + 0.016) {
+		if (virusSpawn > spawnIncre + 0.020) {
 			Virus8 virus8 = new Virus8();
 			virus8.setPosition(stageJuego.getWidth(), stageJuego.getHeight() * (float) Math.random());
 			stageJuego.addActor(virus8);
 			// Añadir a lista de virus en pantalla
-			listVirus.add(virus8);
+			listActores.add(virus8);
 		}
-
+		if (virusSpawn > spawnIncre) {
+			virusSpawn = 0f;
+		}
 	}
 
 	/**
 	 * @category Comprueba las colisiones entre actores Virus-Nanobot y Virus-Adn y
 	 *           aplica remove
 	 */
-	private void accionColisionesListas() {
+	private void accionColisionesListas() throws Exception {
 		// Se que es una cutrada..... pero no doy con la clave para que funcionen
 		// algunos métodos necesarios (getRectangle()) mediante la herencia con Actor.
 		adn = new Adn();
 		// Hay virus que son letales xD
 		float IMPACTO = 0.25f;
 		float IMPACTOLETAL = 1f;
-		
+
 		// Si hay colision entre Virus - Nanobot. Se elimina alien, energia y puntuación
 		// Si hay colision entre Virus - Adn. Se elimina alien, adn y marcador++
-		for (int j = 0; j < listVirus.size(); j++) {
-			if (listVirus.get(j).getClass().getSimpleName().equals("Virus")) {
+		for (int j = 0; j < listActores.size(); j++) {
+			if (listActores.get(j).getClass().getSimpleName().equals("Virus")) {
 				Virus virus = new Virus();
-				virus = (Virus) listVirus.get(j);
+				virus = (Virus) listActores.get(j);
 				if (virus.getRectangle().overlaps(nanoBot.getRectangle()) && virus.getX() != stageJuego.getWidth()) {
 					virusKill++;
 					if (nanoBot.getEnergiaRango() <= 0.25) {
@@ -714,7 +672,7 @@ public class PantallaJuego extends Pantalla {
 						}
 						SarsCovKiller.ASSETMANAGER.get("sonido/impactoBot.ogg", Sound.class).play();
 					}
-					listVirus.remove(j);
+					listActores.remove(j);
 					virus.remove();
 				} else
 					for (int i = 0; i < listAdns.size(); i++) {
@@ -726,17 +684,17 @@ public class PantallaJuego extends Pantalla {
 							puntos.setSck(virusKill);
 							SarsCovKiller.ASSETMANAGER.get("sonido/impactoVirus.ogg", Sound.class).play();
 							adn = listAdns.get(i);
-							listVirus.remove(j);
+							listActores.remove(j);
 							listAdns.remove(i);
 							adn.remove();
 							virus.remove();
 						}
 					}
-			} else if (listVirus.get(j).getClass().getSimpleName().equals("Virus2")) {
+			} else if (listActores.get(j).getClass().getSimpleName().equals("Virus2")) {
 				Virus2 virus = new Virus2();
-				virus = (Virus2) listVirus.get(j);
+				virus = (Virus2) listActores.get(j);
 				if (virus.getRectangle().overlaps(nanoBot.getRectangle()) && virus.getX() != stageJuego.getWidth()) {
-					virusKill++;					
+					virusKill++;
 					if (nanoBot.getEnergiaRango() <= 0.25) {
 						nanoBot.setEnergia(0);
 						SarsCovKiller.ASSETMANAGER.get("sonido/botKill.ogg", Sound.class).play();
@@ -758,7 +716,7 @@ public class PantallaJuego extends Pantalla {
 						}
 						SarsCovKiller.ASSETMANAGER.get("sonido/impactoBot.ogg", Sound.class).play();
 					}
-					listVirus.remove(j);
+					listActores.remove(j);
 					virus.remove();
 				} else
 					for (int i = 0; i < listAdns.size(); i++) {
@@ -770,15 +728,15 @@ public class PantallaJuego extends Pantalla {
 							puntos.setSck(virusKill);
 							SarsCovKiller.ASSETMANAGER.get("sonido/impactoVirus.ogg", Sound.class).play();
 							adn = listAdns.get(i);
-							listVirus.remove(j);
+							listActores.remove(j);
 							listAdns.remove(i);
 							adn.remove();
 							virus.remove();
 						}
 					}
-			} else if (listVirus.get(j).getClass().getSimpleName().equals("Virus3")) {
+			} else if (listActores.get(j).getClass().getSimpleName().equals("Virus3")) {
 				Virus3 virus = new Virus3();
-				virus = (Virus3) listVirus.get(j);
+				virus = (Virus3) listActores.get(j);
 				if (virus.getRectangle().overlaps(nanoBot.getRectangle()) && virus.getX() != stageJuego.getWidth()) {
 					virusKill++;
 					if (nanoBot.getEnergiaRango() <= 0.25) {
@@ -802,7 +760,7 @@ public class PantallaJuego extends Pantalla {
 						}
 						SarsCovKiller.ASSETMANAGER.get("sonido/impactoBot.ogg", Sound.class).play();
 					}
-					listVirus.remove(j);
+					listActores.remove(j);
 					virus.remove();
 				} else
 					for (int i = 0; i < listAdns.size(); i++) {
@@ -814,15 +772,15 @@ public class PantallaJuego extends Pantalla {
 							puntos.setSck(virusKill);
 							SarsCovKiller.ASSETMANAGER.get("sonido/impactoVirus.ogg", Sound.class).play();
 							adn = listAdns.get(i);
-							listVirus.remove(j);
+							listActores.remove(j);
 							listAdns.remove(i);
 							adn.remove();
 							virus.remove();
 						}
 					}
-			} else if (listVirus.get(j).getClass().getSimpleName().equals("Virus4")) {
+			} else if (listActores.get(j).getClass().getSimpleName().equals("Virus4")) {
 				Virus4 virus = new Virus4();
-				virus = (Virus4) listVirus.get(j);
+				virus = (Virus4) listActores.get(j);
 				if (virus.getRectangle().overlaps(nanoBot.getRectangle()) && virus.getX() != stageJuego.getWidth()) {
 					virusKill++;
 					if (nanoBot.getEnergiaRango() <= 0.25) {
@@ -846,7 +804,7 @@ public class PantallaJuego extends Pantalla {
 						}
 						SarsCovKiller.ASSETMANAGER.get("sonido/impactoBot.ogg", Sound.class).play();
 					}
-					listVirus.remove(j);
+					listActores.remove(j);
 					virus.remove();
 				} else
 					for (int i = 0; i < listAdns.size(); i++) {
@@ -858,15 +816,15 @@ public class PantallaJuego extends Pantalla {
 							puntos.setSck(virusKill);
 							SarsCovKiller.ASSETMANAGER.get("sonido/impactoVirus.ogg", Sound.class).play();
 							adn = listAdns.get(i);
-							listVirus.remove(j);
+							listActores.remove(j);
 							listAdns.remove(i);
 							adn.remove();
 							virus.remove();
 						}
 					}
-			} else if (listVirus.get(j).getClass().getSimpleName().equals("Virus5")) {
+			} else if (listActores.get(j).getClass().getSimpleName().equals("Virus5")) {
 				Virus5 virus = new Virus5();
-				virus = (Virus5) listVirus.get(j);
+				virus = (Virus5) listActores.get(j);
 				if (virus.getRectangle().overlaps(nanoBot.getRectangle()) && virus.getX() != stageJuego.getWidth()) {
 					virusKill++;
 					if (nanoBot.getEnergiaRango() <= 0.25) {
@@ -890,7 +848,7 @@ public class PantallaJuego extends Pantalla {
 						}
 						SarsCovKiller.ASSETMANAGER.get("sonido/impactoBot.ogg", Sound.class).play();
 					}
-					listVirus.remove(j);
+					listActores.remove(j);
 					virus.remove();
 				} else
 					for (int i = 0; i < listAdns.size(); i++) {
@@ -902,15 +860,15 @@ public class PantallaJuego extends Pantalla {
 							puntos.setSck(virusKill);
 							SarsCovKiller.ASSETMANAGER.get("sonido/impactoVirus.ogg", Sound.class).play();
 							adn = listAdns.get(i);
-							listVirus.remove(j);
+							listActores.remove(j);
 							listAdns.remove(i);
 							adn.remove();
 							virus.remove();
 						}
 					}
-			} else if (listVirus.get(j).getClass().getSimpleName().equals("Virus6")) {
+			} else if (listActores.get(j).getClass().getSimpleName().equals("Virus6")) {
 				Virus6 virus = new Virus6();
-				virus = (Virus6) listVirus.get(j);
+				virus = (Virus6) listActores.get(j);
 				if (virus.getRectangle().overlaps(nanoBot.getRectangle()) && virus.getX() != stageJuego.getWidth()) {
 					virusKill++;
 					if (nanoBot.getEnergiaRango() <= 0.25) {
@@ -934,7 +892,7 @@ public class PantallaJuego extends Pantalla {
 						}
 						SarsCovKiller.ASSETMANAGER.get("sonido/impactoBot.ogg", Sound.class).play();
 					}
-					listVirus.remove(j);
+					listActores.remove(j);
 					virus.remove();
 				} else
 					for (int i = 0; i < listAdns.size(); i++) {
@@ -946,15 +904,15 @@ public class PantallaJuego extends Pantalla {
 							puntos.setSck(virusKill);
 							SarsCovKiller.ASSETMANAGER.get("sonido/impactoVirus.ogg", Sound.class).play();
 							adn = listAdns.get(i);
-							listVirus.remove(j);
+							listActores.remove(j);
 							listAdns.remove(i);
 							adn.remove();
 							virus.remove();
 						}
 					}
-			} else if (listVirus.get(j).getClass().getSimpleName().equals("Virus7")) {
+			} else if (listActores.get(j).getClass().getSimpleName().equals("Virus7")) {
 				Virus7 virus = new Virus7();
-				virus = (Virus7) listVirus.get(j);
+				virus = (Virus7) listActores.get(j);
 				if (virus.getRectangle().overlaps(nanoBot.getRectangle()) && virus.getX() != stageJuego.getWidth()) {
 					virusKill++;
 					if (nanoBot.getEnergiaRango() <= 0.25) {
@@ -978,27 +936,21 @@ public class PantallaJuego extends Pantalla {
 						}
 						SarsCovKiller.ASSETMANAGER.get("sonido/impactoBot.ogg", Sound.class).play();
 					}
-					listVirus.remove(j);
+					listActores.remove(j);
 					virus.remove();
 				} else
 					for (int i = 0; i < listAdns.size(); i++) {
 						// Colision entre Virus - Adn. Se elimina alien, adn y marcador++
 						if (listAdns.get(i).getRectangle().overlaps(virus.getRectangle())) {
-							virusKill++;
-							puntos.setMarcador(puntos.getMarcador() + 100);
-							puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
-							puntos.setSck(virusKill);
-							SarsCovKiller.ASSETMANAGER.get("sonido/impactoVirus.ogg", Sound.class).play();
+							SarsCovKiller.ASSETMANAGER.get("sonido/metal.ogg", Sound.class).play();
 							adn = listAdns.get(i);
-							listVirus.remove(j);
 							listAdns.remove(i);
 							adn.remove();
-							virus.remove();
 						}
 					}
-			} else if (listVirus.get(j).getClass().getSimpleName().equals("Virus8")) {
+			} else if (listActores.get(j).getClass().getSimpleName().equals("Virus8")) {
 				Virus8 virus = new Virus8();
-				virus = (Virus8) listVirus.get(j);
+				virus = (Virus8) listActores.get(j);
 				if (virus.getRectangle().overlaps(nanoBot.getRectangle()) && virus.getX() != stageJuego.getWidth()) {
 					virusKill++;
 					if (nanoBot.getEnergiaRango() <= 0.25) {
@@ -1022,30 +974,58 @@ public class PantallaJuego extends Pantalla {
 						}
 						SarsCovKiller.ASSETMANAGER.get("sonido/impactoBot.ogg", Sound.class).play();
 					}
-					listVirus.remove(j);
+					listActores.remove(j);
 					virus.remove();
 				} else
 					for (int i = 0; i < listAdns.size(); i++) {
-						// Colision entre Virus - Adn. Se elimina alien, adn y marcador++
 						if (listAdns.get(i).getRectangle().overlaps(virus.getRectangle())) {
-							virusKill++;
-							puntos.setMarcador(puntos.getMarcador() + 100);
-							puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
-							puntos.setSck(virusKill);
-							SarsCovKiller.ASSETMANAGER.get("sonido/impactoVirus.ogg", Sound.class).play();
+							SarsCovKiller.ASSETMANAGER.get("sonido/metal.ogg", Sound.class).play();
 							adn = listAdns.get(i);
-							listVirus.remove(j);
 							listAdns.remove(i);
 							adn.remove();
-							virus.remove();
 						}
 					}
+				// Bonus Energia
+			} else if (listActores.get(j).getClass().getSimpleName().equals("BonusEnergia")) {
+				BonusEnergia bonusEnergia = new BonusEnergia();
+				bonusEnergia = (BonusEnergia) listActores.get(j);
+				if (bonusEnergia.getRectangle().overlaps(nanoBot.getRectangle())
+						&& bonusEnergia.getX() != stageJuego.getWidth()) {
+					SarsCovKiller.ASSETMANAGER.get("sonido/bonus.ogg", Sound.class).play();
+					listActores.remove(j);
+					bonusEnergia.remove();
+					nanoBot.setEnergia(1);
+				}
+
+				// Bonus Puntos
+			} else if (listActores.get(j).getClass().getSimpleName().equals("BonusPuntos")) {
+				BonusPuntos bonusPuntos = new BonusPuntos();
+				bonusPuntos = (BonusPuntos) listActores.get(j);
+				if (bonusPuntos.getRectangle().overlaps(nanoBot.getRectangle())
+						&& bonusPuntos.getX() != stageJuego.getWidth()) {
+					SarsCovKiller.ASSETMANAGER.get("sonido/bonus.ogg", Sound.class).play();
+					listActores.remove(j);
+					bonusPuntos.remove();
+					puntos.setMarcador(puntos.getMarcador() + 10000);
+					puntos.setNivel(((int) puntos.getMarcador() / 10000) + 1);
+				}
+
+				// Bonus Velocidad
+			} else if (listActores.get(j).getClass().getSimpleName().equals("BonusVelocidad")) {
+				BonusVelocidad bonusVelocidad = new BonusVelocidad();
+				bonusVelocidad = (BonusVelocidad) listActores.get(j);
+				if (bonusVelocidad.getRectangle().overlaps(nanoBot.getRectangle())
+						&& bonusVelocidad.getX() != stageJuego.getWidth()) {
+					SarsCovKiller.ASSETMANAGER.get("sonido/bonus.ogg", Sound.class).play();
+					listActores.remove(j);
+					bonusVelocidad.remove();
+					if (velocidadNanoBot != 900) {
+						velocidadNanoBot += 100;
+					}
+				}
 			}
-
 		}
-
 	}
-
 
 	public Stage getStage() {
 		return stageJuego;
@@ -1069,28 +1049,6 @@ public class PantallaJuego extends Pantalla {
 
 	public void setNanoBot(NanoBot nanoBot) {
 		this.nanoBot = nanoBot;
-	}
-
-	/**
-	 * @return the virus
-	 */
-	public Virus getVirus() {
-		return virus;
-	}
-
-	/**
-	 * @param virus the virus to set
-	 */
-	public void setVirus(Virus virus) {
-		this.virus = virus;
-	}
-
-	public Adn getAdn() {
-		return adn;
-	}
-
-	public void setAdn(Adn adn) {
-		this.adn = adn;
 	}
 
 	public Pad getControl() {
@@ -1126,11 +1084,11 @@ public class PantallaJuego extends Pantalla {
 	}
 
 	public ArrayList<Actor> getListVirus() {
-		return listVirus;
+		return listActores;
 	}
 
 	public void setListVirus(ArrayList<Actor> listVirus) {
-		this.listVirus = listVirus;
+		this.listActores = listVirus;
 	}
 
 	public ArrayList<Adn> getListAdns() {
@@ -1173,19 +1131,6 @@ public class PantallaJuego extends Pantalla {
 		this.state = s;
 	}
 
-	/**
-	 * @return the jugador
-	 */
-	public String getJugador() {
-		return jugador;
-	}
-
-	/**
-	 * @param jugador the jugador to set
-	 */
-	public void setJugador(String jugador) {
-		this.jugador = jugador;
-	}
 }
 
 /**

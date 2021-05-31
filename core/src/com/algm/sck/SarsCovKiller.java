@@ -141,6 +141,8 @@ public class SarsCovKiller extends Game {
 		ASSETMANAGER.load("sonido/impactoBot.ogg", Sound.class);
 		ASSETMANAGER.load("sonido/impactoVirus.ogg", Sound.class);
 		ASSETMANAGER.load("sonido/virusKill.ogg", Sound.class);
+		ASSETMANAGER.load("sonido/metal.ogg", Sound.class);
+		ASSETMANAGER.load("sonido/bonus.ogg", Sound.class);
 	}
 
 	@Override

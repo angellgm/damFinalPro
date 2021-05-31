@@ -22,7 +22,7 @@ public class BonusPuntos extends Actor {
 	private Rectangle rectangle;
 
 	public BonusPuntos() {
-		texture = new Texture(Gdx.files.internal("adn.png"));
+		texture = new Texture(Gdx.files.internal("bonusPuntos.png"));
 
 		// Crear array temporal para dividir textura (9 subtexturas)
 		TextureRegion[][] temporalRegions = TextureRegion.split(texture, texture.getWidth() / 2, texture.getHeight());
@@ -62,7 +62,7 @@ public class BonusPuntos extends Actor {
 		tiempo += Gdx.graphics.getDeltaTime();
 		bonusPuntos = (TextureRegion) animacion.getKeyFrame(tiempo, true);
 		// Se mueve solo en el eje x
-		moveBy(200 * delta, 0);
+		moveBy(-200 * delta, 0);
 
 		// Posición y tamaño del rectangle igual al actor
 		rectangle.x = getX();
