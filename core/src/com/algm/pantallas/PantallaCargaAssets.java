@@ -3,7 +3,6 @@
  */
 package com.algm.pantallas;
 
-import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
 
 import com.algm.sck.SarsCovKiller;
 import com.badlogic.gdx.Gdx;

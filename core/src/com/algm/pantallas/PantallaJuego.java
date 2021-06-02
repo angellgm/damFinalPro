@@ -4,9 +4,6 @@
 package com.algm.pantallas;
 
 import java.util.ArrayList;
-
-import javax.management.Query;
-
 import com.algm.actorcontrol.BarraEnergia;
 import com.algm.actorcontrol.BotonDisparo;
 import com.algm.actorcontrol.MBarraEnergia;
@@ -14,7 +11,6 @@ import com.algm.actorcontrol.NivelPuntuacion;
 import com.algm.actorcontrol.Pad;
 import com.algm.actorcontrol.Pausa;
 import com.algm.actores.Adn;
-import com.algm.actores.BonusAdn;
 import com.algm.actores.BonusEnergia;
 import com.algm.actores.BonusPuntos;
 import com.algm.actores.BonusVelocidad;
@@ -69,7 +65,6 @@ public class PantallaJuego extends Pantalla {
 	private Texture btPausa, btMenu;
 	private Image imagePausa, imageMenu;
 	private State state;
-	private String jugador;
 	public Preferences preferences;
 	private int virusKill;
 	private int maxPuntos;
@@ -91,20 +86,20 @@ public class PantallaJuego extends Pantalla {
 
 		viewport = new StretchViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		stageJuego = new Stage(viewport, juego.sckBatch);
-		//-------------------------------
+		// -------------------------------
 		// Modo debug gráfico
 		// stageJuego.setDebugAll(true);
-		//-------------------------------
+		// -------------------------------
 		// Estado inicial RUN
 		state = State.RUN;
 
 		SarsCovKiller.ASSETMANAGER.get("sonido/fondo.ogg", Sound.class).loop();
 
 		velocidadNanoBot = 500;
-		// Rango ideal entre 5 (Facil) y 1 (Dificil)
-		spawnIncre = 1;
+		// Rango ideal entre 5.9 (Facil lv1) y 1 (Dificil lv 50+)
+		spawnIncre = 5.9;
 		// "Maximos" enemigos en pantalla
-		maxSpawn = 6;
+		maxSpawn = 5;
 
 		fondoPJuego = new FondoPantallaJuego();
 		fondoPJuego.setPosition(0, 0);
@@ -195,8 +190,8 @@ public class PantallaJuego extends Pantalla {
 				adnSpawnClick();
 			}
 
+			// Rango ideal entre 5.9 (lv1 Facil) y 1.0 (lv 50 Dificil)
 			incrementarDificultad();
-			System.out.println();
 			generarBonus();
 
 			try {
@@ -205,7 +200,7 @@ public class PantallaJuego extends Pantalla {
 			}
 			stageJuego.draw(); // Dibujar
 			break;
-			
+
 		case PAUSE:
 			pausa.setVisible(true);
 			stageJuego.draw();
@@ -225,7 +220,6 @@ public class PantallaJuego extends Pantalla {
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
@@ -240,12 +234,22 @@ public class PantallaJuego extends Pantalla {
 		super.resume();
 	}
 
+	/**
+	 * 
+	 * @category Realiza una recogida de datos persistentes en el archivo XML de
+	 *           persistencia
+	 */
 	private void cargarDatosPersistencia() {
 		nivel = preferences.getInteger("Nivel ".concat(SarsCovKiller.slotGuardado), 1);
 		maxPuntos = preferences.getInteger("MaxPuntos ".concat(SarsCovKiller.slotGuardado), 0);
 		virusKill = preferences.getInteger("VirusKill ".concat(SarsCovKiller.slotGuardado), 0);
 	}
 
+	/**
+	 * 
+	 * @category Realiza la escritura de los datos de la partida en archivo XML para
+	 *           la persistencia
+	 */
 	private void persistirDatosPartida() {
 		preferences.putInteger("Nivel ".concat(SarsCovKiller.slotGuardado), puntos.getNivel());
 		preferences.putInteger("MaxPuntos ".concat(SarsCovKiller.slotGuardado), puntos.getMarcador());
@@ -253,6 +257,10 @@ public class PantallaJuego extends Pantalla {
 		preferences.flush();
 	}
 
+	/**
+	 * @category Inicaliza Barra de energia y el marco. Le asigna una posición y
+	 *           tamaño
+	 */
 	private void cargarBarraEnergia() {
 		mBarraEnergia = new MBarraEnergia();
 		mBarraEnergia.setPosition(5, stageJuego.getHeight() - mBarraEnergia.getHeight() - 7);
@@ -260,6 +268,10 @@ public class PantallaJuego extends Pantalla {
 		barraEnergia.setPosition(87, stageJuego.getHeight() - mBarraEnergia.getHeight() - 7);
 	}
 
+	/**
+	 * @category Inicaliza Boton de disparo e Imput Listerner (Touch) en
+	 *           Android/IOS. Le asigna una posición y tamaño
+	 */
 	private void btTactilDisparo() {
 		btDisparo = new BotonDisparo();
 		btDisparo.setPosition((stageJuego.getWidth() - btDisparo.getWidth()) - (stageJuego.getWidth() / 14), 20);
@@ -294,7 +306,17 @@ public class PantallaJuego extends Pantalla {
 		}
 	}
 
+	/**
+	 * @category Clase que extiende de input listerner para acciones del teclado
+	 * @see https://libgdx.badlogicgames.com/ci/nightlies/docs/api/com/badlogic/gdx/scenes/scene2d/InputListener.html
+	 */
 	public final class ImputListener extends InputListener {
+
+		private boolean keyDownW;
+		private boolean keyDownS;
+		private boolean keyDownA;
+		private boolean keyDownD;
+
 		/**
 		 * @param InputEvent
 		 * @param keycode
@@ -303,12 +325,6 @@ public class PantallaJuego extends Pantalla {
 		 *           funciones como disparar.
 		 * @see https://libgdx.badlogicgames.com/ci/nightlies/docs/api/com/badlogic/gdx/scenes/scene2d/InputListener.html
 		 */
-
-		private boolean keyDownW;
-		private boolean keyDownS;
-		private boolean keyDownA;
-		private boolean keyDownD;
-
 		@Override
 		public boolean keyDown(InputEvent event, int keycode) {
 
@@ -443,6 +459,10 @@ public class PantallaJuego extends Pantalla {
 		}
 	}
 
+	/**
+	 * @category Inicaliza Boton de menu e Imput Listerner (Touch) en Android/IOS.
+	 *           Le asigna una posición y tamaño
+	 */
 	private void btTactilMenu() {
 		btMenu = SarsCovKiller.ASSETMANAGER.get("ui/menuIcon60.png", Texture.class);
 		imageMenu = new Image(btMenu);
@@ -460,6 +480,10 @@ public class PantallaJuego extends Pantalla {
 		});
 	}
 
+	/**
+	 * @category Inicaliza Boton de pausa e Imput Listerner (Touch) en Android/IOS.
+	 *           Le asigna una posición y tamaño
+	 */
 	private void btTactilPausa() {
 		btPausa = SarsCovKiller.ASSETMANAGER.get("ui/pausaIcon60.png", Texture.class);
 		imagePausa = new Image(btPausa);
@@ -498,12 +522,24 @@ public class PantallaJuego extends Pantalla {
 			listAdns.add(adn);
 		}
 	}
-	
+
+	/**
+	 * @category Incrementa la dificultad del juego en función del nivel de la
+	 *           partida
+	 */
 	private void incrementarDificultad() {
-		double nivelActual= puntos.getNivel();
-		//spawnIncre = 
+		int lvActual = puntos.getNivel();
+		if (lvActual > 50) {
+			spawnIncre = 1;
+		} else {
+			spawnIncre = 6 - (0.10 * puntos.getNivel());
+		}
 	}
-	
+
+	/**
+	 * @category Genera items de bonus en partida de forma random y los añade a la
+	 *           pantalla de juego
+	 */
 	private void generarBonus() {
 		// Rango de muertes para spawn del bonus
 		int rango = 50;
@@ -532,6 +568,10 @@ public class PantallaJuego extends Pantalla {
 		}
 	}
 
+	/**
+	 * @category Inicaliza Boton de Pausa e Imput Listerner (Touch) en Android/IOS.
+	 *           Le asigna una posición y tamaño
+	 */
 	private void pausa() {
 		pausa = new Pausa();
 		pausa.setPosition(stageJuego.getWidth() / 2 - pausa.getWidth() / 2,
@@ -557,20 +597,21 @@ public class PantallaJuego extends Pantalla {
 
 	/**
 	 * @param delta
-	 * @category Genera enemigos "VirusVerde/Azul/Rojo/Azul-Rojo " Spawn determinado
-	 *           por virusSpawn (la suma de delta y número aleatorio
+	 * 
+	 * @category Genera enemigos VirusVerde/Azul/Rojo/Azul-Rojo/Metálicos... "Spawn
+	 *           determinado por virusSpawn (la suma de delta y número aleatorio
 	 *           (Math.random())). Cuando virusSpawn es superior a 1 hay un nuevo
 	 *           spawn.
+	 * 
 	 * @see deltaTime: Tiempo que tarda en procesar y renderizar un frame del
 	 *      videojuego.
 	 */
 	private void virusVerdeAzulRojoSpawn(float delta) {
 		// si delta es inferior (problemas renderizado) se induce menos SPAWN
 		virusSpawn += delta + ((float) Math.random() / 100);
-		System.out.println("virusSpawn: "+virusSpawn+" >");
 		if (virusSpawn > spawnIncre) {
-			//System.out.println("virusSpawn " + virusSpawn + ">SpawnI " + spawnIncre);
-			//System.out.println("diferencia " + (virusSpawn - spawnIncre));
+			// System.out.println("virusSpawn " + virusSpawn + ">SpawnI " + spawnIncre);
+			// System.out.println("diferencia " + (virusSpawn - spawnIncre));
 			Virus virus = new Virus();
 			virus.setPosition(stageJuego.getWidth(), stageJuego.getHeight() * (float) Math.random());
 			stageJuego.addActor(virus);
@@ -633,7 +674,7 @@ public class PantallaJuego extends Pantalla {
 
 	/**
 	 * @category Comprueba las colisiones entre actores Virus-Nanobot y Virus-Adn y
-	 *           aplica remove
+	 *           aplica remove y otras acciones
 	 */
 	private void accionColisionesListas() throws Exception {
 		// Se que es una cutrada..... pero no doy con la clave para que funcionen
@@ -1027,132 +1068,185 @@ public class PantallaJuego extends Pantalla {
 		}
 	}
 
+	/**
+	 * @return
+	 */
 	public Stage getStage() {
 		return stageJuego;
 	}
 
+	/**
+	 * @param stage
+	 */
 	public void setStage(Stage stage) {
 		this.stageJuego = stage;
 	}
 
+	/**
+	 * @return
+	 */
 	public FondoPantallaJuego getFondo() {
 		return fondoPJuego;
 	}
 
+	/**
+	 * @param fondo
+	 */
 	public void setFondo(FondoPantallaJuego fondo) {
 		this.fondoPJuego = fondo;
 	}
 
+	/**
+	 * @return
+	 */
 	public NanoBot getNanoBot() {
 		return nanoBot;
 	}
 
+	/**
+	 * @param nanoBot
+	 */
 	public void setNanoBot(NanoBot nanoBot) {
 		this.nanoBot = nanoBot;
 	}
 
+	/**
+	 * @return
+	 */
 	public Pad getControl() {
 		return control;
 	}
 
+	/**
+	 * @param control
+	 */
 	public void setControl(Pad control) {
 		this.control = control;
 	}
 
+	/**
+	 * @return
+	 */
 	public MBarraEnergia getmBarraEnergia() {
 		return mBarraEnergia;
 	}
 
+	/**
+	 * @param mBarraEnergia
+	 */
 	public void setmBarraEnergia(MBarraEnergia mBarraEnergia) {
 		this.mBarraEnergia = mBarraEnergia;
 	}
 
+	/**
+	 * @return
+	 */
 	public BarraEnergia getBarraEnergia() {
 		return barraEnergia;
 	}
 
+	/**
+	 * @param barraEnergia
+	 */
 	public void setBarraEnergia(BarraEnergia barraEnergia) {
 		this.barraEnergia = barraEnergia;
 	}
 
+	/**
+	 * @return
+	 */
 	public BotonDisparo getBtDisparo() {
 		return btDisparo;
 	}
 
+	/**
+	 * @param btDisparo
+	 */
 	public void setBtDisparo(BotonDisparo btDisparo) {
 		this.btDisparo = btDisparo;
 	}
 
+	/**
+	 * @return
+	 */
 	public ArrayList<Actor> getListVirus() {
 		return listActores;
 	}
 
+	/**
+	 * @param listVirus
+	 */
 	public void setListVirus(ArrayList<Actor> listVirus) {
 		this.listActores = listVirus;
 	}
 
+	/**
+	 * @return
+	 */
 	public ArrayList<Adn> getListAdns() {
 		return listAdns;
 	}
 
+	/**
+	 * @param listAdns
+	 */
 	public void setListAdns(ArrayList<Adn> listAdns) {
 		this.listAdns = listAdns;
 	}
 
+	/**
+	 * @return
+	 */
 	public NivelPuntuacion getPuntos() {
 		return puntos;
 	}
 
+	/**
+	 * @param puntos
+	 */
 	public void setPuntos(NivelPuntuacion puntos) {
 		PantallaJuego.puntos = puntos;
 	}
 
+	/**
+	 * @return
+	 */
 	public float getVelocidadNanoBot() {
 		return velocidadNanoBot;
 	}
 
+	/**
+	 * @param velocidadNanoBot
+	 */
 	public void setVelocidadNanoBot(float velocidadNanoBot) {
 		this.velocidadNanoBot = velocidadNanoBot;
 	}
 
+	/**
+	 * @return
+	 */
 	public float getVirusSpawn() {
 		return virusSpawn;
 	}
 
+	/**
+	 * @param virusSpawn
+	 */
 	public void setVirusSpawn(float virusSpawn) {
 		this.virusSpawn = virusSpawn;
 	}
 
+	/**
+	 * @return
+	 */
 	public State getState() {
 		return state;
 	}
 
+	/**
+	 * @param s
+	 */
 	public void setGameState(State s) {
 		this.state = s;
 	}
-
 }
-
-/**
- * https://libgdx.badlogicgames.com/ci/nightlies/docs/api/com/badlogic/gdx/scenes/scene2d/Stage.html
- * Un gráfico de escena 2D que contiene jerarquías de actors. Stage maneja la
- * ventana gráfica y distribuye eventos de entrada. setViewport(Viewport)
- * controla las coordenadas utilizadas dentro del escenario y configura la
- * cámara utilizada para convertir entre las coordenadas del escenario y las
- * coordenadas de la pantalla. Un escenario debe recibir eventos de entrada para
- * que pueda distribuirlos a los actores. Por lo general, esto se hace pasando
- * el escenario a Gdx.input.setInputProcessor. Se InputMultiplexerpuede usar
- * para manejar eventos de entrada antes o después de que lo haga la etapa. Si
- * un actor maneja un evento devolviendo verdadero desde el método de entrada,
- * entonces el método de entrada de la etapa también devolverá verdadero, lo que
- * provocará que los procesadores de entrada posteriores no reciban el evento.
- * El escenario y sus componentes (como Actores y Oyentes) no son seguros para
- * subprocesos y solo deben actualizarse y consultarse desde un solo subproceso
- * (presumiblemente el subproceso principal de procesamiento). Los métodos deben
- * ser reentrantes, por lo que puede actualizar Actores y Etapas desde
- * devoluciones de llamada y controladores. Stagepuede ser extremadamente útil
- * si necesita controles en pantalla (botones, joystick, etc.) puede usar clases
- * de scene2d.ui
- * 
- * 1200*600 Res. Original auto documentar: Shift-Alt-J
- */

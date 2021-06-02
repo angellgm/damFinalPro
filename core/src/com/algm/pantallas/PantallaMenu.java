@@ -47,9 +47,8 @@ public class PantallaMenu extends Pantalla {
 	private Image imageComoJugarTecla;
 	private Image imageContinuarTecla;
 	private Image imageSalirTecla;
-	//public static String slotGuardado;
+	// public static String slotGuardado;
 	private Image imageLogoSCK;
-	
 
 	public PantallaMenu(SarsCovKiller juego) {
 		super(juego);
@@ -62,7 +61,7 @@ public class PantallaMenu extends Pantalla {
 		viewport = new StretchViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		stageMenu = new Stage(viewport, juego.sckBatch);
 
-		//SarsCovKiller.ASSETMANAGER.get("sonido/fondoMenu.ogg", Sound.class).loop();
+		// SarsCovKiller.ASSETMANAGER.get("sonido/fondoMenu.ogg", Sound.class).loop();
 
 		fondoMenu = new FondoMenu();
 		fondoMenu.setPosition(0, 0);
@@ -73,7 +72,7 @@ public class PantallaMenu extends Pantalla {
 		btContinuar();
 		btJugar();
 		btSalir();
-		btComoJugar();
+		// btComoJugar();
 		logoSCK();
 		btSlot3();
 		btSlot2();
@@ -85,7 +84,7 @@ public class PantallaMenu extends Pantalla {
 			btJugarTecla();
 			btContinuarTecla();
 			btSalirTecla();
-			btComoJugarTecla();
+			// btComoJugarTecla();
 		}
 
 		Gdx.input.setInputProcessor(stageMenu);
@@ -104,8 +103,8 @@ public class PantallaMenu extends Pantalla {
 	@Override
 	public void render(float delta) {
 		// Limpiar pantalla para evitar trazos fantasma de los actores
-		Gdx.gl.glClearColor(0f, 0f, 0f, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		// Gdx.gl.glClearColor(0f, 0f, 0f, 1);
+		// Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		stageMenu.act(Gdx.graphics.getDeltaTime()); // Actulizar
 		stageMenu.draw(); // Dibujar
 
@@ -122,6 +121,10 @@ public class PantallaMenu extends Pantalla {
 	public void dispose() {
 	}
 
+	/**
+	 * @category Inicaliza Boton Jugar e Imput Listerner (Touch) en Android/IOS. Le
+	 *           asigna una posición y tamaño
+	 */
 	private void btJugar() {
 		btJugar = SarsCovKiller.ASSETMANAGER.get("ui/btJugar.png", Texture.class);
 		imageJugar = new Image(btJugar);
@@ -136,13 +139,17 @@ public class PantallaMenu extends Pantalla {
 				SarsCovKiller.esContinuarPartida = false;
 				juego.setScreen(juego.P_JUEGO);
 				SarsCovKiller.ASSETMANAGER.get("sonido/fondoMenu.ogg", Sound.class).stop();
-				
+
 				return true;
 			}
 
 		});
 	}
 
+	/**
+	 * @category Inicaliza Boton Continuar Partida e Imput Listerner (Touch) en
+	 *           Android/IOS. Le asigna una posición y tamaño
+	 */
 	private void btContinuar() {
 		btContinuar = SarsCovKiller.ASSETMANAGER.get("ui/btContinuar.png", Texture.class);
 		imageContinuar = new Image(btContinuar);
@@ -163,6 +170,10 @@ public class PantallaMenu extends Pantalla {
 		});
 	}
 
+	/**
+	 * @category Inicaliza Boton de salir e Imput Listerner (Touch) en Android/IOS.
+	 *           Le asigna una posición y tamaño
+	 */
 	private void btSalir() {
 		btSalir = SarsCovKiller.ASSETMANAGER.get("ui/btSalir.png", Texture.class);
 		imageSalir = new Image(btSalir);
@@ -180,6 +191,10 @@ public class PantallaMenu extends Pantalla {
 		});
 	}
 
+	/**
+	 * @category Inicaliza Boton de Como Jugar e Imput Listerner (Touch) en
+	 *           Android/IOS. Le asigna una posición y tamaño
+	 */
 	private void btComoJugar() {
 		btComoJugar = SarsCovKiller.ASSETMANAGER.get("ui/btComoJugar.png", Texture.class);
 		imageComoJugar = new Image(btComoJugar);
@@ -197,6 +212,10 @@ public class PantallaMenu extends Pantalla {
 		});
 	}
 
+	/**
+	 * @category Inicaliza Boton del Slot3 para seleccionar partida e Imput
+	 *           Listerner (Touch) en Android/IOS. Le asigna una posición y tamaño
+	 */
 	private void btSlot3() {
 		btTexture3 = SarsCovKiller.ASSETMANAGER.get("ui/3.png", Texture.class);
 		image3 = new Image(btTexture3);
@@ -220,6 +239,9 @@ public class PantallaMenu extends Pantalla {
 		});
 	}
 
+	/**
+	 * @category Realiza efecto de iluminar botón 3 seleccionado
+	 */
 	private void esSlot3() {
 		SarsCovKiller.slotGuardado = "SLOT3";
 		image1a.setVisible(false);
@@ -229,6 +251,10 @@ public class PantallaMenu extends Pantalla {
 		image5a.setVisible(false);
 	}
 
+	/**
+	 * @category Inicaliza Boton del Slot2 para seleccionar partida e Imput
+	 *           Listerner (Touch) en Android/IOS. Le asigna una posición y tamaño
+	 */
 	private void btSlot2() {
 		btTexture2 = SarsCovKiller.ASSETMANAGER.get("ui/2.png", Texture.class);
 		image2 = new Image(btTexture2);
@@ -250,6 +276,9 @@ public class PantallaMenu extends Pantalla {
 		});
 	}
 
+	/**
+	 * @category Realiza efecto de iluminar botón 2 seleccionado
+	 */
 	private void esSlot2() {
 		SarsCovKiller.slotGuardado = "SLOT2";
 		image1a.setVisible(false);
@@ -259,6 +288,10 @@ public class PantallaMenu extends Pantalla {
 		image5a.setVisible(false);
 	}
 
+	/**
+	 * @category Inicaliza Boton del Slot4 para seleccionar partida e Imput
+	 *           Listerner (Touch) en Android/IOS. Le asigna una posición y tamaño
+	 */
 	private void btSlot4() {
 		btTexture4 = SarsCovKiller.ASSETMANAGER.get("ui/4.png", Texture.class);
 		image4 = new Image(btTexture4);
@@ -280,6 +313,9 @@ public class PantallaMenu extends Pantalla {
 		});
 	}
 
+	/**
+	 * @category Realiza efecto de iluminar botón 4 seleccionado
+	 */
 	private void esSlot4() {
 		SarsCovKiller.slotGuardado = "SLOT4";
 		image1a.setVisible(false);
@@ -289,6 +325,10 @@ public class PantallaMenu extends Pantalla {
 		image5a.setVisible(false);
 	}
 
+	/**
+	 * @category Inicaliza Boton del Slot5 para seleccionar partida e Imput
+	 *           Listerner (Touch) en Android/IOS. Le asigna una posición y tamaño
+	 */
 	private void btSlot5() {
 		btTexture5 = SarsCovKiller.ASSETMANAGER.get("ui/5.png", Texture.class);
 		image5 = new Image(btTexture5);
@@ -310,6 +350,9 @@ public class PantallaMenu extends Pantalla {
 		});
 	}
 
+	/**
+	 * @category Realiza efecto de iluminar botón 5 seleccionado
+	 */
 	private void esSlot5() {
 		SarsCovKiller.slotGuardado = "SLOT5";
 		image1a.setVisible(false);
@@ -319,6 +362,10 @@ public class PantallaMenu extends Pantalla {
 		image5a.setVisible(true);
 	}
 
+	/**
+	 * @category Inicaliza Boton del Slot1 para seleccionar partida e Imput
+	 *           Listerner (Touch) en Android/IOS. Le asigna una posición y tamaño
+	 */
 	private void btSlot1() {
 		btTexture1 = SarsCovKiller.ASSETMANAGER.get("ui/1.png", Texture.class);
 		image1 = new Image(btTexture1);
@@ -340,6 +387,9 @@ public class PantallaMenu extends Pantalla {
 		});
 	}
 
+	/**
+	 * @category Realiza efecto de iluminar botón 1 seleccionado
+	 */
 	private void esSlot1() {
 		SarsCovKiller.slotGuardado = "SLOT1";
 		image1a.setVisible(true);
@@ -349,6 +399,9 @@ public class PantallaMenu extends Pantalla {
 		image5a.setVisible(false);
 	}
 
+	/**
+	 * @category Inicaliza Boton Jugar Tecla. Le asigna una posición y tamaño
+	 */
 	private void btJugarTecla() {
 		btJugarTecla = SarsCovKiller.ASSETMANAGER.get("ui/j.png", Texture.class);
 		imageJugarTecla = new Image(btJugarTecla);
@@ -357,6 +410,9 @@ public class PantallaMenu extends Pantalla {
 		stageMenu.addActor(imageJugarTecla);
 	}
 
+	/**
+	 * @category Inicaliza Boton Continuar Tecla. Le asigna una posición y tamaño
+	 */
 	private void btContinuarTecla() {
 		btContinuarTecla = SarsCovKiller.ASSETMANAGER.get("ui/c.png", Texture.class);
 		imageContinuarTecla = new Image(btContinuarTecla);
@@ -366,6 +422,9 @@ public class PantallaMenu extends Pantalla {
 		stageMenu.addActor(imageContinuarTecla);
 	}
 
+	/**
+	 * @category Inicaliza Boton Salir Tecla. Le asigna una posición y tamaño
+	 */
 	private void btSalirTecla() {
 		btSalirTecla = SarsCovKiller.ASSETMANAGER.get("ui/esc.png", Texture.class);
 		imageSalirTecla = new Image(btSalirTecla);
@@ -374,6 +433,9 @@ public class PantallaMenu extends Pantalla {
 		stageMenu.addActor(imageSalirTecla);
 	}
 
+	/**
+	 * @category Inicaliza Boton Como Jugar Tecla. Le asigna una posición y tamaño
+	 */
 	private void btComoJugarTecla() {
 		btComoJugarTecla = SarsCovKiller.ASSETMANAGER.get("ui/q.png", Texture.class);
 		imageComoJugarTecla = new Image(btComoJugarTecla);
@@ -383,6 +445,9 @@ public class PantallaMenu extends Pantalla {
 		stageMenu.addActor(imageComoJugarTecla);
 	}
 
+	/**
+	 * @category Inicaliza Logo del juego.Le asigna una posición y tamaño
+	 */
 	private void logoSCK() {
 		logoSCK = SarsCovKiller.ASSETMANAGER.get("ui/sckLogo.png", Texture.class);
 		imageLogoSCK = new Image(logoSCK);
@@ -390,14 +455,18 @@ public class PantallaMenu extends Pantalla {
 		stageMenu.addActor(imageLogoSCK);
 	}
 
+	/**
+	 * @category Clase que extiende de input listerner para acciones del teclado
+	 * @see https://libgdx.badlogicgames.com/ci/nightlies/docs/api/com/badlogic/gdx/scenes/scene2d/InputListener.html
+	 */
 	private final class InpLGameOver extends InputListener {
+
 		/**
 		 * @param InputEvent
 		 * @param keycode
-		 * @category Referente al imput listener del teclado
+		 * @category Referente al imput listener del teclado (pulsar la tecla).
 		 * @see https://libgdx.badlogicgames.com/ci/nightlies/docs/api/com/badlogic/gdx/scenes/scene2d/InputListener.html
 		 */
-
 		@Override
 		public boolean keyDown(InputEvent event, int keycode) {
 

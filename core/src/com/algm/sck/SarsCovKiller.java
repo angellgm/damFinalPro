@@ -1,12 +1,10 @@
 package com.algm.sck;
 
-
 import com.algm.pantallas.Pantalla;
 import com.algm.pantallas.PantallaCargaAssets;
 import com.algm.pantallas.PantallaGameOver;
 import com.algm.pantallas.PantallaMenu;
 import com.algm.pantallas.PantallaComoJugar;
-import com.algm.pantallas.PantallaMenuOpc2;
 import com.algm.pantallas.PantallaJuego;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.assets.AssetManager;
@@ -42,7 +40,6 @@ public class SarsCovKiller extends Game {
 	public final Pantalla P_JUEGO;
 	public final Pantalla P_GAMEOVER;
 	public final Pantalla P_COMOJUGAR;
-	public final Pantalla P_MENU_OPC2;
 	public static boolean esContinuarPartida = true;
 	public static String slotGuardado = "";
 
@@ -55,7 +52,6 @@ public class SarsCovKiller extends Game {
 		P_JUEGO = new PantallaJuego(this);
 		P_GAMEOVER = new PantallaGameOver(this);
 		P_COMOJUGAR = new PantallaComoJugar(this);
-		P_MENU_OPC2 = new PantallaMenuOpc2(this);
 	}
 
 	/**
