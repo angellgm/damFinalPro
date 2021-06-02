@@ -13,7 +13,7 @@ public class BotonDisparo extends Button {
 
 	public BotonDisparo() {
 		// Inicializar textura
-		btDisparo = new TextureRegion(SarsCovKiller.ASSETMANAGER.get("ui/botonDisparo.png", Texture.class), 90, 90);
+		btDisparo = new TextureRegion(SarsCovKiller.ASSETMANAGER.get(SarsCovKiller.path("ui/botonDisparo.png"), Texture.class), 90, 90);
 
 		// Tamaño igual al de la textura
 		setSize(btDisparo.getRegionWidth(), btDisparo.getRegionHeight());

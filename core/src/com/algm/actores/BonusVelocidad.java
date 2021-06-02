@@ -1,5 +1,6 @@
 package com.algm.actores;
 
+import com.algm.sck.SarsCovKiller;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -21,7 +22,7 @@ public class BonusVelocidad extends Actor {
 	private Rectangle rectangle;
 
 	public BonusVelocidad() {
-		texture = new Texture(Gdx.files.internal("bonusVelocidad.png"));
+		texture = new Texture(Gdx.files.internal(SarsCovKiller.path("bonusVelocidad.png")));
 
 		// Crear array temporal para dividir textura (6 subtexturas)
 		TextureRegion[][] temporalRegions = TextureRegion.split(texture, texture.getWidth() / 6, texture.getHeight());

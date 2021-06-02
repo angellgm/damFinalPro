@@ -12,7 +12,7 @@ public class MBarraEnergia extends Actor {
 
 	public MBarraEnergia() {
 		// Inicializar textura
-		mBEnergia = new TextureRegion(SarsCovKiller.ASSETMANAGER.get("ui/mEnergia.png", Texture.class), 270,
+		mBEnergia = new TextureRegion(SarsCovKiller.ASSETMANAGER.get(SarsCovKiller.path("ui/mEnergia.png"), Texture.class), 270,
 				70);
 
 		// Tamaño igual al de la textura

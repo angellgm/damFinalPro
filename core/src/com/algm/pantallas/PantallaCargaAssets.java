@@ -33,10 +33,10 @@ public class PantallaCargaAssets extends Pantalla {
 		}
 		
 		//Inicia la pantalla de carga después de cargar sus assets
-		if (SarsCovKiller.ASSETMANAGER.isLoaded("fondo/sckCarga.png")) {
+		if (SarsCovKiller.ASSETMANAGER.isLoaded(SarsCovKiller.path("fondo/sckCarga.png"))) {
 			//System.out.println("is loader sck carga");
 			juego.sckBatch.begin();
-			juego.sckBatch.draw(SarsCovKiller.ASSETMANAGER.get("fondo/sckCarga.png", Texture.class), 0, 0, Gdx.graphics.getWidth(),
+			juego.sckBatch.draw(SarsCovKiller.ASSETMANAGER.get(SarsCovKiller.path("fondo/sckCarga.png"), Texture.class), 0, 0, Gdx.graphics.getWidth(),
 					Gdx.graphics.getHeight());
 			juego.sckBatch.end();
 		}

@@ -61,7 +61,7 @@ public class PantallaMenu extends Pantalla {
 		viewport = new StretchViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		stageMenu = new Stage(viewport, juego.sckBatch);
 
-		// SarsCovKiller.ASSETMANAGER.get("sonido/fondoMenu.ogg", Sound.class).loop();
+		SarsCovKiller.ASSETMANAGER.get(SarsCovKiller.path("sonido/fondoMenu.ogg"), Sound.class).loop();
 
 		fondoMenu = new FondoMenu();
 		fondoMenu.setPosition(0, 0);
@@ -126,7 +126,7 @@ public class PantallaMenu extends Pantalla {
 	 *           asigna una posición y tamaño
 	 */
 	private void btJugar() {
-		btJugar = SarsCovKiller.ASSETMANAGER.get("ui/btJugar.png", Texture.class);
+		btJugar = SarsCovKiller.ASSETMANAGER.get(SarsCovKiller.path("ui/btJugar.png"), Texture.class);
 		imageJugar = new Image(btJugar);
 		imageJugar.setPosition(imageContinuar.getX() - (imageJugar.getWidth() + (stageMenu.getWidth() / 50)),
 				stageMenu.getHeight() / 7f);
@@ -138,7 +138,7 @@ public class PantallaMenu extends Pantalla {
 				// PANTALLA JUEGO
 				SarsCovKiller.esContinuarPartida = false;
 				juego.setScreen(juego.P_JUEGO);
-				SarsCovKiller.ASSETMANAGER.get("sonido/fondoMenu.ogg", Sound.class).stop();
+				SarsCovKiller.ASSETMANAGER.get(SarsCovKiller.path("sonido/fondoMenu.ogg"), Sound.class).stop();
 
 				return true;
 			}
@@ -151,7 +151,7 @@ public class PantallaMenu extends Pantalla {
 	 *           Android/IOS. Le asigna una posición y tamaño
 	 */
 	private void btContinuar() {
-		btContinuar = SarsCovKiller.ASSETMANAGER.get("ui/btContinuar.png", Texture.class);
+		btContinuar = SarsCovKiller.ASSETMANAGER.get(SarsCovKiller.path("ui/btContinuar.png"), Texture.class);
 		imageContinuar = new Image(btContinuar);
 		imageContinuar.setPosition(stageMenu.getWidth() / 2f - (imageContinuar.getWidth() / 2),
 				stageMenu.getHeight() / 7f);
@@ -163,7 +163,7 @@ public class PantallaMenu extends Pantalla {
 				// PANTALLA JUEGO
 				SarsCovKiller.esContinuarPartida = true;
 				juego.setScreen(juego.P_JUEGO);
-				SarsCovKiller.ASSETMANAGER.get("sonido/fondoMenu.ogg", Sound.class).stop();
+				SarsCovKiller.ASSETMANAGER.get(SarsCovKiller.path("sonido/fondoMenu.ogg"), Sound.class).stop();
 				return true;
 			}
 
@@ -175,7 +175,7 @@ public class PantallaMenu extends Pantalla {
 	 *           Le asigna una posición y tamaño
 	 */
 	private void btSalir() {
-		btSalir = SarsCovKiller.ASSETMANAGER.get("ui/btSalir.png", Texture.class);
+		btSalir = SarsCovKiller.ASSETMANAGER.get(SarsCovKiller.path("ui/btSalir.png"), Texture.class);
 		imageSalir = new Image(btSalir);
 		imageSalir.setPosition((imageContinuar.getX() + imageContinuar.getWidth()) + (stageMenu.getWidth() / 50),
 				stageMenu.getHeight() / 7f);
@@ -196,7 +196,7 @@ public class PantallaMenu extends Pantalla {
 	 *           Android/IOS. Le asigna una posición y tamaño
 	 */
 	private void btComoJugar() {
-		btComoJugar = SarsCovKiller.ASSETMANAGER.get("ui/btComoJugar.png", Texture.class);
+		btComoJugar = SarsCovKiller.ASSETMANAGER.get(SarsCovKiller.path("ui/btComoJugar.png"), Texture.class);
 		imageComoJugar = new Image(btComoJugar);
 		imageComoJugar.setPosition(stageMenu.getWidth() - (imageComoJugar.getWidth() + 15),
 				stageMenu.getHeight() - (imageComoJugar.getHeight() + 15));
@@ -217,13 +217,13 @@ public class PantallaMenu extends Pantalla {
 	 *           Listerner (Touch) en Android/IOS. Le asigna una posición y tamaño
 	 */
 	private void btSlot3() {
-		btTexture3 = SarsCovKiller.ASSETMANAGER.get("ui/3.png", Texture.class);
+		btTexture3 = SarsCovKiller.ASSETMANAGER.get(SarsCovKiller.path("ui/3.png"), Texture.class);
 		image3 = new Image(btTexture3);
 		image3.setPosition(imageContinuar.getX() + imageContinuar.getWidth() / 2 - image3.getWidth() / 2,
 				imageContinuar.getY() + imageContinuar.getHeight() + 5);
 		stageMenu.addActor(image3);
 
-		btTexture3a = SarsCovKiller.ASSETMANAGER.get("ui/3a.png", Texture.class);
+		btTexture3a = SarsCovKiller.ASSETMANAGER.get(SarsCovKiller.path("ui/3a.png"), Texture.class);
 		image3a = new Image(btTexture3a);
 		image3a.setPosition(imageContinuar.getX() + imageContinuar.getWidth() / 2 - image3.getWidth() / 2,
 				imageContinuar.getY() + imageContinuar.getHeight() + 5);
@@ -256,12 +256,12 @@ public class PantallaMenu extends Pantalla {
 	 *           Listerner (Touch) en Android/IOS. Le asigna una posición y tamaño
 	 */
 	private void btSlot2() {
-		btTexture2 = SarsCovKiller.ASSETMANAGER.get("ui/2.png", Texture.class);
+		btTexture2 = SarsCovKiller.ASSETMANAGER.get(SarsCovKiller.path("ui/2.png"), Texture.class);
 		image2 = new Image(btTexture2);
 		image2.setPosition(image3.getX() - image3.getWidth(), imageContinuar.getY() + imageContinuar.getHeight() + 5);
 		stageMenu.addActor(image2);
 
-		btTexture2a = SarsCovKiller.ASSETMANAGER.get("ui/2a.png", Texture.class);
+		btTexture2a = SarsCovKiller.ASSETMANAGER.get(SarsCovKiller.path("ui/2a.png"), Texture.class);
 		image2a = new Image(btTexture2a);
 		image2a.setPosition(image3.getX() - image3.getWidth(), imageContinuar.getY() + imageContinuar.getHeight() + 5);
 		stageMenu.addActor(image2a);
@@ -293,12 +293,12 @@ public class PantallaMenu extends Pantalla {
 	 *           Listerner (Touch) en Android/IOS. Le asigna una posición y tamaño
 	 */
 	private void btSlot4() {
-		btTexture4 = SarsCovKiller.ASSETMANAGER.get("ui/4.png", Texture.class);
+		btTexture4 = SarsCovKiller.ASSETMANAGER.get(SarsCovKiller.path("ui/4.png"), Texture.class);
 		image4 = new Image(btTexture4);
 		image4.setPosition(image3.getX() + image3.getWidth(), imageContinuar.getY() + imageContinuar.getHeight() + 5);
 		stageMenu.addActor(image4);
 
-		btTexture4a = SarsCovKiller.ASSETMANAGER.get("ui/4a.png", Texture.class);
+		btTexture4a = SarsCovKiller.ASSETMANAGER.get(SarsCovKiller.path("ui/4a.png"), Texture.class);
 		image4a = new Image(btTexture4a);
 		image4a.setPosition(image3.getX() + image3.getWidth(), imageContinuar.getY() + imageContinuar.getHeight() + 5);
 		stageMenu.addActor(image4a);
@@ -330,12 +330,12 @@ public class PantallaMenu extends Pantalla {
 	 *           Listerner (Touch) en Android/IOS. Le asigna una posición y tamaño
 	 */
 	private void btSlot5() {
-		btTexture5 = SarsCovKiller.ASSETMANAGER.get("ui/5.png", Texture.class);
+		btTexture5 = SarsCovKiller.ASSETMANAGER.get(SarsCovKiller.path("ui/5.png"), Texture.class);
 		image5 = new Image(btTexture5);
 		image5.setPosition(image4.getX() + image4.getWidth(), imageContinuar.getY() + imageContinuar.getHeight() + 5);
 		stageMenu.addActor(image5);
 
-		btTexture5a = SarsCovKiller.ASSETMANAGER.get("ui/5a.png", Texture.class);
+		btTexture5a = SarsCovKiller.ASSETMANAGER.get(SarsCovKiller.path("ui/5a.png"), Texture.class);
 		image5a = new Image(btTexture5a);
 		image5a.setPosition(image4.getX() + image4.getWidth(), imageContinuar.getY() + imageContinuar.getHeight() + 5);
 		stageMenu.addActor(image5a);
@@ -367,12 +367,12 @@ public class PantallaMenu extends Pantalla {
 	 *           Listerner (Touch) en Android/IOS. Le asigna una posición y tamaño
 	 */
 	private void btSlot1() {
-		btTexture1 = SarsCovKiller.ASSETMANAGER.get("ui/1.png", Texture.class);
+		btTexture1 = SarsCovKiller.ASSETMANAGER.get(SarsCovKiller.path("ui/1.png"), Texture.class);
 		image1 = new Image(btTexture1);
 		image1.setPosition(image2.getX() - image2.getWidth(), imageContinuar.getY() + imageContinuar.getHeight() + 5);
 		stageMenu.addActor(image1);
 
-		btTexture1a = SarsCovKiller.ASSETMANAGER.get("ui/1a.png", Texture.class);
+		btTexture1a = SarsCovKiller.ASSETMANAGER.get(SarsCovKiller.path("ui/1a.png"), Texture.class);
 		image1a = new Image(btTexture1a);
 		image1a.setPosition(image2.getX() - image2.getWidth(), imageContinuar.getY() + imageContinuar.getHeight() + 5);
 		stageMenu.addActor(image1a);
@@ -403,7 +403,7 @@ public class PantallaMenu extends Pantalla {
 	 * @category Inicaliza Boton Jugar Tecla. Le asigna una posición y tamaño
 	 */
 	private void btJugarTecla() {
-		btJugarTecla = SarsCovKiller.ASSETMANAGER.get("ui/j.png", Texture.class);
+		btJugarTecla = SarsCovKiller.ASSETMANAGER.get(SarsCovKiller.path("ui/j.png"), Texture.class);
 		imageJugarTecla = new Image(btJugarTecla);
 		imageJugarTecla.setPosition((imageJugar.getX() + imageJugar.getWidth() / 2) - (imageJugarTecla.getWidth() / 2),
 				imageJugar.getY() - imageJugarTecla.getHeight());
@@ -414,7 +414,7 @@ public class PantallaMenu extends Pantalla {
 	 * @category Inicaliza Boton Continuar Tecla. Le asigna una posición y tamaño
 	 */
 	private void btContinuarTecla() {
-		btContinuarTecla = SarsCovKiller.ASSETMANAGER.get("ui/c.png", Texture.class);
+		btContinuarTecla = SarsCovKiller.ASSETMANAGER.get(SarsCovKiller.path("ui/c.png"), Texture.class);
 		imageContinuarTecla = new Image(btContinuarTecla);
 		imageContinuarTecla.setPosition(
 				(imageContinuar.getX() + imageContinuar.getWidth() / 2) - (imageContinuarTecla.getWidth() / 2),
@@ -426,7 +426,7 @@ public class PantallaMenu extends Pantalla {
 	 * @category Inicaliza Boton Salir Tecla. Le asigna una posición y tamaño
 	 */
 	private void btSalirTecla() {
-		btSalirTecla = SarsCovKiller.ASSETMANAGER.get("ui/esc.png", Texture.class);
+		btSalirTecla = SarsCovKiller.ASSETMANAGER.get(SarsCovKiller.path("ui/esc.png"), Texture.class);
 		imageSalirTecla = new Image(btSalirTecla);
 		imageSalirTecla.setPosition((imageSalir.getX() + imageSalir.getWidth() / 2) - (imageSalirTecla.getWidth() / 2),
 				imageSalir.getY() - imageSalirTecla.getHeight());
@@ -437,7 +437,7 @@ public class PantallaMenu extends Pantalla {
 	 * @category Inicaliza Boton Como Jugar Tecla. Le asigna una posición y tamaño
 	 */
 	private void btComoJugarTecla() {
-		btComoJugarTecla = SarsCovKiller.ASSETMANAGER.get("ui/q.png", Texture.class);
+		btComoJugarTecla = SarsCovKiller.ASSETMANAGER.get(SarsCovKiller.path("ui/q.png"), Texture.class);
 		imageComoJugarTecla = new Image(btComoJugarTecla);
 		imageComoJugarTecla.setPosition(
 				(imageComoJugar.getX() + imageComoJugar.getWidth() / 2) - (imageComoJugarTecla.getWidth() / 2),
@@ -449,7 +449,7 @@ public class PantallaMenu extends Pantalla {
 	 * @category Inicaliza Logo del juego.Le asigna una posición y tamaño
 	 */
 	private void logoSCK() {
-		logoSCK = SarsCovKiller.ASSETMANAGER.get("ui/sckLogo.png", Texture.class);
+		logoSCK = SarsCovKiller.ASSETMANAGER.get(SarsCovKiller.path("ui/sckLogo.png"), Texture.class);
 		imageLogoSCK = new Image(logoSCK);
 		imageLogoSCK.setPosition(20, stageMenu.getHeight() - (imageLogoSCK.getHeight() + 20));
 		stageMenu.addActor(imageLogoSCK);
@@ -480,14 +480,14 @@ public class PantallaMenu extends Pantalla {
 				// PANTALLA JUEGO CONTINUAR
 				SarsCovKiller.esContinuarPartida = true;
 				juego.setScreen(juego.P_JUEGO);
-				SarsCovKiller.ASSETMANAGER.get("sonido/fondoMenu.ogg", Sound.class).stop();
+				SarsCovKiller.ASSETMANAGER.get(SarsCovKiller.path("sonido/fondoMenu.ogg"), Sound.class).stop();
 				return true;
 
 			case Input.Keys.J:
 				// PANTALLA JUEGO PARTIDA NUEVA
 				SarsCovKiller.esContinuarPartida = false;
 				juego.setScreen(juego.P_JUEGO);
-				SarsCovKiller.ASSETMANAGER.get("sonido/fondoMenu.ogg", Sound.class).stop();
+				SarsCovKiller.ASSETMANAGER.get(SarsCovKiller.path("sonido/fondoMenu.ogg"), Sound.class).stop();
 				return true;
 
 			case Input.Keys.Q:

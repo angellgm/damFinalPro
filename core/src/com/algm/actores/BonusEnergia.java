@@ -22,7 +22,7 @@ public class BonusEnergia extends Actor {
 	private Rectangle rectangle;
 
 	public BonusEnergia() {
-		texture = new Texture(Gdx.files.internal("bonusEnergia.png"));
+		texture = new Texture(Gdx.files.internal(SarsCovKiller.path("bonusEnergia.png")));
 
 		// Crear array temporal para dividir textura (6 subtexturas)
 		TextureRegion[][] temporalRegions = TextureRegion.split(texture, texture.getWidth() / 6, texture.getHeight());

@@ -1,6 +1,7 @@
 package com.algm.actores;
 
 import com.algm.pantallas.PantallaJuego;
+import com.algm.sck.SarsCovKiller;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -27,7 +28,7 @@ public class Virus5 extends Actor {
 		velX = -800;
 		velY = -100;
 		velAnimacion = 0.09f;
-		texture = new Texture(Gdx.files.internal("anivirus5.png"));
+		texture = new Texture(Gdx.files.internal(SarsCovKiller.path("anivirus5.png")));
 
 		// Crear array temporal para dividir textura (10 subtexturas)
 		TextureRegion[][] temporalRegions = TextureRegion.split(texture, texture.getWidth() / 10, texture.getHeight());

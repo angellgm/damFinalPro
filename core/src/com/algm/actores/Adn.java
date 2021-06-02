@@ -22,7 +22,7 @@ public class Adn extends Actor {
 	private Rectangle rectangle;
 
 	public Adn() {
-		texture = new Texture(Gdx.files.internal("adn.png"));
+		texture = new Texture(Gdx.files.internal(SarsCovKiller.path("adn.png")));
 
 		// Crear array temporal para dividir textura (9 subtexturas)
 		TextureRegion[][] temporalRegions = TextureRegion.split(texture, texture.getWidth() / 9, texture.getHeight());

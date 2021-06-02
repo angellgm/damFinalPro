@@ -19,7 +19,7 @@ public class NanoBot extends Actor implements NivelEnergia {
 
 	public NanoBot() {
 		// Inicializar textura
-		nanoBot = new TextureRegion(SarsCovKiller.ASSETMANAGER.get("nanobot.png", Texture.class), 120, 80);
+		nanoBot = new TextureRegion(SarsCovKiller.ASSETMANAGER.get(SarsCovKiller.path("nanoBot.png"), Texture.class), 120, 80);
 		// Tamaño igual al de la textura
 		setSize(nanoBot.getRegionWidth(), nanoBot.getRegionHeight());
 		// Velocidad inicial 0

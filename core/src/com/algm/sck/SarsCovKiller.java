@@ -7,7 +7,10 @@ import com.algm.pantallas.PantallaMenu;
 import com.algm.pantallas.PantallaComoJugar;
 import com.algm.pantallas.PantallaJuego;
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.resolvers.ClasspathFileHandleResolver;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -34,7 +37,7 @@ public class SarsCovKiller extends Game {
 	 */
 
 	public SpriteBatch sckBatch;// = new SpriteBatch();
-	public static final AssetManager ASSETMANAGER = new AssetManager();
+	public static final AssetManager ASSETMANAGER = new AssetManager(new ClasspathFileHandleResolver());
 	public final Pantalla P_CARGA;
 	public final Pantalla P_MENU;
 	public final Pantalla P_JUEGO;
@@ -43,6 +46,14 @@ public class SarsCovKiller extends Game {
 	public static boolean esContinuarPartida = true;
 	public static String slotGuardado = "";
 
+	static public String path(String nombre) {
+		if (Gdx.app.getType() == ApplicationType.Desktop) {
+			return nombre;
+		} else {
+			return "assets/"+nombre;
+		}
+	}
+	
 	/**
 	 * 
 	 */
@@ -81,64 +92,64 @@ public class SarsCovKiller extends Game {
 	}
 
 	private void assetsLoad() {
-		ASSETMANAGER.load("fondo/sckCarga.png", Texture.class);
-		ASSETMANAGER.load("anivirus.png", Texture.class);
-		ASSETMANAGER.load("anivirus2.png", Texture.class);
-		ASSETMANAGER.load("anivirus3.png", Texture.class);
-		ASSETMANAGER.load("anivirus4.png", Texture.class);
-		ASSETMANAGER.load("anivirus5.png", Texture.class);
-		ASSETMANAGER.load("anivirus6.png", Texture.class);
-		ASSETMANAGER.load("anivirus7.png", Texture.class);
-		ASSETMANAGER.load("anivirus8.png", Texture.class);
-		ASSETMANAGER.load("nanobot.png", Texture.class);
-		ASSETMANAGER.load("adn.png", Texture.class);
-		ASSETMANAGER.load("bonusAdn.png", Texture.class);
-		ASSETMANAGER.load("bonusEnergia.png", Texture.class);
-		ASSETMANAGER.load("bonusPuntos.png", Texture.class);
-		ASSETMANAGER.load("bonusVelocidad.png", Texture.class);
-		ASSETMANAGER.load("fondo/menu.png", Texture.class);
-		ASSETMANAGER.load("ui/sckLogo.png", Texture.class);
-		ASSETMANAGER.load("ui/pausa.png", Texture.class);
-		ASSETMANAGER.load("ui/mEnergia.png", Texture.class);
-		ASSETMANAGER.load("ui/bEnergia.png", Texture.class);
-		ASSETMANAGER.load("ui/botonDisparo.png", Texture.class);
-		ASSETMANAGER.load("ui/btSalir.png", Texture.class);
-		ASSETMANAGER.load("ui/btMenu.png", Texture.class);
-		ASSETMANAGER.load("ui/menuIcon60.png", Texture.class);
-		ASSETMANAGER.load("ui/pausaIcon60.png", Texture.class);
-		ASSETMANAGER.load("ui/btContinuar.png", Texture.class);
-		ASSETMANAGER.load("ui/btOpciones.png", Texture.class);
-		ASSETMANAGER.load("ui/btComoJugar.png", Texture.class);
-		ASSETMANAGER.load("ui/btJugar.png", Texture.class);
+		ASSETMANAGER.load(path("fondo/sckCarga.png"), Texture.class);
+		ASSETMANAGER.load(path("anivirus.png"), Texture.class);
+		ASSETMANAGER.load(path("anivirus2.png"), Texture.class);
+		ASSETMANAGER.load(path("anivirus3.png"), Texture.class);
+		ASSETMANAGER.load(path("anivirus4.png"), Texture.class);
+		ASSETMANAGER.load(path("anivirus5.png"), Texture.class);
+		ASSETMANAGER.load(path("anivirus6.png"), Texture.class);
+		ASSETMANAGER.load(path("anivirus7.png"), Texture.class);
+		ASSETMANAGER.load(path("anivirus8.png"), Texture.class);
+		ASSETMANAGER.load(path("nanoBot.png"), Texture.class);
+		ASSETMANAGER.load(path("adn.png"), Texture.class);
+		ASSETMANAGER.load(path("bonusAdn.png"), Texture.class);
+		ASSETMANAGER.load(path("bonusEnergia.png"), Texture.class);
+		ASSETMANAGER.load(path("bonusPuntos.png"), Texture.class);
+		ASSETMANAGER.load(path("bonusVelocidad.png"), Texture.class);
+		ASSETMANAGER.load(path("fondo/menu.png"), Texture.class);
+		ASSETMANAGER.load(path("ui/sckLogo.png"), Texture.class);
+		ASSETMANAGER.load(path("ui/pausa.png"), Texture.class);
+		ASSETMANAGER.load(path("ui/mEnergia.png"), Texture.class);
+		ASSETMANAGER.load(path("ui/bEnergia.png"), Texture.class);
+		ASSETMANAGER.load(path("ui/botonDisparo.png"), Texture.class);
+		ASSETMANAGER.load(path("ui/btSalir.png"), Texture.class);
+		ASSETMANAGER.load(path("ui/btMenu.png"), Texture.class);
+		ASSETMANAGER.load(path("ui/menuIcon60.png"), Texture.class);
+		ASSETMANAGER.load(path("ui/pausaIcon60.png"), Texture.class);
+		ASSETMANAGER.load(path("ui/btContinuar.png"), Texture.class);
+		ASSETMANAGER.load(path("ui/btOpciones.png"), Texture.class);
+		ASSETMANAGER.load(path("ui/btComoJugar.png"), Texture.class);
+		ASSETMANAGER.load(path("ui/btJugar.png"), Texture.class);
 
-		ASSETMANAGER.load("ui/esc.png", Texture.class);
-		ASSETMANAGER.load("ui/m.png", Texture.class);
-		ASSETMANAGER.load("ui/c.png", Texture.class);
-		ASSETMANAGER.load("ui/o.png", Texture.class);
-		ASSETMANAGER.load("ui/c.png", Texture.class);
-		ASSETMANAGER.load("ui/q.png", Texture.class);
-		ASSETMANAGER.load("ui/j.png", Texture.class);
-		ASSETMANAGER.load("ui/1.png", Texture.class);
-		ASSETMANAGER.load("ui/1a.png", Texture.class);
-		ASSETMANAGER.load("ui/2.png", Texture.class);
-		ASSETMANAGER.load("ui/2a.png", Texture.class);
-		ASSETMANAGER.load("ui/3.png", Texture.class);
-		ASSETMANAGER.load("ui/3a.png", Texture.class);
-		ASSETMANAGER.load("ui/4.png", Texture.class);
-		ASSETMANAGER.load("ui/4a.png", Texture.class);
-		ASSETMANAGER.load("ui/5.png", Texture.class);
-		ASSETMANAGER.load("ui/5a.png", Texture.class);
+		ASSETMANAGER.load(path("ui/esc.png"), Texture.class);
+		ASSETMANAGER.load(path("ui/m.png"), Texture.class);
+		ASSETMANAGER.load(path("ui/c.png"), Texture.class);
+		ASSETMANAGER.load(path("ui/o.png"), Texture.class);
+		ASSETMANAGER.load(path("ui/c.png"), Texture.class);
+		ASSETMANAGER.load(path("ui/q.png"), Texture.class);
+		ASSETMANAGER.load(path("ui/j.png"), Texture.class);
+		ASSETMANAGER.load(path("ui/1.png"), Texture.class);
+		ASSETMANAGER.load(path("ui/1a.png"), Texture.class);
+		ASSETMANAGER.load(path("ui/2.png"), Texture.class);
+		ASSETMANAGER.load(path("ui/2a.png"), Texture.class);
+		ASSETMANAGER.load(path("ui/3.png"), Texture.class);
+		ASSETMANAGER.load(path("ui/3a.png"), Texture.class);
+		ASSETMANAGER.load(path("ui/4.png"), Texture.class);
+		ASSETMANAGER.load(path("ui/4a.png"), Texture.class);
+		ASSETMANAGER.load(path("ui/5.png"), Texture.class);
+		ASSETMANAGER.load(path("ui/5a.png"), Texture.class);
 
-		ASSETMANAGER.load("sonido/fondoMenu.ogg", Sound.class);
-		ASSETMANAGER.load("sonido/fondo.ogg", Sound.class);
-		ASSETMANAGER.load("sonido/adn.ogg", Sound.class);
-		ASSETMANAGER.load("sonido/botKill.ogg", Sound.class);
-		ASSETMANAGER.load("sonido/GameOver1.ogg", Sound.class);
-		ASSETMANAGER.load("sonido/impactoBot.ogg", Sound.class);
-		ASSETMANAGER.load("sonido/impactoVirus.ogg", Sound.class);
-		ASSETMANAGER.load("sonido/virusKill.ogg", Sound.class);
-		ASSETMANAGER.load("sonido/metal.ogg", Sound.class);
-		ASSETMANAGER.load("sonido/bonus.ogg", Sound.class);
+		ASSETMANAGER.load(path("sonido/fondoMenu.ogg"), Sound.class);
+		ASSETMANAGER.load(path("sonido/fondo.ogg"), Sound.class);
+		ASSETMANAGER.load(path("sonido/adn.ogg"), Sound.class);
+		ASSETMANAGER.load(path("sonido/botKill.ogg"), Sound.class);
+		ASSETMANAGER.load(path("sonido/GameOver1.ogg"), Sound.class);
+		ASSETMANAGER.load(path("sonido/impactoBot.ogg"), Sound.class);
+		ASSETMANAGER.load(path("sonido/impactoVirus.ogg"), Sound.class);
+		ASSETMANAGER.load(path("sonido/virusKill.ogg"), Sound.class);
+		ASSETMANAGER.load(path("sonido/metal.ogg"), Sound.class);
+		ASSETMANAGER.load(path("sonido/bonus.ogg"), Sound.class);
 	}
 
 	@Override

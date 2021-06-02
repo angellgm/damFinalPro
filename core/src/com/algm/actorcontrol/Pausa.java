@@ -12,7 +12,7 @@ public class Pausa extends Actor {
 
 	public Pausa() {
 		// Inicializar textura
-		tRPausa = new TextureRegion(SarsCovKiller.ASSETMANAGER.get("ui/pausa.png", Texture.class), 450, 400);
+		tRPausa = new TextureRegion(SarsCovKiller.ASSETMANAGER.get(SarsCovKiller.path("ui/pausa.png"), Texture.class), 450, 400);
 
 		// Tamaño igual al de la textura
 		setSize(tRPausa.getRegionWidth(), tRPausa.getRegionHeight());
