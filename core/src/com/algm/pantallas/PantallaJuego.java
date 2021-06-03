@@ -88,7 +88,7 @@ public class PantallaJuego extends Pantalla {
 		stageJuego = new Stage(viewport, juego.sckBatch);
 		// -------------------------------
 		// Modo debug gráfico
-		// stageJuego.setDebugAll(true);
+		//stageJuego.setDebugAll(true);
 		// -------------------------------
 		// Estado inicial RUN
 		state = State.RUN;
@@ -152,9 +152,9 @@ public class PantallaJuego extends Pantalla {
 		if (Gdx.app.getType() == ApplicationType.Desktop) {
 			stageJuego.setKeyboardFocus(nanoBot);
 			nanoBot.addListener(new ImputListener());
-			Gdx.input.setInputProcessor(stageJuego);
+			
 		}
-
+		Gdx.input.setInputProcessor(stageJuego);
 		
 		pausa();
 	}
@@ -541,7 +541,7 @@ public class PantallaJuego extends Pantalla {
 	 */
 	private void generarBonus() {
 		// Rango de muertes para spawn del bonus
-		int rango = 50;
+		int rango = 25;
 		if (contadorParaBonus + rango == puntos.getSck()) {
 			// Bonus aleatorio
 			contadorParaBonus = puntos.getSck();
